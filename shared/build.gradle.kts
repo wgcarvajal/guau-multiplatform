@@ -3,6 +3,7 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
@@ -30,13 +31,23 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(compose.material3)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+                implementation("org.jetbrains.kotlinx:atomicfu:0.17.3")
+
+                api("dev.icerock.moko:resources:0.23.0")
+                api("dev.icerock.moko:resources-compose:0.23.0")
+
+                api("moe.tlaster:precompose:1.4.3")
+
+                api("dev.icerock.moko:mvvm-core:0.16.1")
+                api("dev.icerock.moko:mvvm-compose:0.16.1")
             }
         }
         val androidMain by getting {
             dependencies {
+                dependsOn(commonMain)
                 api("androidx.activity:activity-compose:1.6.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.9.0")
@@ -73,4 +84,9 @@ android {
     kotlin {
         jvmToolchain(11)
     }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.myapplication"
+    multiplatformResourcesClassName = "SharedRes"
 }

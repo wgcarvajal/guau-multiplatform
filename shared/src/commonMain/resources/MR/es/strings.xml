@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">Guau</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="enter_your_password">Ingrese su contraseña</string>
+    <string name="password">Contraseña</string>
+    <string name="enter_your_email">Enter your correo electrónico</string>
+    <string name="email">Correo electrónico</string>
+    <string name="name">Nombres</string>
+    <string name="last_name">Apellidos</string>
+    <string name="bad_credentials">Usuario o contraseña incorrectos</string>
+    <string name="dont_have_an_account">No tienes una cuenta?</string>
+    <string name="sign_up">Regístrate</string>
+    <string name="sign_in">Iniciar sesión</string>
+    <string name="already_a_member">Ya eres miembro?</string>
+    <string name="field_duplicate">Campos duplicados.</string>
+    <string name="field_duplicate_with_field">El %1$s ya se encuentra registrado.</string>
+    <string name="authentication_error">Error de autenticación.</string>
+    <string name="server_error">Ocurrió un problema en el servidor.</string>
+    <string name="successful_registration">Registro exitoso!!</string>
+    <string name="my_vets">Mis veterinarias</string>
+    <string name="my_jobs">Mis Empleos</string>
+    <string name="sign_off">Cerrar sesión</string>
+    <string name="my_profile">Mi perfil</string>
+    <string name="are_you_sure_you_want_to_log_out">¿Estas seguro que deseas cerrar sesión?</string>
+    <string name="ok">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="retry">Reintentar</string>
+    <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de la aplicación?</string>
+    <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada, inicia creando una</string>
+</resources>

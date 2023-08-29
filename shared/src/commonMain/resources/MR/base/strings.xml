@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">Guau</string>
+    <string name="login">Log in</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="password">Password</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="last_name">Last name</string>
+    <string name="bad_credentials">Invalid username or password</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="already_a_member">Already a member?</string>
+    <string name="field_duplicate">Duplicate fields.</string>
+    <string name="field_duplicate_with_field">The %1$s is already registered.</string>
+    <string name="authentication_error">Authentication Error.</string>
+    <string name="server_error">There was a problem on the server.</string>
+    <string name="successful_registration">Successful registration!!</string>
+    <string name="my_vets">My vets</string>
+    <string name="my_jobs">My jobs</string>
+    <string name="sign_off">Sign off</string>
+    <string name="my_profile">My profile</string>
+    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="are_you_sure_you_want_to_exit_the_application">Are you sure you want to exit the application?</string>
+    <string name="you_do_not_have_any_veterinary_created">You do not have any veterinary created, start by creating one</string>
+</resources>
