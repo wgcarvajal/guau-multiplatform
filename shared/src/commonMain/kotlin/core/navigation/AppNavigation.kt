@@ -1,8 +1,11 @@
-package navigation
+package core.navigation
 
 import SplashScreen
 import androidx.compose.runtime.Composable
 import login.ui.screens.LoginScreen
+import login.ui.screens.LoginViewModel
+import login.ui.screens.SignUpScreen
+import login.ui.screens.SignUpViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import splash.ui.screens.SplashViewModel
@@ -11,7 +14,11 @@ import splash.ui.screens.SplashViewModel
 fun AppNavigation(
     navigator: Navigator,
     splashViewModel: SplashViewModel,
-    launchLogin: () -> Unit
+    loginViewModel: LoginViewModel,
+    signUpViewModel: SignUpViewModel,
+    launchLogin: () -> Unit,
+    onClickSignUp: () -> Unit,
+    onClickLink:()->Unit
 ) {
     NavHost(
         navigator = navigator,
@@ -22,7 +29,11 @@ fun AppNavigation(
         }
 
         scene(route = AppNavigationRoute.LoginScreen.route) {
-            LoginScreen()
+            LoginScreen(loginViewModel = loginViewModel, onClickSignUp = onClickSignUp)
+        }
+
+        scene(route = AppNavigationRoute.SignUpScreen.route) {
+            SignUpScreen(signUpViewModel = signUpViewModel, onClickLink = onClickLink)
         }
     }
 }

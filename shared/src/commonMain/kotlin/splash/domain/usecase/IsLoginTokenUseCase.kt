@@ -1,5 +1,7 @@
 package splash.domain.usecase
 
-class IsLoginTokenUseCase() {
-    suspend operator fun invoke() = false
+import login.domain.port.LoginAuthorizationPort
+
+class IsLoginTokenUseCase(private val loginAuthorizationPort: LoginAuthorizationPort) {
+    suspend operator fun invoke() = loginAuthorizationPort.getToken() != ""
 }

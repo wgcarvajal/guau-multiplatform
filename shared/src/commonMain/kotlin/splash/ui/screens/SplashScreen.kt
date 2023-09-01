@@ -16,7 +16,6 @@ fun SplashScreen(splashViewModel: SplashViewModel, launchLogin: () -> Unit) {
     if (launchInitialSetup) {
         println("launchInitialSetup")
     }
-
     val launchLogin by splashViewModel.launchLogin.collectAsState()
     if (launchLogin) {
         launchLogin()

@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 kotlin {
@@ -32,6 +33,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation("org.jetbrains.kotlinx:atomicfu:0.17.3")
@@ -39,10 +41,17 @@ kotlin {
                 api("dev.icerock.moko:resources:0.23.0")
                 api("dev.icerock.moko:resources-compose:0.23.0")
 
-                api("moe.tlaster:precompose:1.4.3")
+                api("moe.tlaster:precompose:1.5.0")
 
                 api("dev.icerock.moko:mvvm-core:0.16.1")
                 api("dev.icerock.moko:mvvm-compose:0.16.1")
+
+                api("androidx.datastore:datastore-preferences-core:1.1.0-alpha04")
+
+                implementation("io.ktor:ktor-client-core:2.3.3")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.3")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
             }
         }
         val androidMain by getting {
@@ -51,6 +60,7 @@ kotlin {
                 api("androidx.activity:activity-compose:1.6.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.9.0")
+                implementation("io.ktor:ktor-client-android:2.3.3")
             }
         }
         val iosX64Main by getting
@@ -61,6 +71,10 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:2.3.3")
+            }
         }
     }
 }
