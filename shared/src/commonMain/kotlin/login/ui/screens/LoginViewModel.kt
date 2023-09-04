@@ -4,8 +4,6 @@ package login.ui.screens
 import core.domain.model.Resp
 import core.ui.model.ErrorUi
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,6 +23,10 @@ class LoginViewModel(
     private val saveNameUseCase: SaveNameUseCase,
     private val saveTokenUseCase: SaveTokenUseCase
 ) : ViewModel() {
+
+    companion object{
+        const val KEY = "LoginViewModel"
+    }
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -53,19 +55,22 @@ class LoginViewModel(
     }
 
     fun doLogin() {
-        _isLoading.value = true
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
+            _isLoading.value = true
             val result = doLoginUseCase(LoginReq(_email.value, _password.value))
             processResult(result)
         }
     }
 
-    private suspend fun processResult(result: Resp<LoginResp>){
+    private suspend fun processResult(result: Resp<LoginResp>) {
         if (result.isValid) {
             val response = result.data!!
             saveTokenUseCase(response.authorization)
             saveNameUseCase(response.name)
             saveEmailUseCase(response.email)
+            _email.value = ""
+            _password.value = ""
+            _loginEnabled.value = false
             _loginSuccess.value = true
         } else {
             error = ErrorUi(result.error, result.errorCode)

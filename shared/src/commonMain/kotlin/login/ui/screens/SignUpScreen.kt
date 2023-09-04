@@ -35,8 +35,12 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel,
+    onShowTopBar: (Boolean) -> Unit,
     onClickLink: () -> Unit
 ) {
+    LaunchedEffect(key1 = 1){
+        onShowTopBar(false)
+    }
     val onNameChange: (String) -> Unit = {
         signUpViewModel.nameChange(it)
     }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="app_name">Guau</string>
+    <string name="app_name_shared">Guau</string>
     <string name="login">Iniciar sesión</string>
     <string name="enter_your_password">Ingrese su contraseña</string>
     <string name="password">Contraseña</string>
-    <string name="enter_your_email">Enter your correo electrónico</string>
+    <string name="enter_your_email">Ingrese su correo electrónico</string>
     <string name="email">Correo electrónico</string>
     <string name="name">Nombres</string>
     <string name="last_name">Apellidos</string>

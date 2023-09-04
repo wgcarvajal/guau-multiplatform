@@ -14,6 +14,10 @@ class SplashViewModel(private val isLoginTokenUseCase: IsLoginTokenUseCase) : Vi
     private val _launchLogin = MutableStateFlow(false)
     val launchLogin: StateFlow<Boolean> = _launchLogin
 
+    companion object{
+        const val KEY = "SplashViewModel"
+    }
+
     fun launchView() {
         viewModelScope.launch() {
             if (isLoginTokenUseCase()) {
@@ -22,5 +26,15 @@ class SplashViewModel(private val isLoginTokenUseCase: IsLoginTokenUseCase) : Vi
                 _launchLogin.value = true
             }
         }
+    }
+
+    fun resetLaunchLogin()
+    {
+        _launchLogin.value = false
+    }
+
+    fun resetLaunchInitialSetup()
+    {
+        _launchInitialSetup.value = false
     }
 }

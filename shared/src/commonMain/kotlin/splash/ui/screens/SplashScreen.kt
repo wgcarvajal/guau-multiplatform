@@ -11,13 +11,23 @@ import kotlinx.coroutines.delay
 import splash.ui.screens.SplashViewModel
 
 @Composable
-fun SplashScreen(splashViewModel: SplashViewModel, launchLogin: () -> Unit) {
+fun SplashScreen(
+    splashViewModel: SplashViewModel,
+    onShowTopBar: (Boolean) -> Unit,
+    launchLogin: () -> Unit,
+    launchInitialSetup: () -> Unit
+) {
+    LaunchedEffect(key1 = 1) {
+        onShowTopBar(false)
+    }
     val launchInitialSetup by splashViewModel.launchInitialSetup.collectAsState()
     if (launchInitialSetup) {
-        println("launchInitialSetup")
+        splashViewModel.resetLaunchInitialSetup()
+        launchInitialSetup()
     }
     val launchLogin by splashViewModel.launchLogin.collectAsState()
     if (launchLogin) {
+        splashViewModel.resetLaunchLogin()
         launchLogin()
     }
     ScreenPortrait()

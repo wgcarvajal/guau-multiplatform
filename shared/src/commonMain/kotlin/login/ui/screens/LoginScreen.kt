@@ -12,6 +12,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,7 +33,15 @@ import core.ui.screens.textfields.SimpleTextFieldPassword
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, onClickSignUp: () -> Unit) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel,
+    onShowTopBar: (Boolean) -> Unit,
+    onClickSignUp: () -> Unit,
+    loginSuccess: () -> Unit
+) {
+    LaunchedEffect(key1 = 1) {
+        onShowTopBar(false)
+    }
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val loginEnabled by loginViewModel.loginEnabled.collectAsState()
@@ -68,7 +77,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, onClickSignUp: () -> Unit) {
 
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
     if (loginSuccess) {
-        //launchActivities.launchInitialSetupActivityAndCloseCurrent()
+        loginSuccess()
     }
 }
 
@@ -94,7 +103,7 @@ private fun ScreenPortrait(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, end = 8.dp),
-                    text = stringResource(SharedRes.strings.app_name),
+                    text = stringResource(SharedRes.strings.app_name_shared),
                     fontSize = 36.sp,
                 )
                 SimpleTextField(

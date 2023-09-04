@@ -5,5 +5,10 @@ sealed class AppNavigationRoute(val route: String) {
 
     object LoginScreen : AppNavigationRoute(route = "LoginScreen")
 
-    object SignUpScreen:AppNavigationRoute(route = "SignUpScreen")
+    object SignUpScreen : AppNavigationRoute(route = "SignUpScreen")
+
+    object InitialScreen : AppNavigationRoute(route = "InitialScreen")
+
+    object MyVetsScreen : AppNavigationRoute(route = "MyVetsScreen")
+
 }

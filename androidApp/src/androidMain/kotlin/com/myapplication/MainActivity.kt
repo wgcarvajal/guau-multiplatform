@@ -12,7 +12,9 @@ class MainActivity : PreComposeActivity() {
         super.onCreate(savedInstanceState)
 
         setContent() {
-            MainView(dataStore = createDataStore(context = LocalContext.current))
+            MainView(dataStore = createDataStore(context = LocalContext.current.applicationContext), finishCallback = {
+                finish()
+            })
         }
     }
 }

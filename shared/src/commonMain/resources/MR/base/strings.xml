@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="app_name">Guau</string>
+    <string name="app_name_shared">Guau</string>
     <string name="login">Log in</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="password">Password</string>

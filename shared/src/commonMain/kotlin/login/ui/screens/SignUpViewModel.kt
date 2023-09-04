@@ -27,6 +27,10 @@ class SignUpViewModel(
     private val validateNameUseCase: ValidateNameUseCase
 ) : ViewModel() {
 
+    companion object{
+        const val KEY = "SignUpViewModel"
+    }
+
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
 

@@ -6,4 +6,4 @@ import androidx.datastore.preferences.core.Preferences
 actual fun getPlatformName(): String = "Android"
 
 @Composable
-fun MainView(dataStore: DataStore<Preferences>) = App(datastore = dataStore)
+fun MainView(dataStore: DataStore<Preferences>,finishCallback:()->Unit) = App(datastore = dataStore, finishCallback = finishCallback)
