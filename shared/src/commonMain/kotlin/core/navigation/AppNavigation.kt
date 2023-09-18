@@ -48,6 +48,7 @@ fun AppNavigation(
                 splashViewModel = splashViewModel,
                 onShowTopBar = onShowTopBar,
                 onShowBottomBar = onShowBottomBar,
+                showFloatActionButton = showActionFloatActionButton,
                 launchLogin = launchLogin,
                 launchHome = launchHome,
                 launchInitialSetup = launchInitialSetup
@@ -59,6 +60,7 @@ fun AppNavigation(
             LoginScreen(
                 loginViewModel = loginViewModel,
                 onShowTopBar = onShowTopBar,
+                showFloatActionButton = showActionFloatActionButton,
                 onShowBottomBar = onShowBottomBar,
                 loginSuccess = launchInitialSetup,
                 onClickSignUp = launchSignUp,

@@ -25,6 +25,19 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+    <key>GIDClientID</key>
+    <string>987785305857-n1l56se1v0bd2c20hcdpt4iuie27odn3.apps.googleusercontent.com</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.987785305857-n1l56se1v0bd2c20hcdpt4iuie27odn3</string>
+        </array>
+      </dict>
+    </array>
+    <key>GIDServerClientID</key>
+    <string>987785305857-mq7o4d7l3pt2ispufecqt09fe271p4c1.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

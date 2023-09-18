@@ -1,11 +1,11 @@
 import UIKit
+import GoogleSignIn
 import SwiftUI
 import shared
 
 struct ComposeView: UIViewControllerRepresentable {
     var loginWithGoogle:()->Void
     var signOutWithGoogle:()-> Void
-    
     func makeUIViewController(context: Context) -> UIViewController {
         Main_iosKt.MainViewController(
             database:CreateDatabase_iosKt.createDatabase(),
@@ -18,10 +18,12 @@ struct ComposeView: UIViewControllerRepresentable {
 }
 
 struct ContentView: View {
+    var loginWithGoogle:()->Void
+    var signOutWithGoogle:()-> Void
     var body: some View {
         ComposeView(
-            loginWithGoogle: {},
-            signOutWithGoogle: {}
+            loginWithGoogle: loginWithGoogle,
+            signOutWithGoogle: signOutWithGoogle
         ).ignoresSafeArea(.all, edges: .bottom) // Compose has own keyboard handler
     }
 }

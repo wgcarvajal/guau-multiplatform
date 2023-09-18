@@ -38,6 +38,7 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     onShowTopBar: (Boolean) -> Unit,
     onShowBottomBar: (Boolean) -> Unit,
+    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
     onClickSignUp: () -> Unit,
     loginSuccess: () -> Unit,
     loginWithGoogle: () -> Unit
@@ -46,6 +47,7 @@ fun LoginScreen(
         onShowTopBar(false)
         onShowBottomBar(false)
     }
+    showFloatActionButton(false) {}
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val loginEnabled by loginViewModel.loginEnabled.collectAsState()

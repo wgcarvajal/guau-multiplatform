@@ -15,6 +15,7 @@ fun SplashScreen(
     splashViewModel: SplashViewModel,
     onShowTopBar: (Boolean) -> Unit,
     onShowBottomBar: (Boolean) -> Unit,
+    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
     launchLogin: () -> Unit,
     launchHome: () -> Unit,
     launchInitialSetup: () -> Unit
@@ -23,6 +24,7 @@ fun SplashScreen(
         onShowTopBar(false)
         onShowBottomBar(false)
     }
+    showFloatActionButton(false) {}
     ScreenPortrait()
     LaunchedEffect(key1 = 1) {
         delay(2000)
