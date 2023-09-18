@@ -2,7 +2,7 @@ package core.domain.usecase
 
 
 import androidx.compose.runtime.Composable
-import com.myapplication.SharedRes
+import com.carpisoft.guau.SharedRes
 import core.ui.model.ErrorUi
 import core.utils.constants.Errors
 import dev.icerock.moko.resources.compose.stringResource

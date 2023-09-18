@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
 
@@ -16,6 +17,11 @@ class PreferencesImpl(private val dataStore: DataStore<Preferences>) : IPreferen
 
     override suspend fun saveInt(key: String, value: Int) {
         val preferencesKey = intPreferencesKey(key)
+        savePreference(preferencesKey, value)
+    }
+
+    override suspend fun saveLong(key: String, value: Long) {
+        val preferencesKey = longPreferencesKey(key)
         savePreference(preferencesKey, value)
     }
 
@@ -41,6 +47,11 @@ class PreferencesImpl(private val dataStore: DataStore<Preferences>) : IPreferen
     override suspend fun getInt(key: String): Int {
         val preferencesKey = intPreferencesKey(key)
         return getPreferences(preferencesKey) ?: -1
+    }
+
+    override suspend fun getLong(key: String): Long {
+        val preferencesKey = longPreferencesKey(key)
+        return getPreferences(preferencesKey) ?: -1L
     }
 
     override suspend fun getString(key: String): String {

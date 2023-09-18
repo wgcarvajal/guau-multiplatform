@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.myapplication.SharedRes
+import com.carpisoft.guau.SharedRes
 import core.domain.usecase.GetMessageErrorUseCase
 import core.ui.model.ErrorUi
 import core.ui.screens.buttons.GeneralButton
@@ -36,10 +36,12 @@ import dev.icerock.moko.resources.compose.stringResource
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel,
     onShowTopBar: (Boolean) -> Unit,
+    onShowBottomBar: (Boolean) -> Unit,
     onClickLink: () -> Unit
 ) {
     LaunchedEffect(key1 = 1){
         onShowTopBar(false)
+        onShowBottomBar(false)
     }
     val onNameChange: (String) -> Unit = {
         signUpViewModel.nameChange(it)

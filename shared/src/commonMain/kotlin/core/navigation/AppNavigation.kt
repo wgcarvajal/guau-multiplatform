@@ -2,6 +2,7 @@ package core.navigation
 
 import SplashScreen
 import androidx.compose.runtime.Composable
+import home.ui.HomeScreen
 import initialsetup.ui.screens.InitialScreen
 import initialsetup.ui.screens.MyVetsScreen
 import initialsetup.ui.screens.MyVetsViewModel
@@ -23,6 +24,8 @@ fun AppNavigation(
     signUpViewModel: SignUpViewModel,
     myVetsViewModel: MyVetsViewModel,
     onShowTopBar: (Boolean) -> Unit,
+    onShowExitCenter: (Boolean) -> Unit,
+    onShowBottomBar: (Boolean) -> Unit,
     showActionNavigation: (Boolean) -> Unit,
     onSetTitle: (String) -> Unit,
     showActionFloatActionButton: (Boolean, () -> Unit) -> Unit,
@@ -31,7 +34,9 @@ fun AppNavigation(
     launchSignUp: () -> Unit,
     launchMyVets: () -> Unit,
     onBack: () -> Unit,
-    onBackShowDialog: () -> Unit
+    onBackShowDialog: () -> Unit,
+    launchHome: () -> Unit,
+    loginWithGoogle: () -> Unit
 ) {
     NavHost(
         navigator = navigator,
@@ -42,7 +47,9 @@ fun AppNavigation(
             SplashScreen(
                 splashViewModel = splashViewModel,
                 onShowTopBar = onShowTopBar,
+                onShowBottomBar = onShowBottomBar,
                 launchLogin = launchLogin,
+                launchHome = launchHome,
                 launchInitialSetup = launchInitialSetup
             )
         }
@@ -52,16 +59,18 @@ fun AppNavigation(
             LoginScreen(
                 loginViewModel = loginViewModel,
                 onShowTopBar = onShowTopBar,
+                onShowBottomBar = onShowBottomBar,
                 loginSuccess = launchInitialSetup,
-                onClickSignUp = launchSignUp
+                onClickSignUp = launchSignUp,
+                loginWithGoogle = loginWithGoogle
             )
         }
 
         scene(route = AppNavigationRoute.SignUpScreen.route) {
-            appViewModel.currentScreenRoute = AppNavigationRoute.SignUpScreen.route
             SignUpScreen(
                 signUpViewModel = signUpViewModel,
                 onShowTopBar = onShowTopBar,
+                onShowBottomBar = onShowBottomBar,
                 onClickLink = onBack
             )
         }
@@ -71,6 +80,8 @@ fun AppNavigation(
             appViewModel.currentScreenRoute = AppNavigationRoute.InitialScreen.route
             InitialScreen(
                 onShowTopBar = onShowTopBar,
+                onShowBottomBar = onShowBottomBar,
+                onShowExitCenter = onShowExitCenter,
                 showNavigation = showActionNavigation,
                 myVetsOnClick = launchMyVets,
                 showFloatActionButton = showActionFloatActionButton,
@@ -81,14 +92,29 @@ fun AppNavigation(
 
         scene(route = AppNavigationRoute.MyVetsScreen.route)
         {
-            appViewModel.currentScreenRoute = AppNavigationRoute.MyVetsScreen.route
             MyVetsScreen(
                 myVetsViewModel = myVetsViewModel,
                 onShowTopBar = onShowTopBar,
+                onShowExitCenter = onShowExitCenter,
+                onShowBottomBar = onShowBottomBar,
                 showNavigation = showActionNavigation,
                 showFloatActionButton = showActionFloatActionButton,
                 onSetTitle = onSetTitle,
-                onBackOnClick = onBack
+                onBackOnClick = onBack,
+                onGoHome = launchHome
+            )
+        }
+
+        scene(route = AppNavigationRoute.HomeScreen.route)
+        {
+            appViewModel.currentScreenRoute = AppNavigationRoute.HomeScreen.route
+            HomeScreen(
+                onShowTopBar = onShowTopBar,
+                onShowBottomBar = onShowBottomBar,
+                onShowExitCenter = onShowExitCenter,
+                showNavigation = showActionNavigation,
+                showFloatActionButton = showActionFloatActionButton,
+                onSetTitle = onSetTitle
             )
         }
     }

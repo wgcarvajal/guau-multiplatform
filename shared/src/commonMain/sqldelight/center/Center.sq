@@ -1,0 +1,8 @@
+CREATE TABLE center(
+    id INTEGER PRIMARY KEY NOT NULL,
+    nameCent TEXT NOT NULL
+);
+
+firstOrLastName:
+SELECT *
+FROM center;

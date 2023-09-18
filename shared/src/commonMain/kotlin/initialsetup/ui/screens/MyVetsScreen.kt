@@ -1,6 +1,7 @@
 package initialsetup.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +30,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.myapplication.SharedRes
+import com.carpisoft.guau.SharedRes
 import core.domain.usecase.GetMessageErrorUseCase
 import core.ui.model.ErrorUi
 import core.ui.screens.dialogs.TwoButtonDialog
@@ -43,16 +44,21 @@ import io.kamel.image.asyncPainterResource
 fun MyVetsScreen(
     myVetsViewModel: MyVetsViewModel,
     showNavigation: (Boolean) -> Unit,
-    onShowTopBar:(Boolean)->Unit,
+    onShowTopBar: (Boolean) -> Unit,
+    onShowExitCenter: (Boolean) -> Unit,
+    onShowBottomBar: (Boolean) -> Unit,
     showFloatActionButton: (Boolean, () -> Unit) -> Unit,
     onSetTitle: (String) -> Unit,
-    onBackOnClick: () -> Unit
+    onBackOnClick: () -> Unit,
+    onGoHome:()->Unit
 ) {
     var myVetsString: String = stringResource(SharedRes.strings.my_vets)
     LaunchedEffect(key1 = 1) {
         onShowTopBar(true)
+        onShowBottomBar(false)
         onSetTitle(myVetsString)
         showNavigation(true)
+        onShowExitCenter(false)
     }
     val loading by myVetsViewModel.loading.collectAsState()
     val isEmpty by myVetsViewModel.isEmpty.collectAsState()
@@ -65,7 +71,10 @@ fun MyVetsScreen(
         showError = showError,
         showFloatActionButton = showFloatActionButton,
         list = list
-    )
+    ) { employee ->
+        myVetsViewModel.selectVet(employeeResp =employee)
+    }
+
     LaunchedEffect(key1 = 1) {
         myVetsViewModel.showMyVets()
     }
@@ -83,6 +92,12 @@ fun MyVetsScreen(
             myVetsViewModel.dismissErrorDialog()
             onBackOnClick()
         })
+
+    val goHome by myVetsViewModel.goHome.collectAsState()
+    if(goHome){
+        myVetsViewModel.resetGoHome()
+        onGoHome()
+    }
 }
 
 
@@ -92,7 +107,8 @@ private fun ScreenPortrait(
     isEmpty: Boolean,
     showError: Boolean,
     showFloatActionButton: (Boolean, () -> Unit) -> Unit,
-    list: List<EmployeeResp>
+    list: List<EmployeeResp>,
+    onClick: (EmployeeResp) -> Unit
 ) {
     if (loading) {
         SimpleLoading()
@@ -111,9 +127,10 @@ private fun ScreenPortrait(
     } else if (!showError) {
 
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(modifier = Modifier.fillMaxWidth()
-                .background(Color.White)
-                .padding(10.dp)) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(10.dp)
+            ) {
                 items(list) { employeeResp ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -127,14 +144,18 @@ private fun ScreenPortrait(
                         Row(
                             Modifier
                                 .fillMaxWidth()
-                                .height(100.dp)
+                                .height(100.dp).clickable {
+                                    onClick(employeeResp)
+                                }
                         ) {
                             KamelImage(
                                 modifier = Modifier
                                     .width(100.dp)
                                     .fillMaxHeight()
                                     .background(Color.Gray),
-                                resource = asyncPainterResource(data = employeeResp.centerResp.image?:""),
+                                resource = asyncPainterResource(
+                                    data = employeeResp.centerResp.image ?: ""
+                                ),
                                 contentDescription = null,
                                 onFailure = {
 

@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.myapplication.SharedRes
+import com.carpisoft.guau.SharedRes
 import core.ui.screens.buttons.GeneralButton
 import dev.icerock.moko.resources.compose.stringResource
 import moe.tlaster.precompose.navigation.BackHandler
@@ -18,6 +18,8 @@ import moe.tlaster.precompose.navigation.BackHandler
 fun InitialScreen(
     showNavigation: (Boolean) -> Unit,
     onShowTopBar:(Boolean)->Unit,
+    onShowExitCenter: (Boolean) -> Unit,
+    onShowBottomBar:(Boolean)->Unit,
     myVetsOnClick: () -> Unit,
     showFloatActionButton: (Boolean, () -> Unit) -> Unit,
     onSetTitle: (String) -> Unit,
@@ -25,8 +27,10 @@ fun InitialScreen(
 ) {
     LaunchedEffect(key1 = 1) {
         onShowTopBar(true)
+        onShowBottomBar(false)
         onSetTitle("")
         showNavigation(false)
+        onShowExitCenter(false)
     }
     showFloatActionButton(false) {}
     BackHandler {

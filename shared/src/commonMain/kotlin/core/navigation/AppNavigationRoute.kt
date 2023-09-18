@@ -11,4 +11,6 @@ sealed class AppNavigationRoute(val route: String) {
 
     object MyVetsScreen : AppNavigationRoute(route = "MyVetsScreen")
 
+    object HomeScreen : AppNavigationRoute(route = "HomeScreen")
+
 }

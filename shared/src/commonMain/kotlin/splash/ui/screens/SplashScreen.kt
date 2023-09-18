@@ -14,11 +14,19 @@ import splash.ui.screens.SplashViewModel
 fun SplashScreen(
     splashViewModel: SplashViewModel,
     onShowTopBar: (Boolean) -> Unit,
+    onShowBottomBar: (Boolean) -> Unit,
     launchLogin: () -> Unit,
+    launchHome: () -> Unit,
     launchInitialSetup: () -> Unit
 ) {
     LaunchedEffect(key1 = 1) {
         onShowTopBar(false)
+        onShowBottomBar(false)
+    }
+    ScreenPortrait()
+    LaunchedEffect(key1 = 1) {
+        delay(2000)
+        splashViewModel.launchView()
     }
     val launchInitialSetup by splashViewModel.launchInitialSetup.collectAsState()
     if (launchInitialSetup) {
@@ -30,10 +38,11 @@ fun SplashScreen(
         splashViewModel.resetLaunchLogin()
         launchLogin()
     }
-    ScreenPortrait()
-    LaunchedEffect(key1 = 1) {
-        delay(2000)
-        splashViewModel.launchView()
+
+    val launchHome by splashViewModel.launchHome.collectAsState()
+    if (launchHome) {
+        splashViewModel.resetLaunchHome()
+        launchHome()
     }
 }
 

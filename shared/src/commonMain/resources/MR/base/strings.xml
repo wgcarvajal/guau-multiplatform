@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="app_name_shared">Guau</string>
+    <string name="home">Home</string>
+    <string name="pets">Pets</string>
     <string name="login">Log in</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="password">Password</string>
@@ -21,8 +23,10 @@
     <string name="my_vets">My vets</string>
     <string name="my_jobs">My jobs</string>
     <string name="sign_off">Sign off</string>
+    <string name="exit_center">Exit vet</string>
     <string name="my_profile">My profile</string>
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
+    <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>

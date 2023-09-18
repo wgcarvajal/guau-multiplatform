@@ -21,7 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.myapplication.SharedRes
+import com.carpisoft.guau.SharedRes
 import core.domain.usecase.GetMessageErrorUseCase
 import core.ui.model.ErrorUi
 import core.ui.screens.buttons.GeneralButton
@@ -30,17 +30,21 @@ import core.ui.screens.loading.SimpleLoading
 import core.ui.screens.text.TextQuestionWithLink
 import core.ui.screens.textfields.SimpleTextField
 import core.ui.screens.textfields.SimpleTextFieldPassword
+import core.utils.states.LoginWithGoogleHandler
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
     onShowTopBar: (Boolean) -> Unit,
+    onShowBottomBar: (Boolean) -> Unit,
     onClickSignUp: () -> Unit,
-    loginSuccess: () -> Unit
+    loginSuccess: () -> Unit,
+    loginWithGoogle: () -> Unit
 ) {
     LaunchedEffect(key1 = 1) {
         onShowTopBar(false)
+        onShowBottomBar(false)
     }
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
@@ -63,7 +67,7 @@ fun LoginScreen(
                 loginViewModel.doLogin()
             },
             onClickGoogle = {
-
+                loginWithGoogle()
             },
             onClickSignUp = onClickSignUp
         )
@@ -77,7 +81,12 @@ fun LoginScreen(
 
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
     if (loginSuccess) {
+        loginViewModel.resetLoginSuccess()
         loginSuccess()
+    }
+
+    LoginWithGoogleHandler {
+        loginViewModel.doSocialLogin(it.param, "Google")
     }
 }
 

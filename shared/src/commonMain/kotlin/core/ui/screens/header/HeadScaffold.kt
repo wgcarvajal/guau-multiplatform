@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.TransitEnterexit
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -24,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.myapplication.SharedRes
+import com.carpisoft.guau.SharedRes
 import dev.icerock.moko.resources.compose.stringResource
 import ui.theme.BackgroundHead
 
@@ -33,19 +34,22 @@ import ui.theme.BackgroundHead
 fun HeadScaffold(
     title: String,
     showNavigation: Boolean,
+    showExitCenter: Boolean,
     titleFontSize: TextUnit,
     iconSize: Dp,
     appBarHeight: Dp,
-    dropdownMenuWidth:Dp,
-    signOffOnClick:()->Unit,
-    onBackOnClick:()->Unit
+    dropdownMenuWidth: Dp,
+    signOffOnClick: () -> Unit,
+    onExitVet:()->Unit,
+    onBackOnClick: () -> Unit
 ) {
     var openMenu by rememberSaveable { mutableStateOf(false) }
     MyTopAppBar(
         title = {
             Text(
                 text = title,
-                fontSize = titleFontSize)
+                fontSize = titleFontSize
+            )
 
         },
         appBarHeight = appBarHeight,
@@ -87,6 +91,22 @@ fun HeadScaffold(
                     }
 
                 })
+                if (showExitCenter) {
+                    Divider()
+                    DropdownMenuItem(onClick = {
+                        openMenu = false
+                        onExitVet()
+                    }, text = {
+                        Row() {
+                            Icon(
+                                imageVector = Icons.Filled.TransitEnterexit,
+                                contentDescription = ""
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = stringResource(SharedRes.strings.exit_center))
+                        }
+                    })
+                }
                 Divider()
                 DropdownMenuItem(onClick = {
                     openMenu = false

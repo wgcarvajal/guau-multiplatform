@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.myapplication.SharedRes
+import com.carpisoft.guau.Database
+import com.carpisoft.guau.SharedRes
 import core.data.preferences.PreferencesImpl
 import core.domain.usecase.InitialsInCapitalLetterUseCase
 import core.domain.usecase.IsMaxStringSizeUseCase
@@ -30,22 +31,34 @@ import core.domain.usecase.RemoveInitialWhiteSpaceUseCase
 import core.navigation.AppNavigation
 import core.navigation.AppNavigationRoute
 import core.ui.screens.dialogs.TwoButtonDialog
+import core.ui.screens.foot.Foot
 import core.ui.screens.header.HeadScaffold
+import core.utils.states.SignOutWithGoogleHandler
+import core.utils.states.createStore
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 import dev.icerock.moko.resources.compose.stringResource
+import employee.data.repository.EmployeePreferencesRepository
+import employee.domain.usecase.SaveCenterIdUseCase
+import employee.domain.usecase.SaveEmployeeIdUseCase
+import employee.domain.usecase.SaveRolUseCase
 import initialsetup.data.network.repository.InitialSetupRepository
 import initialsetup.domain.usecase.GetEmployeesUseCase
+import initialsetup.domain.usecase.SaveCenterIdAndRolUseCase
 import initialsetup.ui.screens.MyVetsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import login.data.repository.LoginAuthorizationRepository
 import login.data.repository.LoginRepository
 import login.data.repository.SignUpRepository
+import login.data.repository.SocialLoginRepository
 import login.domain.usecase.DoLoginUseCase
 import login.domain.usecase.DoRegisterUseCase
+import login.domain.usecase.DoSocialLoginUseCase
 import login.domain.usecase.GetEmailUseCase
 import login.domain.usecase.GetTokenUseCase
 import login.domain.usecase.SaveEmailUseCase
@@ -59,12 +72,21 @@ import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.PopUpTo
 import moe.tlaster.precompose.navigation.rememberNavigator
 import splash.domain.usecase.IsLoginTokenUseCase
+import splash.domain.usecase.IsSelectedVetUseCase
 import splash.ui.screens.SplashViewModel
 import ui.AppViewModel
 import ui.theme.GuauTheme
 
+val store = CoroutineScope(SupervisorJob()).createStore()
+
 @Composable
-fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null) {
+fun App(
+    database: Database,
+    datastore: DataStore<Preferences>,
+    finishCallback: (() -> Unit)? = null,
+    loginWithGoogle: () -> Unit,
+    signOutWithGoogle: () -> Unit
+) {
     GuauTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -74,10 +96,14 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
             val httpClient = getHttpClient()
             val loginAuthorizationRepository =
                 getLoginAuthorizationRepository(dataStore = datastore)
+            val employeePreferencesRepository =
+                getEmployeePreferencesRepository(dataStore = datastore)
             val splashViewModel =
                 GetSplashViewModel(
                     loginAuthorizationRepository =
-                    loginAuthorizationRepository
+                    loginAuthorizationRepository,
+                    employeePreferencesRepository =
+                    employeePreferencesRepository
                 )
 
             val loginViewModel = GetLoginViewModel(
@@ -88,17 +114,23 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
             val signUpViewModel = GetSignUpViewModel(httpClient = httpClient)
 
             val appViewModel =
-                GetAppViewModel(loginAuthorizationRepository = loginAuthorizationRepository)
+                GetAppViewModel(
+                    loginAuthorizationRepository = loginAuthorizationRepository,
+                    employeePreferencesRepository = employeePreferencesRepository
+                )
 
             val myVetsViewModel = GetMyVetsViewModel(
                 loginAuthorizationRepository = loginAuthorizationRepository,
+                employeePreferencesRepository = employeePreferencesRepository,
                 httpClient = httpClient
             )
 
             var showExitAlertDialog by rememberSaveable { mutableStateOf(false) }
             val title by appViewModel.title.collectAsState()
             var showNavigation by rememberSaveable { mutableStateOf(false) }
+            var showExitCenter by rememberSaveable { mutableStateOf(false) }
             var showTopBar by rememberSaveable { mutableStateOf(false) }
+            var showBottomBar by rememberSaveable { mutableStateOf(false) }
             var showFloatActionButton by rememberSaveable { mutableStateOf(false) }
             var onClickFloatActionButton: () -> Unit = {}
             val showActionNavigation: (Boolean) -> Unit = {
@@ -121,9 +153,21 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
                 showTopBar = it
             }
 
+            val onShowExitCenter: (Boolean) -> Unit = {
+                showExitCenter = it
+            }
+
+            val onShowBottomBar: (Boolean) -> Unit = {
+                showBottomBar = it
+            }
+
             val signOffOnClick: () -> Unit = {
                 appViewModel.showSignOffDialog(true)
             }
+            val onExitVet: () -> Unit = {
+                appViewModel.showExitCenterDialog(true)
+            }
+
             val onBackShowDialog: () -> Unit = {
                 showExitAlertDialog = true
             }
@@ -154,12 +198,23 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
                         HeadScaffold(
                             title = title,
                             showNavigation = showNavigation,
+                            showExitCenter = showExitCenter,
                             titleFontSize = 16.sp,
                             iconSize = 20.dp,
                             appBarHeight = 40.dp,
                             dropdownMenuWidth = 200.dp,
                             signOffOnClick = signOffOnClick,
+                            onExitVet = onExitVet,
                             onBackOnClick = onBackOnClickConfirmation
+                        )
+                    }
+                } else {
+                    {}
+                },
+                bottomBar = if (showBottomBar) {
+                    {
+                        Foot(
+                            selectedIndex = 1
                         )
                     }
                 } else {
@@ -175,6 +230,8 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
                         signUpViewModel = signUpViewModel,
                         myVetsViewModel = myVetsViewModel,
                         onShowTopBar = onShowTopBar,
+                        onShowBottomBar = onShowBottomBar,
+                        onShowExitCenter = onShowExitCenter,
                         showActionNavigation = showActionNavigation,
                         onSetTitle = onSetTitle,
                         showActionFloatActionButton = showActionFloatActionButton,
@@ -206,7 +263,19 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
                         },
                         launchMyVets = launchMyVets,
                         onBack = { navigator.popBackStack() },
-                        onBackShowDialog = onBackShowDialog
+                        onBackShowDialog = onBackShowDialog,
+                        launchHome = {
+                            navigator.navigate(
+                                route = AppNavigationRoute.HomeScreen.route,
+                                options = NavOptions(
+                                    popUpTo = PopUpTo(
+                                        route = appViewModel.currentScreenRoute,
+                                        inclusive = true,
+                                    ),
+                                )
+                            )
+                        },
+                        loginWithGoogle = loginWithGoogle
                     )
                 }
             }
@@ -217,29 +286,33 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
                 confirmButtonText = stringResource(SharedRes.strings.ok),
                 cancelButtonText = stringResource(SharedRes.strings.cancel),
                 confirmButton = {
-                    appViewModel.signOff()
+                    signOutWithGoogle()
                 },
                 onDismissRequest = {
                     appViewModel.showSignOffDialog(false)
                 })
 
-            val successSignOff by appViewModel.successSignOff.collectAsState()
-            if (successSignOff) {
+            val launchSplash: () -> Unit = {
                 navigator.navigate(
                     route = AppNavigationRoute.SplashScreen.route,
                     options = NavOptions(
                         popUpTo = PopUpTo(
-                            route = if (appViewModel.currentScreenRoute == AppNavigationRoute.MyVetsScreen.route) {
-                                AppNavigationRoute.InitialScreen.route
-                            } else {
-                                appViewModel.currentScreenRoute
-                            },
+                            route = appViewModel.currentScreenRoute,
                             inclusive = true,
                         ),
                     )
                 )
             }
-
+            val successSignOff by appViewModel.successSignOff.collectAsState()
+            if (successSignOff) {
+                appViewModel.resetSuccessSignOff()
+                launchSplash()
+            }
+            val successExitCenter by appViewModel.successExitCenter.collectAsState()
+            if (successExitCenter) {
+                appViewModel.resetSuccessExitCenter()
+                launchSplash()
+            }
             TwoButtonDialog(
                 show = showExitAlertDialog,
                 message = stringResource(SharedRes.strings.are_you_sure_you_want_to_exit_the_application),
@@ -254,7 +327,25 @@ fun App(datastore: DataStore<Preferences>, finishCallback: (() -> Unit)? = null)
                 onDismissRequest = {
                     showExitAlertDialog = false
                 })
+
+            val showExitCenterDialog by appViewModel.showExitCenterDialog.collectAsState()
+            TwoButtonDialog(
+                show = showExitCenterDialog,
+                message = stringResource(SharedRes.strings.are_you_sure_you_want_to_exit),
+                confirmButtonText = stringResource(SharedRes.strings.ok),
+                cancelButtonText = stringResource(SharedRes.strings.cancel),
+                confirmButton = {
+                    appViewModel.exitCenter()
+                },
+                onDismissRequest = {
+                    appViewModel.showExitCenterDialog(false)
+                })
+            SignOutWithGoogleHandler {
+                appViewModel.signOff()
+            }
         }
+
+
     }
 }
 
@@ -276,13 +367,25 @@ fun getLoginAuthorizationRepository(dataStore: DataStore<Preferences>): LoginAut
     )
 }
 
+fun getEmployeePreferencesRepository(dataStore: DataStore<Preferences>): EmployeePreferencesRepository {
+    return EmployeePreferencesRepository(
+        preferences = PreferencesImpl(dataStore = dataStore)
+    )
+}
+
 @Composable
-fun GetSplashViewModel(loginAuthorizationRepository: LoginAuthorizationRepository): SplashViewModel {
+fun GetSplashViewModel(
+    loginAuthorizationRepository: LoginAuthorizationRepository,
+    employeePreferencesRepository: EmployeePreferencesRepository
+): SplashViewModel {
     return getViewModel(SplashViewModel.KEY,
         viewModelFactory {
             SplashViewModel(
                 isLoginTokenUseCase = IsLoginTokenUseCase(
                     loginAuthorizationPort = loginAuthorizationRepository
+                ),
+                isSelectedVetUseCase = IsSelectedVetUseCase(
+                    employeePreferencesPort = employeePreferencesRepository
                 )
             )
         })
@@ -300,6 +403,11 @@ fun GetLoginViewModel(
                 validateEmailAndPasswordUseCase = ValidateEmailAndPasswordUseCase(),
                 doLoginUseCase = DoLoginUseCase(
                     loginPort = LoginRepository(
+                        httpClient = httpClient
+                    )
+                ),
+                doSocialLoginUseCase = DoSocialLoginUseCase(
+                    socialLoginPort = SocialLoginRepository(
                         httpClient = httpClient
                     )
                 ),
@@ -336,7 +444,10 @@ fun GetSignUpViewModel(httpClient: HttpClient): SignUpViewModel {
 }
 
 @Composable
-fun GetAppViewModel(loginAuthorizationRepository: LoginAuthorizationRepository): AppViewModel {
+fun GetAppViewModel(
+    loginAuthorizationRepository: LoginAuthorizationRepository,
+    employeePreferencesRepository: EmployeePreferencesRepository
+): AppViewModel {
     return getViewModel(
         AppViewModel.KEY,
         viewModelFactory {
@@ -350,6 +461,15 @@ fun GetAppViewModel(loginAuthorizationRepository: LoginAuthorizationRepository):
                 ),
                 saveTokenUseCase = SaveTokenUseCase(
                     loginAuthorizationPort = loginAuthorizationRepository
+                ),
+                saveCenterIdUseCase = SaveCenterIdUseCase(
+                    employeePreferencesPort = employeePreferencesRepository
+                ),
+                saveEmployeeIdUseCase = SaveEmployeeIdUseCase(
+                    employeePreferencesPort = employeePreferencesRepository
+                ),
+                saveRolUseCase = SaveRolUseCase(
+                    employeePreferencesPort = employeePreferencesRepository
                 )
             )
         })
@@ -358,6 +478,7 @@ fun GetAppViewModel(loginAuthorizationRepository: LoginAuthorizationRepository):
 @Composable
 fun GetMyVetsViewModel(
     loginAuthorizationRepository: LoginAuthorizationRepository,
+    employeePreferencesRepository: EmployeePreferencesRepository,
     httpClient: HttpClient
 ): MyVetsViewModel {
     return getViewModel(
@@ -370,7 +491,8 @@ fun GetMyVetsViewModel(
                     initialSetupPort = InitialSetupRepository(
                         httpClient = httpClient
                     )
-                )
+                ),
+                saveCenterIdAndRolUseCase = SaveCenterIdAndRolUseCase(employeePreferencesPort = employeePreferencesRepository)
             )
         })
 }

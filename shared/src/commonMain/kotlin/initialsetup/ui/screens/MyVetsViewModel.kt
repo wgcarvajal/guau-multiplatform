@@ -6,6 +6,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import initialsetup.domain.model.EmployeeResp
 import initialsetup.domain.model.EmployeesReq
 import initialsetup.domain.usecase.GetEmployeesUseCase
+import initialsetup.domain.usecase.SaveCenterIdAndRolUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,10 +20,11 @@ import login.domain.usecase.GetTokenUseCase
 class MyVetsViewModel(
     private val getTokenUseCase: GetTokenUseCase,
     private val getEmailUseCase: GetEmailUseCase,
-    private val getEmployeesUseCase: GetEmployeesUseCase
+    private val getEmployeesUseCase: GetEmployeesUseCase,
+    private val saveCenterIdAndRolUseCase: SaveCenterIdAndRolUseCase
 ) : ViewModel() {
 
-    companion object{
+    companion object {
         const val KEY = "MyVetsViewModel"
     }
 
@@ -37,6 +39,9 @@ class MyVetsViewModel(
 
     private val _list = MutableStateFlow((listOf<EmployeeResp>()))
     val list: StateFlow<List<EmployeeResp>> = _list.asStateFlow()
+
+    private val _goHome = MutableStateFlow(false)
+    val goHome :StateFlow<Boolean> = _goHome.asStateFlow()
 
     var error: ErrorUi? = null
 
@@ -74,5 +79,22 @@ class MyVetsViewModel(
 
     fun dismissErrorDialog() {
         _showError.value = false
+    }
+
+    fun resetGoHome()
+    {
+        _goHome.value = false
+    }
+    fun selectVet(employeeResp: EmployeeResp) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            saveCenterIdAndRolUseCase(
+                employeeId = employeeResp.idEmployee,
+                centerId = employeeResp.centerResp.id,
+                rol = "owner"
+            )
+            _loading.value = false
+            _goHome.value = true
+        }
     }
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="app_name_shared">Guau</string>
+    <string name="home">Inicio</string>
+    <string name="pets">Mascotas</string>
     <string name="login">Iniciar sesión</string>
     <string name="enter_your_password">Ingrese su contraseña</string>
     <string name="password">Contraseña</string>
@@ -12,6 +14,7 @@
     <string name="dont_have_an_account">No tienes una cuenta?</string>
     <string name="sign_up">Regístrate</string>
     <string name="sign_in">Iniciar sesión</string>
+    <string name="exit_center">Salir de la veterinaria</string>
     <string name="already_a_member">Ya eres miembro?</string>
     <string name="field_duplicate">Campos duplicados.</string>
     <string name="field_duplicate_with_field">El %1$s ya se encuentra registrado.</string>
@@ -23,6 +26,7 @@
     <string name="sign_off">Cerrar sesión</string>
     <string name="my_profile">Mi perfil</string>
     <string name="are_you_sure_you_want_to_log_out">¿Estas seguro que deseas cerrar sesión?</string>
+    <string name="are_you_sure_you_want_to_exit">¿Estas seguro que deseas salir?</string>
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="retry">Reintentar</string>

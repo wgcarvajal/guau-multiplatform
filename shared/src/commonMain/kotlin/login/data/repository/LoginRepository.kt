@@ -22,7 +22,6 @@ class LoginRepository(
     private val httpClient: HttpClient
 ) : LoginPort, LoginRepositoryHelper() {
     override suspend fun doLogin(loginReq: LoginReq): Resp<LoginResp> {
-        println("entro do login")
         val resp = try {
             val response =
                 httpClient.post(urlString = "${NetworkConstants.SERVER}${LoginConstants.LOGIN_PATH}") {

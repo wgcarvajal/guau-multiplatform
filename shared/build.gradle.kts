@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("app.cash.sqldelight").version("2.0.0")
     kotlin("plugin.serialization") version "1.9.0"
 }
 
@@ -24,7 +25,8 @@ kotlin {
             baseName = "shared"
             isStatic = true
         }
-        extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
+        extraSpecAttributes["resources"] =
+            "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
 
     sourceSets {
@@ -36,17 +38,17 @@ kotlin {
                 implementation(compose.materialIconsExtended)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
-                implementation("org.jetbrains.kotlinx:atomicfu:0.17.3")
+                implementation("org.jetbrains.kotlinx:atomicfu:0.21.0")
 
                 api("dev.icerock.moko:resources:0.23.0")
                 api("dev.icerock.moko:resources-compose:0.23.0")
 
-                api("moe.tlaster:precompose:1.5.0")
+                api("moe.tlaster:precompose:1.5.1")
 
                 api("dev.icerock.moko:mvvm-core:0.16.1")
                 api("dev.icerock.moko:mvvm-compose:0.16.1")
 
-                api("androidx.datastore:datastore-preferences-core:1.1.0-alpha04")
+                api("androidx.datastore:datastore-preferences-core:1.1.0-alpha05")
 
                 implementation("io.ktor:ktor-client-core:2.3.3")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.3")
@@ -59,10 +61,11 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 dependsOn(commonMain)
-                api("androidx.activity:activity-compose:1.6.1")
+                api("androidx.activity:activity-compose:1.7.2")
                 api("androidx.appcompat:appcompat:1.6.1")
-                api("androidx.core:core-ktx:1.9.0")
+                api("androidx.core:core-ktx:1.12.0")
                 implementation("io.ktor:ktor-client-android:2.3.3")
+                implementation("app.cash.sqldelight:android-driver:2.0.0")
             }
         }
         val iosX64Main by getting
@@ -76,6 +79,7 @@ kotlin {
 
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:2.3.3")
+                implementation("app.cash.sqldelight:native-driver:2.0.0")
             }
         }
     }
@@ -83,7 +87,7 @@ kotlin {
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication.common"
+    namespace = "com.carpisoft.guau.common"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -103,6 +107,14 @@ android {
 }
 
 multiplatformResources {
-    multiplatformResourcesPackage = "com.myapplication"
+    multiplatformResourcesPackage = "com.carpisoft.guau"
     multiplatformResourcesClassName = "SharedRes"
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.carpisoft.guau")
+        }
+    }
 }
