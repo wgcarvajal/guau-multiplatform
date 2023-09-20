@@ -60,6 +60,8 @@ fun MyVetsScreen(
         showNavigation(true)
         onShowExitCenter(false)
     }
+    showFloatActionButton(false) {
+    }
     val loading by myVetsViewModel.loading.collectAsState()
     val isEmpty by myVetsViewModel.isEmpty.collectAsState()
     val showError by myVetsViewModel.showError.collectAsState()
@@ -125,7 +127,6 @@ private fun ScreenPortrait(
             )
         }
     } else if (!showError) {
-
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()

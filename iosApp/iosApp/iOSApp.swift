@@ -6,15 +6,13 @@ import shared
 struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                Color.white.ignoresSafeArea(.all) // status bar color
                 ContentView(
-                    loginWithGoogle: loginWithGoogle,
-                    signOutWithGoogle: signOutWithGoogle
-                )
-            }.onOpenURL(perform: { url in
-                GIDSignIn.sharedInstance.handle(url)
-            }).preferredColorScheme(.light)
+                    //loginWithGoogle: loginWithGoogle,
+                    //signOutWithGoogle: signOutWithGoogle
+                ).onOpenURL(perform: { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                })
+        
         }
     }
 }

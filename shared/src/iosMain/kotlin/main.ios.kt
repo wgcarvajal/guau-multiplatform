@@ -1,23 +1,21 @@
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import com.carpisoft.guau.Database
+import androidx.compose.ui.window.ComposeUIViewController
+import core.utils.constants.PlatformConstants
 import core.utils.states.Action
-import moe.tlaster.precompose.PreComposeApplication
 
-actual fun getPlatformName(): String = "iOS"
+actual fun getPlatformName(): String = PlatformConstants.IOS
 
 fun MainViewController(
-    database: Database,
+    /*database: Database,
     datastore: DataStore<Preferences>,
     loginWithGoogle: () -> Unit,
-    signOutWithGoogle: () -> Unit
+    signOutWithGoogle: () -> Unit*/
 ) =
-    PreComposeApplication() {
-        App(
-            database = database,
+    ComposeUIViewController {
+        App2(
+            /*database = database,
             datastore = datastore,
             loginWithGoogle = loginWithGoogle,
-            signOutWithGoogle = signOutWithGoogle
+            signOutWithGoogle = signOutWithGoogle*/
         )
     }
 

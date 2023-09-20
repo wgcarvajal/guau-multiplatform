@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
@@ -26,7 +27,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.carpisoft.guau.SharedRes
+import core.utils.constants.PlatformConstants
 import dev.icerock.moko.resources.compose.stringResource
+import getPlatformName
 import ui.theme.BackgroundHead
 
 
@@ -35,13 +38,15 @@ fun HeadScaffold(
     title: String,
     showNavigation: Boolean,
     showExitCenter: Boolean,
+    showButtonAddOnTopBar:Boolean,
     titleFontSize: TextUnit,
     iconSize: Dp,
     appBarHeight: Dp,
     dropdownMenuWidth: Dp,
     signOffOnClick: () -> Unit,
     onExitVet:()->Unit,
-    onBackOnClick: () -> Unit
+    onBackOnClick: () -> Unit,
+    onAddOnClick:()->Unit,
 ) {
     var openMenu by rememberSaveable { mutableStateOf(false) }
     MyTopAppBar(
@@ -68,6 +73,14 @@ fun HeadScaffold(
             null
         },
         actions = {
+            if(getPlatformName() == PlatformConstants.IOS && showButtonAddOnTopBar) {
+                IconButton(onClick = onAddOnClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = ""
+                    )
+                }
+            }
             IconButton(onClick = { openMenu = !openMenu }) {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,

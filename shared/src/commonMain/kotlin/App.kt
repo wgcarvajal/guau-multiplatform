@@ -1,20 +1,29 @@
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -33,6 +42,7 @@ import core.navigation.AppNavigationRoute
 import core.ui.screens.dialogs.TwoButtonDialog
 import core.ui.screens.foot.Foot
 import core.ui.screens.header.HeadScaffold
+import core.utils.constants.PlatformConstants
 import core.utils.states.SignOutWithGoogleHandler
 import core.utils.states.createStore
 import dev.icerock.moko.mvvm.compose.getViewModel
@@ -71,6 +81,8 @@ import login.ui.screens.SignUpViewModel
 import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.PopUpTo
 import moe.tlaster.precompose.navigation.rememberNavigator
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import splash.domain.usecase.IsLoginTokenUseCase
 import splash.domain.usecase.IsSelectedVetUseCase
 import splash.ui.screens.SplashViewModel
@@ -131,14 +143,14 @@ fun App(
             var showExitCenter by rememberSaveable { mutableStateOf(false) }
             var showTopBar by rememberSaveable { mutableStateOf(false) }
             var showBottomBar by rememberSaveable { mutableStateOf(false) }
-            var showFloatActionButton by rememberSaveable { mutableStateOf(false) }
-            var onClickFloatActionButton: () -> Unit = {}
+            var showAddActionButton by rememberSaveable { mutableStateOf(false) }
+            var onClickAddActionButton: () -> Unit = {}
             val showActionNavigation: (Boolean) -> Unit = {
                 showNavigation = it
             }
             val showActionFloatActionButton: (Boolean, () -> Unit) -> Unit = { show, action ->
-                onClickFloatActionButton = action
-                showFloatActionButton = show
+                onClickAddActionButton = action
+                showAddActionButton = show
             }
 
             val onBackOnClickConfirmation: () -> Unit = {
@@ -177,11 +189,11 @@ fun App(
             }
 
             Scaffold(
-                floatingActionButton = if (showFloatActionButton) {
+                floatingActionButton = if (getPlatformName() == PlatformConstants.ANDROID && showAddActionButton) {
                     {
                         FloatingActionButton(
                             shape = RoundedCornerShape(50),
-                            onClick = onClickFloatActionButton
+                            onClick = onClickAddActionButton
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Add,
@@ -199,13 +211,15 @@ fun App(
                             title = title,
                             showNavigation = showNavigation,
                             showExitCenter = showExitCenter,
+                            showButtonAddOnTopBar = showAddActionButton,
                             titleFontSize = 16.sp,
                             iconSize = 20.dp,
                             appBarHeight = 40.dp,
                             dropdownMenuWidth = 200.dp,
                             signOffOnClick = signOffOnClick,
                             onExitVet = onExitVet,
-                            onBackOnClick = onBackOnClickConfirmation
+                            onBackOnClick = onBackOnClickConfirmation,
+                            onAddOnClick = onClickAddActionButton
                         )
                     }
                 } else {
@@ -344,8 +358,30 @@ fun App(
                 appViewModel.signOff()
             }
         }
+    }
+}
 
-
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun App2(){
+    MaterialTheme {
+        var greetingText by remember { mutableStateOf("Hello, World!") }
+        var showImage by remember { mutableStateOf(false) }
+        Column(Modifier.fillMaxWidth().background(Color.Black), horizontalAlignment = Alignment.CenterHorizontally) {
+            Button(onClick = {
+                greetingText = "Hello, ${getPlatformName()}"
+                showImage = !showImage
+            }) {
+                Text(greetingText)
+            }
+            AnimatedVisibility(showImage) {
+                Image(
+                    painterResource("compose-multiplatform.xml"),
+                    null
+                )
+            }
+            Text(text = stringResource(SharedRes.strings.email), color = Color.White)
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import com.carpisoft.guau.SharedRes
+import core.ui.screens.itemlist.ItemHome
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -29,7 +30,7 @@ fun HomeScreen(
     }
     LazyVerticalGrid(modifier = Modifier.fillMaxSize(), columns = GridCells.Fixed(count = 2)) {
         item {
-
+ItemHome()
         }
     }
 }

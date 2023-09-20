@@ -1,8 +1,4 @@
 buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-
     dependencies {
         classpath ("dev.icerock.moko:resources-generator:0.23.0")
     }
