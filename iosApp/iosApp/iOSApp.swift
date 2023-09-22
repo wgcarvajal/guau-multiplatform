@@ -7,8 +7,8 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
                 ContentView(
-                    //loginWithGoogle: loginWithGoogle,
-                    //signOutWithGoogle: signOutWithGoogle
+                    loginWithGoogle: loginWithGoogle,
+                    signOutWithGoogle: signOutWithGoogle
                 ).onOpenURL(perform: { url in
                     GIDSignIn.sharedInstance.handle(url)
                 })

@@ -1,6 +1,5 @@
 import androidx.compose.runtime.Composable
 import androidx.datastore.core.DataStore
-
 import androidx.datastore.preferences.core.Preferences
 import com.carpisoft.guau.Database
 import core.utils.constants.PlatformConstants
@@ -10,19 +9,18 @@ actual fun getPlatformName(): String = PlatformConstants.ANDROID
 
 @Composable
 fun MainView(
-    /*database: Database,
+    database: Database,
     dataStore: DataStore<Preferences>,
     finishCallback: () -> Unit,
     loginWithGoogle: () -> Unit,
-    signOutWithGoogle: () -> Unit,*/
-) =App2()
-    /*App(
-        database = database,
-        datastore = dataStore,
-        finishCallback = finishCallback,
-        loginWithGoogle = loginWithGoogle,
-        signOutWithGoogle = signOutWithGoogle
-    )*/
+    signOutWithGoogle: () -> Unit,
+) = App(
+    database = database,
+    datastore = dataStore,
+    finishCallback = finishCallback,
+    loginWithGoogle = loginWithGoogle,
+    signOutWithGoogle = signOutWithGoogle
+)
 
 fun onLoginWithGoogle(token: String) {
     store.send(Action.OnLoginWithGoogle(param = token))

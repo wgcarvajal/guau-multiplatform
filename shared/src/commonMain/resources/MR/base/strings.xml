@@ -32,4 +32,7 @@
     <string name="retry">Retry</string>
     <string name="are_you_sure_you_want_to_exit_the_application">Are you sure you want to exit the application?</string>
     <string name="you_do_not_have_any_veterinary_created">You do not have any veterinary created, start by creating one</string>
+    <string name="admission">Admission</string>
+    <string name="vaccines">Vaccines</string>
+    <string name="appointment">Appointment</string>
 </resources>

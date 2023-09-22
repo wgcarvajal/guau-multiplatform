@@ -13,4 +13,6 @@ sealed class AppNavigationRoute(val route: String) {
 
     object HomeScreen : AppNavigationRoute(route = "HomeScreen")
 
+    object Admissions : AppNavigationRoute(route = "Admissions")
+
 }

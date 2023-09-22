@@ -1,6 +1,7 @@
 package core.navigation
 
 import SplashScreen
+import admission.ui.screens.Admissions
 import androidx.compose.runtime.Composable
 import home.ui.HomeScreen
 import initialsetup.ui.screens.InitialScreen
@@ -36,7 +37,8 @@ fun AppNavigation(
     onBack: () -> Unit,
     onBackShowDialog: () -> Unit,
     launchHome: () -> Unit,
-    loginWithGoogle: () -> Unit
+    loginWithGoogle: () -> Unit,
+    onAdmission:()->Unit
 ) {
     NavHost(
         navigator = navigator,
@@ -116,8 +118,14 @@ fun AppNavigation(
                 onShowExitCenter = onShowExitCenter,
                 showNavigation = showActionNavigation,
                 showFloatActionButton = showActionFloatActionButton,
-                onSetTitle = onSetTitle
+                onSetTitle = onSetTitle,
+                onAdmission = onAdmission
             )
+        }
+
+        scene(route = AppNavigationRoute.Admissions.route)
+        {
+            Admissions()
         }
     }
 }

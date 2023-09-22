@@ -1,23 +1,25 @@
-import androidx.compose.ui.window.ComposeUIViewController
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import com.carpisoft.guau.Database
 import core.utils.constants.PlatformConstants
 import core.utils.states.Action
+import moe.tlaster.precompose.PreComposeApplication
 
 actual fun getPlatformName(): String = PlatformConstants.IOS
 
 fun MainViewController(
-    /*database: Database,
+    database: Database,
     datastore: DataStore<Preferences>,
     loginWithGoogle: () -> Unit,
-    signOutWithGoogle: () -> Unit*/
-) =
-    ComposeUIViewController {
-        App2(
-            /*database = database,
-            datastore = datastore,
-            loginWithGoogle = loginWithGoogle,
-            signOutWithGoogle = signOutWithGoogle*/
-        )
-    }
+    signOutWithGoogle: () -> Unit
+) = PreComposeApplication {
+    App(
+        database = database,
+        datastore = datastore,
+        loginWithGoogle = loginWithGoogle,
+        signOutWithGoogle = signOutWithGoogle
+    )
+}
 
 fun onLoginWithGoogle(token: String) {
     store.send(Action.OnLoginWithGoogle(param = token))

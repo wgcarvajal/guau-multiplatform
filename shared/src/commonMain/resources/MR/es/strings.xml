@@ -32,4 +32,8 @@
     <string name="retry">Reintentar</string>
     <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de la aplicación?</string>
     <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada, inicia creando una</string>
+    <string name="admission">Ingresos</string>
+    <string name="vaccination">Vacunación</string>
+    <string name="vaccines">Vacunas</string>
+    <string name="appointment">Citas</string>
 </resources>
