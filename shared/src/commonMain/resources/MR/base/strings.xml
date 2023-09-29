@@ -30,9 +30,26 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>
-    <string name="are_you_sure_you_want_to_exit_the_application">Are you sure you want to exit the application?</string>
-    <string name="you_do_not_have_any_veterinary_created">You do not have any veterinary created, start by creating one</string>
-    <string name="admission">Admission</string>
+    <string name="are_you_sure_you_want_to_exit_the_application">Are you sure you want to exit the
+        application?
+    </string>
+    <string name="you_do_not_have_any_veterinary_created">You do not have any veterinary created,
+        start by creating one
+    </string>
+    <string name="admissions">Admissions</string>
     <string name="vaccines">Vaccines</string>
     <string name="appointment">Appointment</string>
+    <string name="select_pet">Select pet</string>
+    <string name="select">Select</string>
+    <string name="add_pet">Register pet</string>
+    <string name="dog">Dog</string>
+    <string name="cat">Cat</string>
+    <string name="other">Other</string>
+    <string name="pet_kind">Pet Kinds</string>
+    <string name="breeds">Breeds</string>
+    <string name="select_kind_pet">Select pet kind</string>
+    <string name="one_of_five">(1 of 5)</string>
+    <string name="select_breed">Select breed</string>
+    <string name="two_of_five">(2 of 5)</string>
+    <string name="search_breed">Search breed</string>
 </resources>

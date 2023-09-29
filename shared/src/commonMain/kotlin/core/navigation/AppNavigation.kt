@@ -1,8 +1,10 @@
 package core.navigation
 
 import SplashScreen
-import admission.ui.screens.Admissions
+import admission.ui.screens.AdmissionScreen
+import admission.ui.screens.SelectPetScreen
 import androidx.compose.runtime.Composable
+import core.ui.model.UiStructureProperties
 import home.ui.HomeScreen
 import initialsetup.ui.screens.InitialScreen
 import initialsetup.ui.screens.MyVetsScreen
@@ -13,23 +15,25 @@ import login.ui.screens.SignUpScreen
 import login.ui.screens.SignUpViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
+import pet.ui.screens.AddPetViewModel
+import pet.ui.screens.BreedsScreen
+import pet.ui.screens.PetsScreen
+import pet.ui.screens.SelectBreedScreen
+import pet.ui.screens.SelectPetTypeScreen
+import pet.ui.screens.SpeciesScreens
 import splash.ui.screens.SplashViewModel
 import ui.AppViewModel
 
 @Composable
 fun AppNavigation(
     navigator: Navigator,
+    uiStructureProperties: UiStructureProperties,
     appViewModel: AppViewModel,
     splashViewModel: SplashViewModel,
     loginViewModel: LoginViewModel,
     signUpViewModel: SignUpViewModel,
     myVetsViewModel: MyVetsViewModel,
-    onShowTopBar: (Boolean) -> Unit,
-    onShowExitCenter: (Boolean) -> Unit,
-    onShowBottomBar: (Boolean) -> Unit,
-    showActionNavigation: (Boolean) -> Unit,
-    onSetTitle: (String) -> Unit,
-    showActionFloatActionButton: (Boolean, () -> Unit) -> Unit,
+    addPetViewModel: AddPetViewModel,
     launchLogin: () -> Unit,
     launchInitialSetup: () -> Unit,
     launchSignUp: () -> Unit,
@@ -38,7 +42,8 @@ fun AppNavigation(
     onBackShowDialog: () -> Unit,
     launchHome: () -> Unit,
     loginWithGoogle: () -> Unit,
-    onAdmission:()->Unit
+    onAdmission: () -> Unit,
+    onSelectAction: () -> Unit
 ) {
     NavHost(
         navigator = navigator,
@@ -47,10 +52,8 @@ fun AppNavigation(
         scene(route = AppNavigationRoute.SplashScreen.route) {
             appViewModel.currentScreenRoute = AppNavigationRoute.SplashScreen.route
             SplashScreen(
+                uiStructureProperties = uiStructureProperties,
                 splashViewModel = splashViewModel,
-                onShowTopBar = onShowTopBar,
-                onShowBottomBar = onShowBottomBar,
-                showFloatActionButton = showActionFloatActionButton,
                 launchLogin = launchLogin,
                 launchHome = launchHome,
                 launchInitialSetup = launchInitialSetup
@@ -60,10 +63,8 @@ fun AppNavigation(
         scene(route = AppNavigationRoute.LoginScreen.route) {
             appViewModel.currentScreenRoute = AppNavigationRoute.LoginScreen.route
             LoginScreen(
+                uiStructureProperties = uiStructureProperties,
                 loginViewModel = loginViewModel,
-                onShowTopBar = onShowTopBar,
-                showFloatActionButton = showActionFloatActionButton,
-                onShowBottomBar = onShowBottomBar,
                 loginSuccess = launchInitialSetup,
                 onClickSignUp = launchSignUp,
                 loginWithGoogle = loginWithGoogle
@@ -72,9 +73,8 @@ fun AppNavigation(
 
         scene(route = AppNavigationRoute.SignUpScreen.route) {
             SignUpScreen(
+                uiStructureProperties = uiStructureProperties,
                 signUpViewModel = signUpViewModel,
-                onShowTopBar = onShowTopBar,
-                onShowBottomBar = onShowBottomBar,
                 onClickLink = onBack
             )
         }
@@ -83,13 +83,8 @@ fun AppNavigation(
         {
             appViewModel.currentScreenRoute = AppNavigationRoute.InitialScreen.route
             InitialScreen(
-                onShowTopBar = onShowTopBar,
-                onShowBottomBar = onShowBottomBar,
-                onShowExitCenter = onShowExitCenter,
-                showNavigation = showActionNavigation,
+                uiStructureProperties = uiStructureProperties,
                 myVetsOnClick = launchMyVets,
-                showFloatActionButton = showActionFloatActionButton,
-                onSetTitle = onSetTitle,
                 onBack = onBackShowDialog
             )
         }
@@ -97,13 +92,8 @@ fun AppNavigation(
         scene(route = AppNavigationRoute.MyVetsScreen.route)
         {
             MyVetsScreen(
+                uiStructureProperties = uiStructureProperties,
                 myVetsViewModel = myVetsViewModel,
-                onShowTopBar = onShowTopBar,
-                onShowExitCenter = onShowExitCenter,
-                onShowBottomBar = onShowBottomBar,
-                showNavigation = showActionNavigation,
-                showFloatActionButton = showActionFloatActionButton,
-                onSetTitle = onSetTitle,
                 onBackOnClick = onBack,
                 onGoHome = launchHome
             )
@@ -113,19 +103,63 @@ fun AppNavigation(
         {
             appViewModel.currentScreenRoute = AppNavigationRoute.HomeScreen.route
             HomeScreen(
-                onShowTopBar = onShowTopBar,
-                onShowBottomBar = onShowBottomBar,
-                onShowExitCenter = onShowExitCenter,
-                showNavigation = showActionNavigation,
-                showFloatActionButton = showActionFloatActionButton,
-                onSetTitle = onSetTitle,
+                uiStructureProperties = uiStructureProperties,
                 onAdmission = onAdmission
             )
         }
 
-        scene(route = AppNavigationRoute.Admissions.route)
+        scene(route = AppNavigationRoute.AdmissionScreen.route)
         {
-            Admissions()
+            AdmissionScreen(uiStructureProperties = uiStructureProperties)
         }
+
+        scene(route = AppNavigationRoute.SelectPetScreen.route)
+        {
+            SelectPetScreen(
+                uiStructureProperties = uiStructureProperties,
+                onSelectAction = onSelectAction
+            )
+        }
+
+        scene(route = AppNavigationRoute.PetsScreen.route)
+        {
+            PetsScreen(uiStructureProperties = uiStructureProperties)
+        }
+
+        scene(route = AppNavigationRoute.SelectPetTypeScreen.route)
+        {
+            SelectPetTypeScreen(
+                uiStructureProperties = uiStructureProperties,
+                addPetViewModel = addPetViewModel,
+                selectOnClick = onSelectAction
+            )
+        }
+
+        scene(route = AppNavigationRoute.SpeciesScreen.route)
+        {
+            SpeciesScreens(
+                uiStructureProperties = uiStructureProperties,
+                addPetViewModel = addPetViewModel,
+                onBackOnClick = onBack
+            )
+        }
+        scene(route = AppNavigationRoute.SelectBreedScreen.route)
+        {
+            SelectBreedScreen(
+                uiStructureProperties = uiStructureProperties,
+                addPetViewModel = addPetViewModel,
+                selectOnClick = onSelectAction
+            )
+        }
+
+        scene(route = AppNavigationRoute.BreedsScreen.route)
+        {
+            BreedsScreen(
+                uiStructureProperties = uiStructureProperties,
+                addPetViewModel = addPetViewModel,
+                onBackOnClick = onBack
+            )
+        }
+
     }
 }

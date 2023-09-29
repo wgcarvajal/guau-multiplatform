@@ -23,6 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.carpisoft.guau.SharedRes
 import core.domain.usecase.GetMessageErrorUseCase
+import core.ui.constants.ScreenEnum
 import core.ui.model.ErrorUi
+import core.ui.model.UiStructureProperties
 import core.ui.screens.dialogs.TwoButtonDialog
 import core.ui.screens.loading.SimpleLoading
 import dev.icerock.moko.resources.compose.stringResource
@@ -42,26 +47,25 @@ import io.kamel.image.asyncPainterResource
 
 @Composable
 fun MyVetsScreen(
+    uiStructureProperties: UiStructureProperties,
     myVetsViewModel: MyVetsViewModel,
-    showNavigation: (Boolean) -> Unit,
-    onShowTopBar: (Boolean) -> Unit,
-    onShowExitCenter: (Boolean) -> Unit,
-    onShowBottomBar: (Boolean) -> Unit,
-    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
-    onSetTitle: (String) -> Unit,
     onBackOnClick: () -> Unit,
-    onGoHome:()->Unit
+    onGoHome: () -> Unit
 ) {
-    var myVetsString: String = stringResource(SharedRes.strings.my_vets)
+
     LaunchedEffect(key1 = 1) {
-        onShowTopBar(true)
-        onShowBottomBar(false)
-        onSetTitle(myVetsString)
-        showNavigation(true)
-        onShowExitCenter(false)
+        uiStructureProperties.onShowTopBar(true)
+        uiStructureProperties.onShowBottomBar(false)
+        uiStructureProperties.showActionNavigation(true)
+        uiStructureProperties.onShowExitCenter(false)
+        uiStructureProperties.onSetTitle(ScreenEnum.MyVets)
     }
-    showFloatActionButton(false) {
+
+    var showAddButton by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(key1 = showAddButton) {
+        uiStructureProperties.showAddActionButton(showAddButton)
     }
+
     val loading by myVetsViewModel.loading.collectAsState()
     val isEmpty by myVetsViewModel.isEmpty.collectAsState()
     val showError by myVetsViewModel.showError.collectAsState()
@@ -71,10 +75,12 @@ fun MyVetsScreen(
         loading = loading,
         isEmpty = isEmpty,
         showError = showError,
-        showFloatActionButton = showFloatActionButton,
+        changeShowAddActionButton = {
+            showAddButton = it
+        },
         list = list
     ) { employee ->
-        myVetsViewModel.selectVet(employeeResp =employee)
+        myVetsViewModel.selectVet(employeeResp = employee)
     }
 
     LaunchedEffect(key1 = 1) {
@@ -96,7 +102,7 @@ fun MyVetsScreen(
         })
 
     val goHome by myVetsViewModel.goHome.collectAsState()
-    if(goHome){
+    if (goHome) {
         myVetsViewModel.resetGoHome()
         onGoHome()
     }
@@ -108,16 +114,16 @@ private fun ScreenPortrait(
     loading: Boolean,
     isEmpty: Boolean,
     showError: Boolean,
-    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
+    changeShowAddActionButton: (Boolean) -> Unit,
     list: List<EmployeeResp>,
     onClick: (EmployeeResp) -> Unit
 ) {
     if (loading) {
+        changeShowAddActionButton(false)
         SimpleLoading()
     } else if (isEmpty) {
         Box(modifier = Modifier.fillMaxSize()) {
-            showFloatActionButton(true) {
-            }
+            changeShowAddActionButton(true)
             Text(
                 textAlign = TextAlign.Center,
                 text = stringResource(
@@ -127,6 +133,7 @@ private fun ScreenPortrait(
             )
         }
     } else if (!showError) {
+        changeShowAddActionButton(false)
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.carpisoft.guau.SharedRes
 import core.domain.usecase.GetMessageErrorUseCase
 import core.ui.model.ErrorUi
+import core.ui.model.UiStructureProperties
 import core.ui.screens.buttons.GeneralButton
 import core.ui.screens.dialogs.OneButtonDialog
 import core.ui.screens.loading.SimpleLoading
@@ -35,19 +36,17 @@ import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun LoginScreen(
+    uiStructureProperties: UiStructureProperties,
     loginViewModel: LoginViewModel,
-    onShowTopBar: (Boolean) -> Unit,
-    onShowBottomBar: (Boolean) -> Unit,
-    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
     onClickSignUp: () -> Unit,
     loginSuccess: () -> Unit,
     loginWithGoogle: () -> Unit
 ) {
-    LaunchedEffect(key1 = 1) {
-        onShowTopBar(false)
-        onShowBottomBar(false)
+    LaunchedEffect(key1 = 1){
+        uiStructureProperties.onShowTopBar(false)
+        uiStructureProperties.onShowBottomBar(false)
+        uiStructureProperties.showAddActionButton(false)
     }
-    showFloatActionButton(false) {}
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val loginEnabled by loginViewModel.loginEnabled.collectAsState()

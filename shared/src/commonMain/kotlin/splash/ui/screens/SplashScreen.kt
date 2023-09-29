@@ -7,24 +7,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import core.ui.constants.ScreenEnum
+import core.ui.model.UiStructureProperties
 import kotlinx.coroutines.delay
 import splash.ui.screens.SplashViewModel
 
 @Composable
 fun SplashScreen(
+    uiStructureProperties: UiStructureProperties,
     splashViewModel: SplashViewModel,
-    onShowTopBar: (Boolean) -> Unit,
-    onShowBottomBar: (Boolean) -> Unit,
-    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
     launchLogin: () -> Unit,
     launchHome: () -> Unit,
     launchInitialSetup: () -> Unit
 ) {
-    LaunchedEffect(key1 = 1) {
-        onShowTopBar(false)
-        onShowBottomBar(false)
+    LaunchedEffect(key1 = 1){
+        uiStructureProperties.onShowTopBar(false)
+        uiStructureProperties.onShowBottomBar(false)
+        uiStructureProperties.showAddActionButton(false)
     }
-    showFloatActionButton(false) {}
+
     ScreenPortrait()
     LaunchedEffect(key1 = 1) {
         delay(2000)

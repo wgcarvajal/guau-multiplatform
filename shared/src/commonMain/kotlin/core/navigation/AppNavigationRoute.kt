@@ -13,6 +13,17 @@ sealed class AppNavigationRoute(val route: String) {
 
     object HomeScreen : AppNavigationRoute(route = "HomeScreen")
 
-    object Admissions : AppNavigationRoute(route = "Admissions")
+    object AdmissionScreen : AppNavigationRoute(route = "AdmissionScreen")
 
+    object SelectPetScreen : AppNavigationRoute(route = "SelectPetScreen")
+
+    object PetsScreen : AppNavigationRoute(route = "PetsScreen")
+
+    object SelectPetTypeScreen : AppNavigationRoute(route = "SelectPetTypeScreen")
+
+    object SelectBreedScreen : AppNavigationRoute(route = "SelectBreedScreen")
+
+    object SpeciesScreen : AppNavigationRoute(route = "SpeciesScreen")
+
+    object BreedsScreen : AppNavigationRoute(route = "BreedsScreen")
 }

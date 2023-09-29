@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIos
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.TransitEnterexit
@@ -16,6 +17,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -36,17 +39,21 @@ import ui.theme.BackgroundHead
 @Composable
 fun HeadScaffold(
     title: String,
+    showAccountOptions: Boolean,
     showNavigation: Boolean,
     showExitCenter: Boolean,
-    showButtonAddOnTopBar:Boolean,
+    showButtonAddOnTopBar: Boolean,
+    showNextAction: Boolean,
+    enableNextAction: Boolean,
     titleFontSize: TextUnit,
     iconSize: Dp,
     appBarHeight: Dp,
     dropdownMenuWidth: Dp,
     signOffOnClick: () -> Unit,
-    onExitVet:()->Unit,
+    onExitVet: () -> Unit,
     onBackOnClick: () -> Unit,
-    onAddOnClick:()->Unit,
+    onNextOnClick: () -> Unit,
+    onAddOnClick: () -> Unit,
 ) {
     var openMenu by rememberSaveable { mutableStateOf(false) }
     MyTopAppBar(
@@ -55,17 +62,23 @@ fun HeadScaffold(
                 text = title,
                 fontSize = titleFontSize
             )
-
         },
         appBarHeight = appBarHeight,
         backgroundColor = BackgroundHead,
         navigationIcon = if (showNavigation) {
             {
-                IconButton(onClick = onBackOnClick) {
+                IconButton(
+                    onClick = onBackOnClick, colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color.Blue,
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = Color.Gray
+                    )
+                ) {
                     Icon(
                         modifier = Modifier.size(iconSize),
                         imageVector = Icons.Default.ArrowBackIos,
-                        contentDescription = "",
+                        contentDescription = ""
                     )
                 }
             }
@@ -73,7 +86,7 @@ fun HeadScaffold(
             null
         },
         actions = {
-            if(getPlatformName() == PlatformConstants.IOS && showButtonAddOnTopBar) {
+            if (getPlatformName() == PlatformConstants.IOS && showButtonAddOnTopBar) {
                 IconButton(onClick = onAddOnClick) {
                     Icon(
                         imageVector = Icons.Filled.Add,
@@ -81,56 +94,73 @@ fun HeadScaffold(
                     )
                 }
             }
-            IconButton(onClick = { openMenu = !openMenu }) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = ""
-                )
-            }
-            DropdownMenu(
-                modifier = Modifier.width(dropdownMenuWidth),
-                expanded = openMenu,
-                onDismissRequest = { openMenu = false }) {
+            if (showAccountOptions) {
+                IconButton(onClick = { openMenu = !openMenu }) {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = ""
+                    )
+                }
+                DropdownMenu(
+                    modifier = Modifier.width(dropdownMenuWidth),
+                    expanded = openMenu,
+                    onDismissRequest = { openMenu = false }) {
 
-                DropdownMenuItem(onClick = {
-                    openMenu = false
+                    DropdownMenuItem(onClick = {
+                        openMenu = false
 
 
-                }, text = {
-                    Row() {
-                        Icon(imageVector = Icons.Filled.Person, contentDescription = "")
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = stringResource(SharedRes.strings.my_profile))
+                    }, text = {
+                        Row() {
+                            Icon(imageVector = Icons.Filled.Person, contentDescription = "")
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = stringResource(SharedRes.strings.my_profile))
+                        }
+                    })
+                    if (showExitCenter) {
+                        Divider()
+                        DropdownMenuItem(onClick = {
+                            openMenu = false
+                            onExitVet()
+                        }, text = {
+                            Row() {
+                                Icon(
+                                    imageVector = Icons.Filled.TransitEnterexit,
+                                    contentDescription = ""
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(text = stringResource(SharedRes.strings.exit_center))
+                            }
+                        })
                     }
-
-                })
-                if (showExitCenter) {
                     Divider()
                     DropdownMenuItem(onClick = {
                         openMenu = false
-                        onExitVet()
+                        signOffOnClick()
                     }, text = {
                         Row() {
-                            Icon(
-                                imageVector = Icons.Filled.TransitEnterexit,
-                                contentDescription = ""
-                            )
+                            Icon(imageVector = Icons.Filled.Logout, contentDescription = "")
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = stringResource(SharedRes.strings.exit_center))
+                            Text(text = stringResource(SharedRes.strings.sign_off))
                         }
                     })
                 }
-                Divider()
-                DropdownMenuItem(onClick = {
-                    openMenu = false
-                    signOffOnClick()
-                }, text = {
-                    Row() {
-                        Icon(imageVector = Icons.Filled.Logout, contentDescription = "")
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = stringResource(SharedRes.strings.sign_off))
-                    }
-                })
+            }
+            if (showNextAction) {
+                IconButton(
+                    onClick = onNextOnClick, colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color.Blue,
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = Color.Gray
+                    ), enabled = enableNextAction
+                ) {
+                    Icon(
+                        modifier = Modifier.size(iconSize),
+                        imageVector = Icons.Default.ArrowForwardIos,
+                        contentDescription = ""
+                    )
+                }
             }
         }
     )

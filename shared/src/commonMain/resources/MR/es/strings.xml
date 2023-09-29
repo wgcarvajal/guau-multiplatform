@@ -30,10 +30,27 @@
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="retry">Reintentar</string>
-    <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de la aplicación?</string>
-    <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada, inicia creando una</string>
-    <string name="admission">Ingresos</string>
+    <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de
+        la aplicación?
+    </string>
+    <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada,
+        inicia creando una
+    </string>
+    <string name="admissions">Ingresos</string>
     <string name="vaccination">Vacunación</string>
     <string name="vaccines">Vacunas</string>
     <string name="appointment">Citas</string>
+    <string name="select_pet">Seleccione mascota</string>
+    <string name="select">Seleccionar</string>
+    <string name="add_pet">Registrar Mascota</string>
+    <string name="dog">Perro</string>
+    <string name="cat">Gato</string>
+    <string name="other">Otro</string>
+    <string name="pet_kind">Tipos de mascota</string>
+    <string name="breeds">Razas</string>
+    <string name="select_kind_pet">Seleccione tipo de mascota</string>
+    <string name="one_of_five">(1 de 5)</string>
+    <string name="select_breed">Seleccione raza</string>
+    <string name="two_of_five">(2 de 5)</string>
+    <string name="search_breed">Buscar raza</string>
 </resources>

@@ -9,6 +9,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.carpisoft.guau.SharedRes
+import core.ui.constants.ScreenEnum
+import core.ui.model.UiStructureProperties
 import core.ui.screens.buttons.GeneralButton
 import dev.icerock.moko.resources.compose.stringResource
 import moe.tlaster.precompose.navigation.BackHandler
@@ -16,29 +18,22 @@ import moe.tlaster.precompose.navigation.BackHandler
 
 @Composable
 fun InitialScreen(
-    showNavigation: (Boolean) -> Unit,
-    onShowTopBar:(Boolean)->Unit,
-    onShowExitCenter: (Boolean) -> Unit,
-    onShowBottomBar:(Boolean)->Unit,
+    uiStructureProperties: UiStructureProperties,
     myVetsOnClick: () -> Unit,
-    showFloatActionButton: (Boolean, () -> Unit) -> Unit,
-    onSetTitle: (String) -> Unit,
     onBack: () -> Unit
 ) {
     LaunchedEffect(key1 = 1) {
-        onShowTopBar(true)
-        onShowBottomBar(false)
-        onSetTitle("")
-        showNavigation(false)
-        onShowExitCenter(false)
+        uiStructureProperties.onShowTopBar(true)
+        uiStructureProperties.onShowBottomBar(false)
+        uiStructureProperties.showActionNavigation(false)
+        uiStructureProperties.onShowExitCenter(false)
+        uiStructureProperties.showAddActionButton(false)
+        uiStructureProperties.onSetTitle(ScreenEnum.Initial)
     }
-    showFloatActionButton(false) {}
+
     BackHandler {
         onBack()
     }
-    /*val myVetsOnClick = {
-        navController.navigate(InitialSetupAppScreen.MyVetsScreen.route)
-    }*/
     ScreenPortrait(myVetsOnClick = myVetsOnClick)
 }
 

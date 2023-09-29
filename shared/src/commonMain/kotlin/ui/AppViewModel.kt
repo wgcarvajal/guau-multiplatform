@@ -1,5 +1,6 @@
 package ui
 
+import core.ui.constants.ScreenEnum
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import employee.domain.usecase.SaveCenterIdUseCase
 import employee.domain.usecase.SaveEmployeeIdUseCase
@@ -27,8 +28,8 @@ class AppViewModel(
         const val KEY = "AppViewModel"
     }
 
-    private val _title = MutableStateFlow("")
-    val title: StateFlow<String> = _title.asStateFlow()
+    private val _title = MutableStateFlow(ScreenEnum.Splash)
+    val title: StateFlow<ScreenEnum> = _title.asStateFlow()
 
     private val _showSignOffDialog = MutableStateFlow(false)
     val showSignOffDialog: StateFlow<Boolean> = _showSignOffDialog.asStateFlow()
@@ -42,7 +43,7 @@ class AppViewModel(
     private val _successExitCenter = MutableStateFlow(false)
     val successExitCenter: StateFlow<Boolean> = _successExitCenter.asStateFlow()
 
-    fun setTitle(title: String) {
+    fun setTitle(title: ScreenEnum) {
         _title.value = title
     }
 

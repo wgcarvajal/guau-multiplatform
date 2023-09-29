@@ -30,6 +30,8 @@ import core.domain.usecase.IsOnlyLettersUseCase
 import core.domain.usecase.RemoveInitialWhiteSpaceUseCase
 import core.navigation.AppNavigation
 import core.navigation.AppNavigationRoute
+import core.ui.constants.ScreenEnum
+import core.ui.model.UiStructureProperties
 import core.ui.screens.dialogs.TwoButtonDialog
 import core.ui.screens.foot.Foot
 import core.ui.screens.header.HeadScaffold
@@ -72,6 +74,11 @@ import login.ui.screens.SignUpViewModel
 import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.PopUpTo
 import moe.tlaster.precompose.navigation.rememberNavigator
+import pet.data.network.repository.BreedRepository
+import pet.data.network.repository.SpeciesRepository
+import pet.domain.usecase.GetBreedsBySpeciesIdWithPaginationAndSortUseCase
+import pet.domain.usecase.GetSpeciesUseCase
+import pet.ui.screens.AddPetViewModel
 import splash.domain.usecase.IsLoginTokenUseCase
 import splash.domain.usecase.IsSelectedVetUseCase
 import splash.ui.screens.SplashViewModel
@@ -126,27 +133,78 @@ fun App(
                 httpClient = httpClient
             )
 
+            val addPetViewModel = GetAddPetViewModel(
+                httpClient = httpClient,
+                loginAuthorizationRepository = loginAuthorizationRepository
+            )
+
             var showExitAlertDialog by rememberSaveable { mutableStateOf(false) }
             val title by appViewModel.title.collectAsState()
             var showNavigation by rememberSaveable { mutableStateOf(false) }
+            var showAccountOptions by rememberSaveable { mutableStateOf(false) }
+            var showNextAction by rememberSaveable { mutableStateOf(false) }
+            var enableNextAction by rememberSaveable { mutableStateOf(false) }
             var showExitCenter by rememberSaveable { mutableStateOf(false) }
             var showTopBar by rememberSaveable { mutableStateOf(false) }
             var showBottomBar by rememberSaveable { mutableStateOf(false) }
             var showAddActionButton by rememberSaveable { mutableStateOf(false) }
-            var onClickAddActionButton: () -> Unit = {}
+
+            var onClickAddActionButton: () -> Unit = {
+                when (title) {
+                    ScreenEnum.Admissions -> {
+                        navigator.navigate(
+                            route = AppNavigationRoute.SelectPetScreen.route
+                        )
+                    }
+
+                    ScreenEnum.Pets -> {
+                        navigator.navigate(
+                            route = AppNavigationRoute.SelectPetTypeScreen.route
+                        )
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
             val showActionNavigation: (Boolean) -> Unit = {
                 showNavigation = it
             }
-            val showActionFloatActionButton: (Boolean, () -> Unit) -> Unit = { show, action ->
-                onClickAddActionButton = action
-                showAddActionButton = show
+
+            val showActionAccountOptions: (Boolean) -> Unit = {
+                showAccountOptions = it
+            }
+
+            val showActionNext: (Boolean) -> Unit = {
+                showNextAction = it
+            }
+
+            val onEnabledNextAction: (Boolean) -> Unit = {
+                enableNextAction = it
+            }
+
+            val onShowAddActionButton: (Boolean) -> Unit = {
+                showAddActionButton = it
             }
 
             val onBackOnClickConfirmation: () -> Unit = {
                 navigator.popBackStack()
             }
 
-            val onSetTitle: (String) -> Unit = {
+            val onNextOnClick: () -> Unit = {
+                when (title) {
+                    ScreenEnum.SelectPetType -> {
+                        navigator.navigate(AppNavigationRoute.SelectBreedScreen.route)
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+
+            val onSetTitle: (ScreenEnum) -> Unit = {
                 appViewModel.setTitle(it)
             }
 
@@ -177,6 +235,18 @@ fun App(
                 navigator.navigate(AppNavigationRoute.MyVetsScreen.route)
             }
 
+            val uiStructureProperties = UiStructureProperties(
+                onShowTopBar = onShowTopBar,
+                onShowExitCenter = onShowExitCenter,
+                onShowBottomBar = onShowBottomBar,
+                showActionNavigation = showActionNavigation,
+                showActionAccountOptions = showActionAccountOptions,
+                showAddActionButton = onShowAddActionButton,
+                showActionNext = showActionNext,
+                onEnabledNextAction = onEnabledNextAction,
+                onSetTitle = onSetTitle
+            )
+
             Scaffold(
                 floatingActionButton = if (getPlatformName() == PlatformConstants.ANDROID && showAddActionButton) {
                     {
@@ -197,10 +267,13 @@ fun App(
                 topBar = if (showTopBar) {
                     {
                         HeadScaffold(
-                            title = title,
+                            title = getTitle(title),
+                            showAccountOptions = showAccountOptions,
                             showNavigation = showNavigation,
                             showExitCenter = showExitCenter,
                             showButtonAddOnTopBar = showAddActionButton,
+                            showNextAction = showNextAction,
+                            enableNextAction = enableNextAction,
                             titleFontSize = 16.sp,
                             iconSize = 20.dp,
                             appBarHeight = 40.dp,
@@ -208,6 +281,7 @@ fun App(
                             signOffOnClick = signOffOnClick,
                             onExitVet = onExitVet,
                             onBackOnClick = onBackOnClickConfirmation,
+                            onNextOnClick = onNextOnClick,
                             onAddOnClick = onClickAddActionButton
                         )
                     }
@@ -227,17 +301,13 @@ fun App(
                 Box(modifier = Modifier.padding(contentPadding)) {
                     AppNavigation(
                         navigator = navigator,
+                        uiStructureProperties = uiStructureProperties,
                         appViewModel = appViewModel,
                         splashViewModel = splashViewModel,
                         loginViewModel = loginViewModel,
                         signUpViewModel = signUpViewModel,
                         myVetsViewModel = myVetsViewModel,
-                        onShowTopBar = onShowTopBar,
-                        onShowBottomBar = onShowBottomBar,
-                        onShowExitCenter = onShowExitCenter,
-                        showActionNavigation = showActionNavigation,
-                        onSetTitle = onSetTitle,
-                        showActionFloatActionButton = showActionFloatActionButton,
+                        addPetViewModel = addPetViewModel,
                         launchLogin = {
                             navigator.navigate(
                                 route = AppNavigationRoute.LoginScreen.route, options = NavOptions(
@@ -281,8 +351,28 @@ fun App(
                         loginWithGoogle = loginWithGoogle,
                         onAdmission = {
                             navigator.navigate(
-                                route = AppNavigationRoute.Admissions.route
+                                route = AppNavigationRoute.AdmissionScreen.route
                             )
+                        },
+                        onSelectAction = {
+                            when (title) {
+                                ScreenEnum.SelectPet -> {
+                                    navigator.navigate(route = AppNavigationRoute.PetsScreen.route)
+                                }
+
+                                ScreenEnum.SelectPetType -> {
+                                    navigator.navigate(route = AppNavigationRoute.SpeciesScreen.route)
+                                }
+
+                                ScreenEnum.SelectBreed -> {
+                                    navigator.navigate(route = AppNavigationRoute.BreedsScreen.route)
+                                }
+
+                                else -> {
+
+                                }
+                            }
+
                         }
                     )
                 }
@@ -500,6 +590,72 @@ fun GetMyVetsViewModel(
                 saveCenterIdAndRolUseCase = SaveCenterIdAndRolUseCase(employeePreferencesPort = employeePreferencesRepository)
             )
         })
+}
+
+@Composable
+fun GetAddPetViewModel(
+    httpClient: HttpClient,
+    loginAuthorizationRepository: LoginAuthorizationRepository,
+): AddPetViewModel {
+    return getViewModel(
+        AddPetViewModel.KEY,
+        viewModelFactory {
+            AddPetViewModel(
+                getSpeciesUseCase = GetSpeciesUseCase(
+                    speciesPort = SpeciesRepository(
+                        httpClient = httpClient
+                    ),
+                ),
+                getBreedsBySpeciesIdWithPaginationAndSortUseCase = GetBreedsBySpeciesIdWithPaginationAndSortUseCase(
+                    breedPort = BreedRepository(
+                        httpClient = httpClient
+                    )
+                ),
+                getTokenUseCase = GetTokenUseCase(loginAuthorizationPort = loginAuthorizationRepository),
+            )
+        }
+    )
+}
+
+@Composable
+fun getTitle(screenEnum: ScreenEnum): String {
+    return when (screenEnum) {
+        ScreenEnum.MyVets -> {
+            stringResource(SharedRes.strings.my_vets)
+        }
+
+        ScreenEnum.Home -> {
+            stringResource(SharedRes.strings.home)
+        }
+
+        ScreenEnum.Admissions -> {
+            stringResource(SharedRes.strings.admissions)
+        }
+
+        ScreenEnum.SelectPet -> {
+            stringResource(SharedRes.strings.select_pet)
+        }
+
+        ScreenEnum.Pets -> {
+            stringResource(SharedRes.strings.pets)
+        }
+
+        ScreenEnum.SelectPetType, ScreenEnum.SelectBreed -> {
+            stringResource(SharedRes.strings.add_pet)
+        }
+
+        ScreenEnum.PetTypes -> {
+            stringResource(SharedRes.strings.pet_kind)
+        }
+
+        ScreenEnum.Breeds -> {
+            stringResource(SharedRes.strings.breeds)
+        }
+
+        else -> {
+            ""
+        }
+    }
 }
 
 

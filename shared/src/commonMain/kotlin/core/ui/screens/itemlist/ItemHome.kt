@@ -40,7 +40,7 @@ fun ItemHome(
                 .padding(top = 20.dp)
                 .clickable { onClick() }
                 .border(
-                    width = 8.dp,
+                    width = 5.dp,
                     color = Color.White,
                     shape = RoundedCornerShape(10)
                 )

@@ -10,7 +10,10 @@ class GetEmployeesUseCase(
     private val initialSetupPort: InitialSetupPort
 ) {
 
-    suspend operator fun invoke(token: String, employeesReq: EmployeesReq): Resp<List<EmployeeResp>> {
+    suspend operator fun invoke(
+        token: String,
+        employeesReq: EmployeesReq
+    ): Resp<List<EmployeeResp>> {
         return initialSetupPort.getEmployees(token = token, employeesReq = employeesReq)
     }
 }
