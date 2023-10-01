@@ -9,7 +9,10 @@ data class UiStructureProperties(
     val showActionNavigation: (Boolean) -> Unit,
     val showActionAccountOptions: (Boolean) -> Unit,
     val showAddActionButton: (Boolean) -> Unit,
+    val onShowActionBottom: (Boolean) -> Unit,
     val showActionNext: (Boolean) -> Unit,
     val onEnabledNextAction: (Boolean) -> Unit,
+    val onShowSaveAction: (Boolean) -> Unit,
+    val onEnabledSaveAction: (Boolean) -> Unit,
     val onSetTitle: (ScreenEnum) -> Unit
 )

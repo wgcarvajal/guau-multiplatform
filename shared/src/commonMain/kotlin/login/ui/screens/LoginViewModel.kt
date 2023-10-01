@@ -17,7 +17,7 @@ import login.domain.usecase.DoSocialLoginUseCase
 import login.domain.usecase.SaveEmailUseCase
 import login.domain.usecase.SaveNameUseCase
 import login.domain.usecase.SaveTokenUseCase
-import login.domain.usecase.ValidateEmailAndPasswordUseCase
+import core.domain.usecase.ValidateEmailAndPasswordUseCase
 class LoginViewModel(
     private val validateEmailAndPasswordUseCase: ValidateEmailAndPasswordUseCase,
     private val doLoginUseCase: DoLoginUseCase,

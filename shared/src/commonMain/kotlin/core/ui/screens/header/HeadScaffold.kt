@@ -34,6 +34,7 @@ import core.utils.constants.PlatformConstants
 import dev.icerock.moko.resources.compose.stringResource
 import getPlatformName
 import ui.theme.BackgroundHead
+import ui.theme.Green100
 
 
 @Composable
@@ -43,8 +44,6 @@ fun HeadScaffold(
     showNavigation: Boolean,
     showExitCenter: Boolean,
     showButtonAddOnTopBar: Boolean,
-    showNextAction: Boolean,
-    enableNextAction: Boolean,
     titleFontSize: TextUnit,
     iconSize: Dp,
     appBarHeight: Dp,
@@ -52,7 +51,6 @@ fun HeadScaffold(
     signOffOnClick: () -> Unit,
     onExitVet: () -> Unit,
     onBackOnClick: () -> Unit,
-    onNextOnClick: () -> Unit,
     onAddOnClick: () -> Unit,
 ) {
     var openMenu by rememberSaveable { mutableStateOf(false) }
@@ -70,7 +68,7 @@ fun HeadScaffold(
                 IconButton(
                     onClick = onBackOnClick, colors = IconButtonDefaults.iconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = Color.Blue,
+                        contentColor = Green100,
                         disabledContainerColor = Color.Transparent,
                         disabledContentColor = Color.Gray
                     )
@@ -144,22 +142,6 @@ fun HeadScaffold(
                             Text(text = stringResource(SharedRes.strings.sign_off))
                         }
                     })
-                }
-            }
-            if (showNextAction) {
-                IconButton(
-                    onClick = onNextOnClick, colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color.Blue,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Gray
-                    ), enabled = enableNextAction
-                ) {
-                    Icon(
-                        modifier = Modifier.size(iconSize),
-                        imageVector = Icons.Default.ArrowForwardIos,
-                        contentDescription = ""
-                    )
                 }
             }
         }

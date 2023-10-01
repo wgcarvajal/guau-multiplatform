@@ -13,5 +13,8 @@ enum class ScreenEnum {
     SelectPetType,
     PetTypes,
     SelectBreed,
-    Breeds
+    Breeds,
+    PetData,
+    Customers,
+    AddCustomer
 }

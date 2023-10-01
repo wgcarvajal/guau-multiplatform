@@ -4,15 +4,18 @@ import core.domain.model.Resp
 import pet.domain.model.BreedResp
 import pet.domain.port.BreedPort
 
-class GetBreedsBySpeciesIdWithPaginationAndSortUseCase(private val breedPort: BreedPort) {
+class GetBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase(private val breedPort: BreedPort) {
+
     suspend operator fun invoke(
-        token: String, speciesId: Int, page: Int, limit: Int
+        token: String, speciesId: Int, name: String, page: Int, limit: Int
     ): Resp<List<BreedResp>> {
-        return breedPort.getBreedsBySpeciesIdWithPaginationAndSort(
+        return breedPort.getBreedsBySpeciesIdAndNameWithPaginationAndSort(
             token = token,
             speciesId = speciesId,
+            name = name,
             page = page,
             limit = limit
         )
     }
+
 }

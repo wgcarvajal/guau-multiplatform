@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import login.domain.model.SignUpReq
 import login.domain.usecase.DoRegisterUseCase
-import login.domain.usecase.ValidateEmailAndPasswordUseCase
-import login.domain.usecase.ValidateNameUseCase
+import core.domain.usecase.ValidateEmailAndPasswordUseCase
+import core.domain.usecase.ValidateNameUseCase
 
 
 class SignUpViewModel(

@@ -17,6 +17,7 @@ import pet.domain.model.BreedResp
 import pet.domain.port.BreedPort
 
 class BreedRepository(private val httpClient: HttpClient) : BreedPort, BreedRepositoryHelper() {
+
     override suspend fun getBreedsBySpeciesIdWithPaginationAndSort(
         token: String,
         speciesId: Int,
@@ -26,6 +27,37 @@ class BreedRepository(private val httpClient: HttpClient) : BreedPort, BreedRepo
         val resp = try {
             val response =
                 httpClient.get(urlString = "${NetworkConstants.SERVER}${PetConstants.BREED}/$speciesId/$page/$limit") {
+                    contentType(ContentType.Application.Json)
+                    header(key = "Authorization", token)
+                }.body<HttpResponse>()
+            if (response.status.value in 200..299) {
+                Response(isValid = true, data = response.body<List<BreedResponse>>())
+            } else {
+                val errorBody = response.body<ResponseError>()
+                println("message $errorBody")
+                Response(
+                    isValid = false,
+                    error = errorBody.message,
+                    errorCode = errorBody.errorCode
+                )
+            }
+
+        } catch (e: Exception) {
+            println("message= $e")
+            Response(isValid = false, error = e.message ?: "")
+        }
+        return processResponse(resp)
+    }
+    override suspend fun getBreedsBySpeciesIdAndNameWithPaginationAndSort(
+        token: String,
+        speciesId: Int,
+        name:String,
+        page: Int,
+        limit: Int
+    ): Resp<List<BreedResp>> {
+        val resp = try {
+            val response =
+                httpClient.get(urlString = "${NetworkConstants.SERVER}${PetConstants.BREED}/$speciesId/$name/$page/$limit") {
                     contentType(ContentType.Application.Json)
                     header(key = "Authorization", token)
                 }.body<HttpResponse>()

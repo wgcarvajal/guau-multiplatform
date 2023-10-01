@@ -36,7 +36,9 @@ fun SelectPetTypeScreen(
         uiStructureProperties.onSetTitle(ScreenEnum.SelectPetType)
         uiStructureProperties.showAddActionButton(false)
         uiStructureProperties.showActionAccountOptions(false)
+        uiStructureProperties.onShowActionBottom(true)
         uiStructureProperties.showActionNext(true)
+        uiStructureProperties.onShowSaveAction(false)
 
     }
     val enabledNextAction by addPetViewModel.enabledNextAction.collectAsState()

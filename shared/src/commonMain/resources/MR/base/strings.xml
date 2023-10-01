@@ -51,5 +51,23 @@
     <string name="one_of_five">(1 of 5)</string>
     <string name="select_breed">Select breed</string>
     <string name="two_of_five">(2 of 5)</string>
+    <string name="pet_data">Pet data</string>
+    <string name="three_of_five">(3 of 5)</string>
     <string name="search_breed">Search breed</string>
+    <string name="hide">Hide</string>
+    <string name="next">Next</string>
+    <string name="customer">Customer</string>
+    <string name="identification_type">Id type</string>
+    <string name="identification_number">Id number</string>
+    <string name="pet">Pet</string>
+    <string name="description">Description</string>
+    <string name="birthdate">Birthdate</string>
+    <string name="associate">Associate</string>
+    <string name="owner">Owner</string>
+    <string name="gender">Gender</string>
+    <string name="customers">Customers</string>
+    <string name="save">Save</string>
+    <string name="customer_registry">Customer registry</string>
+    <string name="phone">Phone</string>
+    <string name="address">Address</string>
 </resources>

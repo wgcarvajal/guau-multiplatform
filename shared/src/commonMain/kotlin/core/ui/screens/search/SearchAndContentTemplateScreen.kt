@@ -1,15 +1,17 @@
 package core.ui.screens.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Search
@@ -19,24 +21,36 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import core.ui.screens.collection.InfiniteGridHandler
+import core.ui.screens.loading.CustomLoading
 import ui.theme.BackgroundHead
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchAndContentTemplateScreen(
     title: String,
-    searchText:String,
+    gridState: LazyGridState,
+    searchText: String,
     activeSearch: Boolean,
+    loadingMore: Boolean,
+    keyboardController: SoftwareKeyboardController?,
+    focusManager: FocusManager,
+    onLoadMore: () -> Unit,
     onBackOnClick: () -> Unit,
     searchOnClick: () -> Unit,
     onValueChange: (String) -> Unit,
     onEmptyOnClick: () -> Unit,
     onCloseOnClick: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize())
+    Box(modifier = Modifier.fillMaxSize())
     {
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -68,7 +82,8 @@ fun SearchAndContentTemplateScreen(
                         isEmpty = searchText.isEmpty(),
                         onValueChange = onValueChange,
                         onEmptyOnClick = onEmptyOnClick,
-                        onCloseOnClick = onCloseOnClick)
+                        onCloseOnClick = onCloseOnClick
+                    )
                 } else {
                     Text(
                         modifier = Modifier.padding(start = 20.dp),
@@ -98,6 +113,33 @@ fun SearchAndContentTemplateScreen(
             }
 
         }
-        content()
+        Box(
+            modifier = Modifier.fillMaxSize().padding(
+                top = 48.dp, bottom = if (loadingMore) {
+                    40.dp
+                } else {
+                    0.dp
+                }
+            ).pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }, onPress = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
+            }
+        ) {
+            content()
+        }
+        if (loadingMore) {
+            CustomLoading(
+                modifier = Modifier.fillMaxWidth().height(40.dp).align(Alignment.BottomCenter)
+            )
+        }
+        InfiniteGridHandler(
+            gridState = gridState,
+            onLoadMore = onLoadMore
+        )
     }
 }

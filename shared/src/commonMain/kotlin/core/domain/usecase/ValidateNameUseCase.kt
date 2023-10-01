@@ -1,4 +1,4 @@
-package login.domain.usecase
+package core.domain.usecase
 
 class ValidateNameUseCase {
     operator fun invoke(name: String): Boolean {

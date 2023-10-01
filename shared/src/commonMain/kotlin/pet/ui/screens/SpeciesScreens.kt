@@ -42,6 +42,9 @@ fun SpeciesScreens(
         uiStructureProperties.showActionAccountOptions(false)
         uiStructureProperties.showActionNext(false)
         uiStructureProperties.onEnabledNextAction(false)
+        uiStructureProperties.onShowActionBottom(false)
+        uiStructureProperties.onShowSaveAction(false)
+        uiStructureProperties.onEnabledSaveAction(false)
     }
     val loading by addPetViewModel.loading.collectAsState()
     val typePets by addPetViewModel.typePets.collectAsState()

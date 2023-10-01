@@ -1,27 +1,25 @@
 package pet.ui.screens
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
@@ -34,8 +32,8 @@ import core.ui.screens.dialogs.TwoButtonDialog
 import core.ui.screens.itemlist.ItemBreed
 import core.ui.screens.loading.SimpleLoading
 import core.ui.screens.search.SearchAndContentTemplateScreen
+import core.ui.screens.snackbars.DecoupledSnackBar
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -56,9 +54,13 @@ fun BreedsScreen(
         uiStructureProperties.showActionAccountOptions(false)
         uiStructureProperties.showActionNext(false)
         uiStructureProperties.onEnabledNextAction(false)
+        uiStructureProperties.onShowActionBottom(false)
+        uiStructureProperties.onShowSaveAction(false)
+        uiStructureProperties.onEnabledSaveAction(false)
     }
 
     val loading by addPetViewModel.loading.collectAsState()
+    val loadingMore by addPetViewModel.loadingMore.collectAsState()
     val breeds by addPetViewModel.breeds.collectAsState()
     val showError by addPetViewModel.showError.collectAsState()
     val searchText by addPetViewModel.searchText.collectAsState()
@@ -69,9 +71,17 @@ fun BreedsScreen(
     } else if (!showError) {
         SearchAndContentTemplateScreen(
             title = stringResource(SharedRes.strings.breeds),
+            gridState = state,
             searchText = searchText,
             activeSearch = activeSearch,
-            onBackOnClick = onBackOnClick,
+            loadingMore = loadingMore,
+            keyboardController = keyboardController,
+            focusManager = focusManager,
+            onLoadMore = { addPetViewModel.onLoadMoreBreedData() },
+            onBackOnClick = {
+                addPetViewModel.resetBreeds()
+                onBackOnClick()
+            },
             searchOnClick = { activeSearch = true },
             onValueChange = { addPetViewModel.onValueSearchBreed(it) },
             onEmptyOnClick = { addPetViewModel.onValueSearchBreed("") },
@@ -79,15 +89,7 @@ fun BreedsScreen(
         ) {
             LazyVerticalGrid(
                 state = state,
-                modifier = Modifier.fillMaxSize().pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }, onPress = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    })
-                }
+                modifier = Modifier.fillMaxSize()
                     .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp),
                 columns = GridCells.Fixed(count = 2),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -100,12 +102,12 @@ fun BreedsScreen(
                         selected = false,
                         onClick = {
                             addPetViewModel.selectedBreed(breed = breed)
+                            addPetViewModel.resetBreeds()
                             onBackOnClick()
                         }
                     )
                 }
             }
-            InfiniteGridHandler(gridState = state, onLoadMore = { println("load more") })
         }
     }
     TwoButtonDialog(
@@ -125,33 +127,26 @@ fun BreedsScreen(
     LaunchedEffect(key1 = 1) {
         addPetViewModel.loadBreedData()
     }
-}
+    val snackBarHostState = remember { SnackbarHostState() }
+    DecoupledSnackBar(
+        snackBarHostState = snackBarHostState,
+        containerColor = Color.Red,
+        messageColor = Color.White,
+        actionColor = Color.White
+    )
 
-@Composable
-fun InfiniteGridHandler(
-    gridState: LazyGridState,
-    buffer: Int = 0,
-    onLoadMore: () -> Unit
-) {
-    val loadMore = remember {
-        derivedStateOf {
-            val layoutInfo = gridState.layoutInfo
-            val totalItemsNumber = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-
-            val result = totalItemsNumber > 0 && lastVisibleItemIndex == (totalItemsNumber - buffer)
-            println("totalItemsNumber: $totalItemsNumber lastVisibleItemIndex: $lastVisibleItemIndex result: $result")
-            result
+    val showErrorSnackBar by addPetViewModel.showErrorSnackBar.collectAsState()
+    val errorMessage = GetMessageErrorUseCase(errorUi = addPetViewModel.getErrorUi() ?: ErrorUi())
+    val actionLabel = stringResource(SharedRes.strings.hide)
+    LaunchedEffect(key1 = showErrorSnackBar) {
+        if (showErrorSnackBar) {
+            snackBarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = actionLabel,
+                duration = SnackbarDuration.Short
+            )
+            addPetViewModel.resetShowErrorSnackBar()
         }
     }
-
-    LaunchedEffect(loadMore) {
-        snapshotFlow { loadMore.value }
-            .distinctUntilChanged()
-            .collect {
-                if (it) {
-                    onLoadMore()
-                }
-            }
-    }
 }
+

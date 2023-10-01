@@ -26,4 +26,10 @@ sealed class AppNavigationRoute(val route: String) {
     object SpeciesScreen : AppNavigationRoute(route = "SpeciesScreen")
 
     object BreedsScreen : AppNavigationRoute(route = "BreedsScreen")
+
+    object PetDataScreen:AppNavigationRoute(route = "PetDataScreen")
+
+    object CustomersScreen:AppNavigationRoute(route = "CustomersScreen")
+
+    object AddCustomerScreen:AppNavigationRoute(route = "AddCustomerScreen")
 }

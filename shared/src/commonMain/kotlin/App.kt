@@ -1,20 +1,25 @@
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -24,10 +29,6 @@ import androidx.datastore.preferences.core.Preferences
 import com.carpisoft.guau.Database
 import com.carpisoft.guau.SharedRes
 import core.data.preferences.PreferencesImpl
-import core.domain.usecase.InitialsInCapitalLetterUseCase
-import core.domain.usecase.IsMaxStringSizeUseCase
-import core.domain.usecase.IsOnlyLettersUseCase
-import core.domain.usecase.RemoveInitialWhiteSpaceUseCase
 import core.navigation.AppNavigation
 import core.navigation.AppNavigationRoute
 import core.ui.constants.ScreenEnum
@@ -35,20 +36,18 @@ import core.ui.model.UiStructureProperties
 import core.ui.screens.dialogs.TwoButtonDialog
 import core.ui.screens.foot.Foot
 import core.ui.screens.header.HeadScaffold
+import core.ui.screens.viewmodels.GetAddCustomerViewModel
+import core.ui.screens.viewmodels.GetAddPetViewModel
+import core.ui.screens.viewmodels.GetAppViewModel
+import core.ui.screens.viewmodels.GetLoginViewModel
+import core.ui.screens.viewmodels.GetMyVetsViewModel
+import core.ui.screens.viewmodels.GetSignUpViewModel
+import core.ui.screens.viewmodels.GetSplashViewModel
 import core.utils.constants.PlatformConstants
 import core.utils.states.SignOutWithGoogleHandler
 import core.utils.states.createStore
-import dev.icerock.moko.mvvm.compose.getViewModel
-import dev.icerock.moko.mvvm.compose.viewModelFactory
 import dev.icerock.moko.resources.compose.stringResource
 import employee.data.repository.EmployeePreferencesRepository
-import employee.domain.usecase.SaveCenterIdUseCase
-import employee.domain.usecase.SaveEmployeeIdUseCase
-import employee.domain.usecase.SaveRolUseCase
-import initialsetup.data.network.repository.InitialSetupRepository
-import initialsetup.domain.usecase.GetEmployeesUseCase
-import initialsetup.domain.usecase.SaveCenterIdAndRolUseCase
-import initialsetup.ui.screens.MyVetsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -56,33 +55,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import login.data.repository.LoginAuthorizationRepository
-import login.data.repository.LoginRepository
-import login.data.repository.SignUpRepository
-import login.data.repository.SocialLoginRepository
-import login.domain.usecase.DoLoginUseCase
-import login.domain.usecase.DoRegisterUseCase
-import login.domain.usecase.DoSocialLoginUseCase
-import login.domain.usecase.GetEmailUseCase
-import login.domain.usecase.GetTokenUseCase
-import login.domain.usecase.SaveEmailUseCase
-import login.domain.usecase.SaveNameUseCase
-import login.domain.usecase.SaveTokenUseCase
-import login.domain.usecase.ValidateEmailAndPasswordUseCase
-import login.domain.usecase.ValidateNameUseCase
-import login.ui.screens.LoginViewModel
-import login.ui.screens.SignUpViewModel
 import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.PopUpTo
 import moe.tlaster.precompose.navigation.rememberNavigator
-import pet.data.network.repository.BreedRepository
-import pet.data.network.repository.SpeciesRepository
-import pet.domain.usecase.GetBreedsBySpeciesIdWithPaginationAndSortUseCase
-import pet.domain.usecase.GetSpeciesUseCase
-import pet.ui.screens.AddPetViewModel
-import splash.domain.usecase.IsLoginTokenUseCase
-import splash.domain.usecase.IsSelectedVetUseCase
-import splash.ui.screens.SplashViewModel
-import ui.AppViewModel
 import ui.theme.GuauTheme
 
 val store = CoroutineScope(SupervisorJob()).createStore()
@@ -138,12 +113,20 @@ fun App(
                 loginAuthorizationRepository = loginAuthorizationRepository
             )
 
+            val addCustomerViewModel = GetAddCustomerViewModel(
+                httpClient = httpClient,
+                loginAuthorizationRepository = loginAuthorizationRepository
+            )
+
             var showExitAlertDialog by rememberSaveable { mutableStateOf(false) }
             val title by appViewModel.title.collectAsState()
             var showNavigation by rememberSaveable { mutableStateOf(false) }
             var showAccountOptions by rememberSaveable { mutableStateOf(false) }
             var showNextAction by rememberSaveable { mutableStateOf(false) }
             var enableNextAction by rememberSaveable { mutableStateOf(false) }
+            var showBottomAction by rememberSaveable { mutableStateOf(false) }
+            var showSaveAction by rememberSaveable { mutableStateOf(false) }
+            var enableSaveAction by rememberSaveable { mutableStateOf(false) }
             var showExitCenter by rememberSaveable { mutableStateOf(false) }
             var showTopBar by rememberSaveable { mutableStateOf(false) }
             var showBottomBar by rememberSaveable { mutableStateOf(false) }
@@ -163,6 +146,12 @@ fun App(
                         )
                     }
 
+                    ScreenEnum.Customers -> {
+                        navigator.navigate(
+                            route = AppNavigationRoute.AddCustomerScreen.route
+                        )
+                    }
+
                     else -> {
 
                     }
@@ -179,11 +168,18 @@ fun App(
             val showActionNext: (Boolean) -> Unit = {
                 showNextAction = it
             }
-
             val onEnabledNextAction: (Boolean) -> Unit = {
                 enableNextAction = it
             }
-
+            val onShowActionBottom: (Boolean) -> Unit = {
+                showBottomAction = it
+            }
+            val onShowSaveAction: (Boolean) -> Unit = {
+                showSaveAction = it
+            }
+            val onEnabledSaveAction: (Boolean) -> Unit = {
+                enableSaveAction = it
+            }
             val onShowAddActionButton: (Boolean) -> Unit = {
                 showAddActionButton = it
             }
@@ -198,6 +194,18 @@ fun App(
                         navigator.navigate(AppNavigationRoute.SelectBreedScreen.route)
                     }
 
+                    ScreenEnum.SelectBreed -> {
+                        navigator.navigate(AppNavigationRoute.PetDataScreen.route)
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+
+            val onSaveOnClick: () -> Unit = {
+                when (title) {
                     else -> {
 
                     }
@@ -242,12 +250,18 @@ fun App(
                 showActionNavigation = showActionNavigation,
                 showActionAccountOptions = showActionAccountOptions,
                 showAddActionButton = onShowAddActionButton,
+                onShowActionBottom = onShowActionBottom,
                 showActionNext = showActionNext,
                 onEnabledNextAction = onEnabledNextAction,
+                onShowSaveAction = onShowSaveAction,
+                onEnabledSaveAction = onEnabledSaveAction,
                 onSetTitle = onSetTitle
             )
 
             Scaffold(
+                snackbarHost = {
+
+                },
                 floatingActionButton = if (getPlatformName() == PlatformConstants.ANDROID && showAddActionButton) {
                     {
                         FloatingActionButton(
@@ -272,8 +286,6 @@ fun App(
                             showNavigation = showNavigation,
                             showExitCenter = showExitCenter,
                             showButtonAddOnTopBar = showAddActionButton,
-                            showNextAction = showNextAction,
-                            enableNextAction = enableNextAction,
                             titleFontSize = 16.sp,
                             iconSize = 20.dp,
                             appBarHeight = 40.dp,
@@ -281,7 +293,6 @@ fun App(
                             signOffOnClick = signOffOnClick,
                             onExitVet = onExitVet,
                             onBackOnClick = onBackOnClickConfirmation,
-                            onNextOnClick = onNextOnClick,
                             onAddOnClick = onClickAddActionButton
                         )
                     }
@@ -298,83 +309,124 @@ fun App(
                     {}
                 }
             ) { contentPadding ->
-                Box(modifier = Modifier.padding(contentPadding)) {
-                    AppNavigation(
-                        navigator = navigator,
-                        uiStructureProperties = uiStructureProperties,
-                        appViewModel = appViewModel,
-                        splashViewModel = splashViewModel,
-                        loginViewModel = loginViewModel,
-                        signUpViewModel = signUpViewModel,
-                        myVetsViewModel = myVetsViewModel,
-                        addPetViewModel = addPetViewModel,
-                        launchLogin = {
-                            navigator.navigate(
-                                route = AppNavigationRoute.LoginScreen.route, options = NavOptions(
-                                    popUpTo = PopUpTo(
-                                        route = appViewModel.currentScreenRoute,
-                                        inclusive = true,
-                                    ),
+                Box(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(
+                            bottom = if (showBottomAction) {
+                                80.dp
+                            } else {
+                                0.dp
+                            }
+                        )
+                    ) {
+                        AppNavigation(
+                            navigator = navigator,
+                            uiStructureProperties = uiStructureProperties,
+                            appViewModel = appViewModel,
+                            splashViewModel = splashViewModel,
+                            loginViewModel = loginViewModel,
+                            signUpViewModel = signUpViewModel,
+                            myVetsViewModel = myVetsViewModel,
+                            addPetViewModel = addPetViewModel,
+                            addCustomerViewModel = addCustomerViewModel,
+                            launchLogin = {
+                                navigator.navigate(
+                                    route = AppNavigationRoute.LoginScreen.route,
+                                    options = NavOptions(
+                                        popUpTo = PopUpTo(
+                                            route = appViewModel.currentScreenRoute,
+                                            inclusive = true,
+                                        ),
+                                    )
                                 )
-                            )
-                        },
-                        launchInitialSetup = {
-                            navigator.navigate(
-                                route = AppNavigationRoute.InitialScreen.route,
-                                options = NavOptions(
-                                    popUpTo = PopUpTo(
-                                        route = appViewModel.currentScreenRoute,
-                                        inclusive = true,
-                                    ),
+                            },
+                            launchInitialSetup = {
+                                navigator.navigate(
+                                    route = AppNavigationRoute.InitialScreen.route,
+                                    options = NavOptions(
+                                        popUpTo = PopUpTo(
+                                            route = appViewModel.currentScreenRoute,
+                                            inclusive = true,
+                                        ),
+                                    )
                                 )
-                            )
-                        },
-                        launchSignUp = {
-                            navigator.navigate(
-                                route = AppNavigationRoute.SignUpScreen.route
-                            )
-                        },
-                        launchMyVets = launchMyVets,
-                        onBack = { navigator.popBackStack() },
-                        onBackShowDialog = onBackShowDialog,
-                        launchHome = {
-                            navigator.navigate(
-                                route = AppNavigationRoute.HomeScreen.route,
-                                options = NavOptions(
-                                    popUpTo = PopUpTo(
-                                        route = appViewModel.currentScreenRoute,
-                                        inclusive = true,
-                                    ),
+                            },
+                            launchSignUp = {
+                                navigator.navigate(
+                                    route = AppNavigationRoute.SignUpScreen.route
                                 )
-                            )
-                        },
-                        loginWithGoogle = loginWithGoogle,
-                        onAdmission = {
-                            navigator.navigate(
-                                route = AppNavigationRoute.AdmissionScreen.route
-                            )
-                        },
-                        onSelectAction = {
-                            when (title) {
-                                ScreenEnum.SelectPet -> {
-                                    navigator.navigate(route = AppNavigationRoute.PetsScreen.route)
+                            },
+                            launchMyVets = launchMyVets,
+                            onBack = { navigator.popBackStack() },
+                            onBackShowDialog = onBackShowDialog,
+                            launchHome = {
+                                navigator.navigate(
+                                    route = AppNavigationRoute.HomeScreen.route,
+                                    options = NavOptions(
+                                        popUpTo = PopUpTo(
+                                            route = appViewModel.currentScreenRoute,
+                                            inclusive = true,
+                                        ),
+                                    )
+                                )
+                            },
+                            loginWithGoogle = loginWithGoogle,
+                            onAdmission = {
+                                navigator.navigate(
+                                    route = AppNavigationRoute.AdmissionScreen.route
+                                )
+                            },
+                            onSelectAction = {
+                                when (title) {
+                                    ScreenEnum.SelectPet -> {
+                                        navigator.navigate(route = AppNavigationRoute.PetsScreen.route)
+                                    }
+
+                                    ScreenEnum.SelectPetType -> {
+                                        navigator.navigate(route = AppNavigationRoute.SpeciesScreen.route)
+                                    }
+
+                                    ScreenEnum.SelectBreed -> {
+                                        navigator.navigate(route = AppNavigationRoute.BreedsScreen.route)
+                                    }
+
+                                    ScreenEnum.PetData -> {
+                                        navigator.navigate(route = AppNavigationRoute.CustomersScreen.route)
+                                    }
+
+                                    else -> {
+
+                                    }
                                 }
 
-                                ScreenEnum.SelectPetType -> {
-                                    navigator.navigate(route = AppNavigationRoute.SpeciesScreen.route)
-                                }
-
-                                ScreenEnum.SelectBreed -> {
-                                    navigator.navigate(route = AppNavigationRoute.BreedsScreen.route)
-                                }
-
-                                else -> {
-
+                            }
+                        )
+                    }
+                    if (showBottomAction) {
+                        Box(Modifier.fillMaxWidth().height(80.dp).align(Alignment.BottomCenter)) {
+                            if (showNextAction) {
+                                Button(
+                                    onClick = onNextOnClick,
+                                    modifier = Modifier.align(Alignment.TopEnd)
+                                        .padding(end = 20.dp),
+                                    enabled = enableNextAction
+                                ) {
+                                    Text(text = stringResource(SharedRes.strings.next))
                                 }
                             }
-
+                            if (showSaveAction) {
+                                Button(
+                                    onClick = onSaveOnClick,
+                                    modifier = Modifier.align(Alignment.TopEnd)
+                                        .padding(end = 20.dp),
+                                    enabled = enableSaveAction
+                                ) {
+                                    Text(text = stringResource(SharedRes.strings.save))
+                                }
+                            }
                         }
-                    )
+                    }
+
                 }
             }
             val showSignOffDialog by appViewModel.showSignOffDialog.collectAsState()
@@ -469,155 +521,6 @@ fun getEmployeePreferencesRepository(dataStore: DataStore<Preferences>): Employe
 }
 
 @Composable
-fun GetSplashViewModel(
-    loginAuthorizationRepository: LoginAuthorizationRepository,
-    employeePreferencesRepository: EmployeePreferencesRepository
-): SplashViewModel {
-    return getViewModel(SplashViewModel.KEY,
-        viewModelFactory {
-            SplashViewModel(
-                isLoginTokenUseCase = IsLoginTokenUseCase(
-                    loginAuthorizationPort = loginAuthorizationRepository
-                ),
-                isSelectedVetUseCase = IsSelectedVetUseCase(
-                    employeePreferencesPort = employeePreferencesRepository
-                )
-            )
-        })
-}
-
-@Composable
-fun GetLoginViewModel(
-    loginAuthorizationRepository: LoginAuthorizationRepository,
-    httpClient: HttpClient
-): LoginViewModel {
-    return getViewModel(
-        LoginViewModel.KEY,
-        viewModelFactory {
-            LoginViewModel(
-                validateEmailAndPasswordUseCase = ValidateEmailAndPasswordUseCase(),
-                doLoginUseCase = DoLoginUseCase(
-                    loginPort = LoginRepository(
-                        httpClient = httpClient
-                    )
-                ),
-                doSocialLoginUseCase = DoSocialLoginUseCase(
-                    socialLoginPort = SocialLoginRepository(
-                        httpClient = httpClient
-                    )
-                ),
-                saveEmailUseCase = SaveEmailUseCase(
-                    loginAuthorizationPort = loginAuthorizationRepository
-                ),
-                saveNameUseCase = SaveNameUseCase(
-                    loginAuthorizationPort = loginAuthorizationRepository
-                ),
-                saveTokenUseCase = SaveTokenUseCase(loginAuthorizationPort = loginAuthorizationRepository)
-            )
-        })
-}
-
-@Composable
-fun GetSignUpViewModel(httpClient: HttpClient): SignUpViewModel {
-    return getViewModel(
-        SignUpViewModel.KEY,
-        viewModelFactory {
-            SignUpViewModel(
-                doRegisterUseCase = DoRegisterUseCase(
-                    signUpPort = SignUpRepository(
-                        httpClient = httpClient
-                    )
-                ),
-                initialsInCapitalLetterUseCase = InitialsInCapitalLetterUseCase(),
-                removeInitialWhiteSpaceUseCase = RemoveInitialWhiteSpaceUseCase(),
-                isOnlyLettersUseCase = IsOnlyLettersUseCase(),
-                isMaxStringSizeUseCase = IsMaxStringSizeUseCase(),
-                validateEmailAndPasswordUseCase = ValidateEmailAndPasswordUseCase(),
-                validateNameUseCase = ValidateNameUseCase()
-            )
-        })
-}
-
-@Composable
-fun GetAppViewModel(
-    loginAuthorizationRepository: LoginAuthorizationRepository,
-    employeePreferencesRepository: EmployeePreferencesRepository
-): AppViewModel {
-    return getViewModel(
-        AppViewModel.KEY,
-        viewModelFactory {
-            AppViewModel(
-                saveEmailUseCase = SaveEmailUseCase(
-                    loginAuthorizationPort =
-                    loginAuthorizationRepository
-                ),
-                saveNameUseCase = SaveNameUseCase(
-                    loginAuthorizationPort = loginAuthorizationRepository
-                ),
-                saveTokenUseCase = SaveTokenUseCase(
-                    loginAuthorizationPort = loginAuthorizationRepository
-                ),
-                saveCenterIdUseCase = SaveCenterIdUseCase(
-                    employeePreferencesPort = employeePreferencesRepository
-                ),
-                saveEmployeeIdUseCase = SaveEmployeeIdUseCase(
-                    employeePreferencesPort = employeePreferencesRepository
-                ),
-                saveRolUseCase = SaveRolUseCase(
-                    employeePreferencesPort = employeePreferencesRepository
-                )
-            )
-        })
-}
-
-@Composable
-fun GetMyVetsViewModel(
-    loginAuthorizationRepository: LoginAuthorizationRepository,
-    employeePreferencesRepository: EmployeePreferencesRepository,
-    httpClient: HttpClient
-): MyVetsViewModel {
-    return getViewModel(
-        MyVetsViewModel.KEY,
-        viewModelFactory {
-            MyVetsViewModel(
-                getTokenUseCase = GetTokenUseCase(loginAuthorizationPort = loginAuthorizationRepository),
-                getEmailUseCase = GetEmailUseCase(loginAuthorizationPort = loginAuthorizationRepository),
-                getEmployeesUseCase = GetEmployeesUseCase(
-                    initialSetupPort = InitialSetupRepository(
-                        httpClient = httpClient
-                    )
-                ),
-                saveCenterIdAndRolUseCase = SaveCenterIdAndRolUseCase(employeePreferencesPort = employeePreferencesRepository)
-            )
-        })
-}
-
-@Composable
-fun GetAddPetViewModel(
-    httpClient: HttpClient,
-    loginAuthorizationRepository: LoginAuthorizationRepository,
-): AddPetViewModel {
-    return getViewModel(
-        AddPetViewModel.KEY,
-        viewModelFactory {
-            AddPetViewModel(
-                getSpeciesUseCase = GetSpeciesUseCase(
-                    speciesPort = SpeciesRepository(
-                        httpClient = httpClient
-                    ),
-                ),
-                getBreedsBySpeciesIdWithPaginationAndSortUseCase = GetBreedsBySpeciesIdWithPaginationAndSortUseCase(
-                    breedPort = BreedRepository(
-                        httpClient = httpClient
-                    )
-                ),
-                getTokenUseCase = GetTokenUseCase(loginAuthorizationPort = loginAuthorizationRepository),
-            )
-        }
-    )
-}
-
-@Composable
 fun getTitle(screenEnum: ScreenEnum): String {
     return when (screenEnum) {
         ScreenEnum.MyVets -> {
@@ -640,7 +543,7 @@ fun getTitle(screenEnum: ScreenEnum): String {
             stringResource(SharedRes.strings.pets)
         }
 
-        ScreenEnum.SelectPetType, ScreenEnum.SelectBreed -> {
+        ScreenEnum.SelectPetType, ScreenEnum.SelectBreed, ScreenEnum.PetData -> {
             stringResource(SharedRes.strings.add_pet)
         }
 
@@ -652,11 +555,18 @@ fun getTitle(screenEnum: ScreenEnum): String {
             stringResource(SharedRes.strings.breeds)
         }
 
+        ScreenEnum.Customers -> {
+            stringResource(SharedRes.strings.customers)
+        }
+
+        ScreenEnum.AddCustomer -> {
+            stringResource(SharedRes.strings.customer_registry)
+        }
+
         else -> {
             ""
         }
     }
 }
-
 
 expect fun getPlatformName(): String

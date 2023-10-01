@@ -12,17 +12,19 @@ import kotlinx.coroutines.launch
 import login.domain.usecase.GetTokenUseCase
 import pet.domain.model.BreedResp
 import pet.domain.model.SpeciesResp
+import pet.domain.usecase.GetBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase
 import pet.domain.usecase.GetBreedsBySpeciesIdWithPaginationAndSortUseCase
 import pet.domain.usecase.GetSpeciesUseCase
 
 class AddPetViewModel(
     private val getSpeciesUseCase: GetSpeciesUseCase,
     private val getBreedsBySpeciesIdWithPaginationAndSortUseCase: GetBreedsBySpeciesIdWithPaginationAndSortUseCase,
+    private val getBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase: GetBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase,
     private val getTokenUseCase: GetTokenUseCase
 ) : ViewModel() {
 
     companion object {
-        const val KEY = "SelectPetTypeViewModel"
+        const val KEY = "AddPetViewModel"
     }
 
     private val _enabledNextAction = MutableStateFlow(false)
@@ -31,9 +33,14 @@ class AddPetViewModel(
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
+    private val _loadingMore = MutableStateFlow(false)
+    val loadingMore: StateFlow<Boolean> = _loadingMore.asStateFlow()
+
     private val _showError = MutableStateFlow(false)
     val showError: StateFlow<Boolean> = _showError.asStateFlow()
 
+    private val _showErrorSnackBar = MutableStateFlow(false)
+    val showErrorSnackBar: StateFlow<Boolean> = _showErrorSnackBar.asStateFlow()
 
     private val _typePets = MutableStateFlow(listOf<SpeciesResp>())
     val typePets: StateFlow<List<SpeciesResp>> = _typePets.asStateFlow()
@@ -53,6 +60,8 @@ class AddPetViewModel(
     val searchText: StateFlow<String> = _searchText.asStateFlow()
 
     var error: ErrorUi? = null
+    var page = 0
+    var limit = 15
 
     fun loadSpeciesData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -69,8 +78,8 @@ class AddPetViewModel(
             val resp = getBreedsBySpeciesIdWithPaginationAndSortUseCase(
                 token = getTokenUseCase(),
                 speciesId = _typePetSelected.value.id,
-                page = 0,
-                limit = 15
+                page = page,
+                limit = limit
             )
             processBreedResult(resp)
             _loading.value = false
@@ -94,6 +103,36 @@ class AddPetViewModel(
         } else {
             error = ErrorUi(result.error, result.errorCode)
             _showError.value = true
+        }
+    }
+
+    private fun processMoreBreedResult(result: Resp<List<BreedResp>>) {
+        if (result.isValid) {
+            val response = result.data!!
+            if (response.isNotEmpty()) {
+                val list = arrayListOf<BreedResp>()
+                for (breed in _breeds.value) {
+                    list.add(breed)
+                }
+                for (breed in response) {
+                    list.add(breed)
+                }
+                page += 1
+                _breeds.value = list
+            }
+        } else {
+            error = ErrorUi(result.error, result.errorCode)
+            _showErrorSnackBar.value = true
+        }
+    }
+
+    private fun processSearchBreedResult(result: Resp<List<BreedResp>>) {
+        if (result.isValid) {
+            val response = result.data!!
+            _breeds.value = response
+        } else {
+            error = ErrorUi(result.error, result.errorCode)
+            _showErrorSnackBar.value = true
         }
     }
 
@@ -130,7 +169,66 @@ class AddPetViewModel(
         _enabledNextAction.value = _breedSelected.value.id != -1
     }
 
-    fun onValueSearchBreed(value:String){
+    fun onValueSearchBreed(value: String) {
+        if (value.length > 2 || _searchText.value.length == 3) {
+            viewModelScope.launch(Dispatchers.IO) {
+                page = 0
+                val resp = if (value.length < 3) {
+                    getBreedsBySpeciesIdWithPaginationAndSortUseCase(
+                        token = getTokenUseCase(),
+                        speciesId = _typePetSelected.value.id,
+                        page = page,
+                        limit = limit
+                    )
+                } else {
+                    getBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase(
+                        token = getTokenUseCase(),
+                        speciesId = _typePetSelected.value.id,
+                        name = value,
+                        page = page,
+                        limit = limit
+                    )
+                }
+                processSearchBreedResult(resp)
+            }
+        }
         _searchText.value = value
     }
+
+
+    fun onLoadMoreBreedData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loadingMore.value = true
+            val p = page + 1
+            val resp = if (_searchText.value.isEmpty()) {
+                getBreedsBySpeciesIdWithPaginationAndSortUseCase(
+                    token = getTokenUseCase(),
+                    speciesId = _typePetSelected.value.id,
+                    page = p,
+                    limit = limit
+                )
+            } else {
+                getBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase(
+                    token = getTokenUseCase(),
+                    speciesId = _typePetSelected.value.id,
+                    name = _searchText.value,
+                    page = p,
+                    limit = limit
+                )
+            }
+            processMoreBreedResult(resp)
+            _loadingMore.value = false
+        }
+    }
+
+    fun resetBreeds() {
+        _breeds.value = mutableListOf()
+        page = 0
+        _searchText.value = ""
+    }
+
+    fun resetShowErrorSnackBar() {
+        _showErrorSnackBar.value = false
+    }
+
 }

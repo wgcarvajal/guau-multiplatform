@@ -1,4 +1,4 @@
-package login.domain.usecase
+package core.domain.usecase
 
 class ValidateEmailAndPasswordUseCase() {
     operator fun invoke(email: String, password: String): Boolean {

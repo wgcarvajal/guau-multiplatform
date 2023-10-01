@@ -5,6 +5,9 @@ import admission.ui.screens.AdmissionScreen
 import admission.ui.screens.SelectPetScreen
 import androidx.compose.runtime.Composable
 import core.ui.model.UiStructureProperties
+import customer.ui.AddCustomerScreen
+import customer.ui.AddCustomerViewModel
+import customer.ui.CustomersScreen
 import home.ui.HomeScreen
 import initialsetup.ui.screens.InitialScreen
 import initialsetup.ui.screens.MyVetsScreen
@@ -17,6 +20,7 @@ import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
 import pet.ui.screens.AddPetViewModel
 import pet.ui.screens.BreedsScreen
+import pet.ui.screens.PetDataScreen
 import pet.ui.screens.PetsScreen
 import pet.ui.screens.SelectBreedScreen
 import pet.ui.screens.SelectPetTypeScreen
@@ -34,6 +38,7 @@ fun AppNavigation(
     signUpViewModel: SignUpViewModel,
     myVetsViewModel: MyVetsViewModel,
     addPetViewModel: AddPetViewModel,
+    addCustomerViewModel: AddCustomerViewModel,
     launchLogin: () -> Unit,
     launchInitialSetup: () -> Unit,
     launchSignUp: () -> Unit,
@@ -160,6 +165,29 @@ fun AppNavigation(
                 onBackOnClick = onBack
             )
         }
+        scene(route = AppNavigationRoute.PetDataScreen.route)
+        {
+            PetDataScreen(
+                uiStructureProperties = uiStructureProperties,
+                addPetViewModel = addPetViewModel,
+                selectOnClick = onSelectAction
+            )
+        }
 
+        scene(route = AppNavigationRoute.CustomersScreen.route)
+        {
+            CustomersScreen(
+                uiStructureProperties = uiStructureProperties
+            )
+        }
+
+        scene(route = AppNavigationRoute.AddCustomerScreen.route)
+        {
+            AddCustomerScreen(
+                uiStructureProperties = uiStructureProperties,
+                addCustomerViewModel = addCustomerViewModel,
+                onBackOnClick = onBack
+            )
+        }
     }
 }

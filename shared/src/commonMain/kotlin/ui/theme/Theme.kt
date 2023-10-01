@@ -9,7 +9,11 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40,
     primaryContainer = Green100,
-    onPrimaryContainer = Green100
+    onPrimaryContainer = Green100,
+    background = Background,
+    onSurface = OnSurface,
+    outline = Outline,
+    onSurfaceVariant = OnSurfaceVariant
 )
 
 

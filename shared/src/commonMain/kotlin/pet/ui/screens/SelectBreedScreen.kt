@@ -36,8 +36,9 @@ fun SelectBreedScreen(
         uiStructureProperties.onSetTitle(ScreenEnum.SelectBreed)
         uiStructureProperties.showAddActionButton(false)
         uiStructureProperties.showActionAccountOptions(false)
+        uiStructureProperties.onShowActionBottom(true)
         uiStructureProperties.showActionNext(true)
-
+        uiStructureProperties.onShowSaveAction(false)
     }
     val enabledNextAction by addPetViewModel.enabledNextAction.collectAsState()
     LaunchedEffect(key1 = enabledNextAction) {
