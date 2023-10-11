@@ -33,6 +33,9 @@
     <string name="are_you_sure_you_want_to_exit_the_application">Are you sure you want to exit the
         application?
     </string>
+    <string name="are_you_sure_you_want_to_cancel_the_registration_process">Are you sure you want to
+        cancel the registration process?
+    </string>
     <string name="you_do_not_have_any_veterinary_created">You do not have any veterinary created,
         start by creating one
     </string>
@@ -45,14 +48,17 @@
     <string name="dog">Dog</string>
     <string name="cat">Cat</string>
     <string name="other">Other</string>
-    <string name="pet_kind">Pet Kinds</string>
+    <string name="pet_kinds">Pet Kinds</string>
+    <string name="pet_kind">Pet Kind</string>
     <string name="breeds">Breeds</string>
+    <string name="breed">Breed</string>
     <string name="select_kind_pet">Select pet kind</string>
-    <string name="one_of_five">(1 of 5)</string>
+    <string name="one_of_four">(1 of 4)</string>
     <string name="select_breed">Select breed</string>
-    <string name="two_of_five">(2 of 5)</string>
+    <string name="two_of_four">(2 of 4)</string>
     <string name="pet_data">Pet data</string>
-    <string name="three_of_five">(3 of 5)</string>
+    <string name="three_of_four">(3 of 4)</string>
+    <string name="four_of_four">(4 of 4)</string>
     <string name="search_breed">Search breed</string>
     <string name="hide">Hide</string>
     <string name="next">Next</string>
@@ -70,4 +76,13 @@
     <string name="customer_registry">Customer registry</string>
     <string name="phone">Phone</string>
     <string name="address">Address</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="unknown">Unknown</string>
+    <string name="summary">Summary</string>
+    <string name="age">Age</string>
+    <string name="year_string">year</string>
+    <string name="years_string">years</string>
+    <string name="month_string">month</string>
+    <string name="months_string">months</string>
 </resources>

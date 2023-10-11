@@ -5,6 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.carpisoft.guau.SharedRes
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun OneButtonDialog(
@@ -17,7 +19,7 @@ fun OneButtonDialog(
             text = { Text(text = message, color = Color.Black) },
             confirmButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text(text = "OK", color = Color.Black)
+                    Text(text = stringResource(SharedRes.strings.ok), color = Color.Black)
                 }
             }
         )

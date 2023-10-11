@@ -68,7 +68,7 @@ class MyVetsViewModel(
                 _list.value = response
             }
         } else {
-            error = ErrorUi(result.error, result.errorCode)
+            error = ErrorUi(error= result.error, code=result.errorCode)
             _showError.value = true
         }
     }

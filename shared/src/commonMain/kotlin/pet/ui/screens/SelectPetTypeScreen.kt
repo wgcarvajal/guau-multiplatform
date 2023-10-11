@@ -21,13 +21,19 @@ import core.ui.constants.ScreenEnum
 import core.ui.model.UiStructureProperties
 import core.ui.screens.itemlist.ItemWithRemove
 import dev.icerock.moko.resources.compose.stringResource
+import moe.tlaster.precompose.navigation.BackHandler
 
 @Composable
 fun SelectPetTypeScreen(
     uiStructureProperties: UiStructureProperties,
     addPetViewModel: AddPetViewModel,
-    selectOnClick: () -> Unit
+    selectOnClick: () -> Unit,
+    onBackOnClick: ()->Unit
 ) {
+
+    BackHandler {
+        onBackOnClick()
+    }
     LaunchedEffect(key1 = 1) {
         uiStructureProperties.onShowTopBar(true)
         uiStructureProperties.onShowBottomBar(false)
@@ -51,7 +57,7 @@ fun SelectPetTypeScreen(
             modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
             text = "${stringResource(SharedRes.strings.select_kind_pet)} ${
                 stringResource(
-                    SharedRes.strings.one_of_five
+                    SharedRes.strings.one_of_four
                 )
             }",
             fontSize = 14.sp,

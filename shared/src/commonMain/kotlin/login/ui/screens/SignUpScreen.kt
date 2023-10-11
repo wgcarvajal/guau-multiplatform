@@ -39,7 +39,7 @@ fun SignUpScreen(
     signUpViewModel: SignUpViewModel,
     onClickLink: () -> Unit
 ) {
-    LaunchedEffect(key1 = 1){
+    LaunchedEffect(key1 = 1) {
         uiStructureProperties.onShowTopBar(false)
         uiStructureProperties.onShowBottomBar(false)
         uiStructureProperties.showAddActionButton(false)
@@ -103,12 +103,7 @@ fun SignUpScreen(
     OneButtonDialog(
         show = showErrorDialog,
         message = GetMessageErrorUseCase(
-            signUpViewModel.error ?: ErrorUi(),
-            if (signUpViewModel.error != null && signUpViewModel.error!!.code != null && signUpViewModel.error!!.code!! == 1062) {
-                stringResource(SharedRes.strings.email)
-            } else {
-                null
-            }
+            signUpViewModel.error ?: ErrorUi()
         ),
         onDismissRequest = { signUpViewModel.dismissErrorDialog() })
 

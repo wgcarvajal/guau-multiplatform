@@ -13,14 +13,12 @@ import core.ui.constants.ScreenEnum
 import core.ui.model.UiStructureProperties
 import core.ui.screens.buttons.GeneralButton
 import dev.icerock.moko.resources.compose.stringResource
-import moe.tlaster.precompose.navigation.BackHandler
 
 
 @Composable
 fun InitialScreen(
     uiStructureProperties: UiStructureProperties,
-    myVetsOnClick: () -> Unit,
-    onBack: () -> Unit
+    myVetsOnClick: () -> Unit
 ) {
     LaunchedEffect(key1 = 1) {
         uiStructureProperties.onShowTopBar(true)
@@ -29,10 +27,6 @@ fun InitialScreen(
         uiStructureProperties.onShowExitCenter(false)
         uiStructureProperties.showAddActionButton(false)
         uiStructureProperties.onSetTitle(ScreenEnum.Initial)
-    }
-
-    BackHandler {
-        onBack()
     }
     ScreenPortrait(myVetsOnClick = myVetsOnClick)
 }

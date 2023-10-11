@@ -9,12 +9,18 @@ import core.domain.usecase.RemoveInitialWhiteSpaceUseCase
 import core.domain.usecase.ValidateEmailAndPasswordUseCase
 import core.domain.usecase.ValidateEmailUseCase
 import core.domain.usecase.ValidateNameUseCase
+import customer.data.network.repository.CustomerRepository
 import customer.data.network.repository.IdentificationTypeRepository
 import customer.domain.usecase.GetAllIdentificationTypeUseCase
+import customer.domain.usecase.GetCustomersByCenterIdAndNameWithPaginationAndSortUseCase
+import customer.domain.usecase.GetCustomersByCenterIdWithPaginationAndSortUseCase
+import customer.domain.usecase.SaveCustomerUseCase
 import customer.ui.AddCustomerViewModel
+import customer.ui.CustomerViewModel
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 import employee.data.repository.EmployeePreferencesRepository
+import employee.domain.usecase.GetCenterIdUseCase
 import employee.domain.usecase.SaveCenterIdUseCase
 import employee.domain.usecase.SaveEmployeeIdUseCase
 import employee.domain.usecase.SaveRolUseCase
@@ -38,10 +44,14 @@ import login.domain.usecase.SaveTokenUseCase
 import login.ui.screens.LoginViewModel
 import login.ui.screens.SignUpViewModel
 import pet.data.network.repository.BreedRepository
+import pet.data.network.repository.GenderRepository
+import pet.data.network.repository.PetRepository
 import pet.data.network.repository.SpeciesRepository
 import pet.domain.usecase.GetBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase
 import pet.domain.usecase.GetBreedsBySpeciesIdWithPaginationAndSortUseCase
+import pet.domain.usecase.GetGendersUseCase
 import pet.domain.usecase.GetSpeciesUseCase
+import pet.domain.usecase.SavePetUseCase
 import pet.ui.screens.AddPetViewModel
 import splash.domain.usecase.IsLoginTokenUseCase
 import splash.domain.usecase.IsSelectedVetUseCase
@@ -200,6 +210,13 @@ fun GetAddPetViewModel(
                     )
                 ),
                 getTokenUseCase = GetTokenUseCase(loginAuthorizationPort = loginAuthorizationRepository),
+                getGendersUseCase = GetGendersUseCase(genderPort = GenderRepository(httpClient = httpClient)),
+                isOnlyLettersUseCase = IsOnlyLettersUseCase(),
+                isMaxStringSizeUseCase = IsMaxStringSizeUseCase(),
+                removeInitialWhiteSpaceUseCase = RemoveInitialWhiteSpaceUseCase(),
+                initialsInCapitalLetterUseCase = InitialsInCapitalLetterUseCase(),
+                validateNameUseCase = ValidateNameUseCase(),
+                savePetUseCase = SavePetUseCase(petPort = PetRepository(httpClient = httpClient))
             )
         }
     )
@@ -210,6 +227,7 @@ fun GetAddPetViewModel(
 fun GetAddCustomerViewModel(
     httpClient: HttpClient,
     loginAuthorizationRepository: LoginAuthorizationRepository,
+    employeePreferencesRepository: EmployeePreferencesRepository
 ): AddCustomerViewModel {
     return getViewModel(
         AddCustomerViewModel.KEY,
@@ -225,7 +243,40 @@ fun GetAddCustomerViewModel(
                 initialsInCapitalLetterUseCase = InitialsInCapitalLetterUseCase(),
                 removeInitialWhiteSpaceUseCase = RemoveInitialWhiteSpaceUseCase(),
                 validateNameUseCase = ValidateNameUseCase(),
-                validateEmailUseCase = ValidateEmailUseCase()
+                validateEmailUseCase = ValidateEmailUseCase(),
+                saveCustomerUseCase = SaveCustomerUseCase(
+                    customerPort = CustomerRepository(
+                        httpClient = httpClient
+                    )
+                ),
+                getCenterIdUseCase = GetCenterIdUseCase(employeePreferencesPort = employeePreferencesRepository)
+            )
+        }
+    )
+}
+
+@Composable
+fun GetCustomerViewModel(
+    httpClient: HttpClient,
+    loginAuthorizationRepository: LoginAuthorizationRepository,
+    employeePreferencesRepository: EmployeePreferencesRepository
+): CustomerViewModel {
+    return getViewModel(
+        CustomerViewModel.KEY,
+        viewModelFactory {
+            CustomerViewModel(
+                getTokenUseCase = GetTokenUseCase(loginAuthorizationPort = loginAuthorizationRepository),
+                getCenterIdUseCase = GetCenterIdUseCase(employeePreferencesPort = employeePreferencesRepository),
+                getCustomersByCenterIdAndNameWithPaginationAndSortUseCase = GetCustomersByCenterIdAndNameWithPaginationAndSortUseCase(
+                    customerPort = CustomerRepository(
+                        httpClient = httpClient
+                    )
+                ),
+                getCustomersByCenterIdWithPaginationAndSortUseCase = GetCustomersByCenterIdWithPaginationAndSortUseCase(
+                    customerPort = CustomerRepository(
+                        httpClient = httpClient
+                    )
+                )
             )
         }
     )

@@ -25,6 +25,6 @@ open class BreedRepositoryHelper {
             }
             data = breedsResp
         }
-        return Resp(response.isValid, response.error, response.errorCode, data)
+        return Resp(response.isValid, response.error, response.param,response.errorCode, data)
     }
 }

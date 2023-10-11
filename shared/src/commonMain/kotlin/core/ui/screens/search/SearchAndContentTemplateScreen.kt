@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -29,22 +31,29 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import core.ui.screens.collection.InfiniteGridHandler
+import core.ui.screens.collection.InfiniteListHandler
 import core.ui.screens.loading.CustomLoading
+import core.utils.constants.PlatformConstants
+import getPlatformName
 import ui.theme.BackgroundHead
+import ui.theme.Green100
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchAndContentTemplateScreen(
     title: String,
-    gridState: LazyGridState,
+    gridState: LazyGridState? = null,
+    listState: LazyListState? = null,
     searchText: String,
     activeSearch: Boolean,
     loadingMore: Boolean,
+    showAdd:Boolean = false,
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager,
     onLoadMore: () -> Unit,
     onBackOnClick: () -> Unit,
     searchOnClick: () -> Unit,
+    addOnClick: () -> Unit = {},
     onValueChange: (String) -> Unit,
     onEmptyOnClick: () -> Unit,
     onCloseOnClick: () -> Unit,
@@ -64,7 +73,7 @@ fun SearchAndContentTemplateScreen(
                 IconButton(
                     onClick = onBackOnClick, colors = IconButtonDefaults.iconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = Color.Blue,
+                        contentColor = Green100,
                         disabledContainerColor = Color.Transparent,
                         disabledContentColor = Color.Gray
                     )
@@ -94,6 +103,22 @@ fun SearchAndContentTemplateScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
+                        if(getPlatformName() == PlatformConstants.IOS && showAdd){
+                            IconButton(
+                                onClick = addOnClick, colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = Color.Gray,
+                                    disabledContainerColor = Color.Transparent,
+                                    disabledContentColor = Color.Gray
+                                )
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = ""
+                                )
+                            }
+                        }
                         IconButton(
                             onClick = searchOnClick, colors = IconButtonDefaults.iconButtonColors(
                                 containerColor = Color.Transparent,
@@ -137,9 +162,18 @@ fun SearchAndContentTemplateScreen(
                 modifier = Modifier.fillMaxWidth().height(40.dp).align(Alignment.BottomCenter)
             )
         }
-        InfiniteGridHandler(
-            gridState = gridState,
-            onLoadMore = onLoadMore
-        )
+        if(gridState!=null) {
+            InfiniteGridHandler(
+                gridState = gridState,
+                onLoadMore = onLoadMore
+            )
+        }
+
+        if(listState!=null){
+            InfiniteListHandler(
+                listState = listState,
+                onLoadMore = onLoadMore
+            )
+        }
     }
 }

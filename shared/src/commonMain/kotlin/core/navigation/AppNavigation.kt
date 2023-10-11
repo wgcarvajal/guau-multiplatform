@@ -4,9 +4,11 @@ import SplashScreen
 import admission.ui.screens.AdmissionScreen
 import admission.ui.screens.SelectPetScreen
 import androidx.compose.runtime.Composable
+import core.ui.constants.ScreenEnum
 import core.ui.model.UiStructureProperties
 import customer.ui.AddCustomerScreen
 import customer.ui.AddCustomerViewModel
+import customer.ui.CustomerViewModel
 import customer.ui.CustomersScreen
 import home.ui.HomeScreen
 import initialsetup.ui.screens.InitialScreen
@@ -18,6 +20,7 @@ import login.ui.screens.SignUpScreen
 import login.ui.screens.SignUpViewModel
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.path
 import pet.ui.screens.AddPetViewModel
 import pet.ui.screens.BreedsScreen
 import pet.ui.screens.PetDataScreen
@@ -25,6 +28,7 @@ import pet.ui.screens.PetsScreen
 import pet.ui.screens.SelectBreedScreen
 import pet.ui.screens.SelectPetTypeScreen
 import pet.ui.screens.SpeciesScreens
+import pet.ui.screens.SummaryPetScreen
 import splash.ui.screens.SplashViewModel
 import ui.AppViewModel
 
@@ -39,16 +43,18 @@ fun AppNavigation(
     myVetsViewModel: MyVetsViewModel,
     addPetViewModel: AddPetViewModel,
     addCustomerViewModel: AddCustomerViewModel,
+    customerViewModel: CustomerViewModel,
     launchLogin: () -> Unit,
     launchInitialSetup: () -> Unit,
     launchSignUp: () -> Unit,
     launchMyVets: () -> Unit,
     onBack: () -> Unit,
-    onBackShowDialog: () -> Unit,
     launchHome: () -> Unit,
     loginWithGoogle: () -> Unit,
     onAdmission: () -> Unit,
-    onSelectAction: () -> Unit
+    onSelectAction: () -> Unit,
+    addOnClick: () -> Unit,
+    onSaveSuccess:()->Unit,
 ) {
     NavHost(
         navigator = navigator,
@@ -89,8 +95,7 @@ fun AppNavigation(
             appViewModel.currentScreenRoute = AppNavigationRoute.InitialScreen.route
             InitialScreen(
                 uiStructureProperties = uiStructureProperties,
-                myVetsOnClick = launchMyVets,
-                onBack = onBackShowDialog
+                myVetsOnClick = launchMyVets
             )
         }
 
@@ -136,7 +141,8 @@ fun AppNavigation(
             SelectPetTypeScreen(
                 uiStructureProperties = uiStructureProperties,
                 addPetViewModel = addPetViewModel,
-                selectOnClick = onSelectAction
+                selectOnClick = onSelectAction,
+                onBackOnClick = onBack
             )
         }
 
@@ -170,14 +176,34 @@ fun AppNavigation(
             PetDataScreen(
                 uiStructureProperties = uiStructureProperties,
                 addPetViewModel = addPetViewModel,
-                selectOnClick = onSelectAction
+                selectOnClick = onSelectAction,
+                onBackOnClick = onBack
             )
         }
 
         scene(route = AppNavigationRoute.CustomersScreen.route)
-        {
+        { backStackEntry ->
+            val caller: String? = backStackEntry.path("caller")
+
             CustomersScreen(
-                uiStructureProperties = uiStructureProperties
+                uiStructureProperties = uiStructureProperties,
+                customerViewModel = customerViewModel,
+                onBackOnClick = onBack,
+                onSelectCustomer = caller?.let {
+                    when (it) {
+                        "${ScreenEnum.PetData}" -> {
+                            { customer ->
+                                addPetViewModel.selectedCustomer(customer)
+                                onBack()
+                            }
+                        }
+
+                        else -> {
+                            null
+                        }
+                    }
+                },
+                addOnClick = addOnClick
             )
         }
 
@@ -187,6 +213,15 @@ fun AppNavigation(
                 uiStructureProperties = uiStructureProperties,
                 addCustomerViewModel = addCustomerViewModel,
                 onBackOnClick = onBack
+            )
+        }
+
+        scene(route = AppNavigationRoute.SummaryPetScreen.route)
+        {
+            SummaryPetScreen(
+                uiStructureProperties = uiStructureProperties,
+                addPetViewModel = addPetViewModel,
+                onSaveSuccess = onSaveSuccess
             )
         }
     }

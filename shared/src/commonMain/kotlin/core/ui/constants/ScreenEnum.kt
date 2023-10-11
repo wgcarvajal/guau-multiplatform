@@ -16,5 +16,6 @@ enum class ScreenEnum {
     Breeds,
     PetData,
     Customers,
-    AddCustomer
+    AddCustomer,
+    SummaryPet
 }

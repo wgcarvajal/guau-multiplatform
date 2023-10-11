@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.carpisoft.guau.SharedRes
@@ -22,12 +25,15 @@ import core.domain.usecase.GetMessageErrorUseCase
 import core.ui.constants.ScreenEnum
 import core.ui.model.ErrorUi
 import core.ui.model.UiStructureProperties
+import core.ui.screens.dialogs.OneButtonDialog
 import core.ui.screens.dialogs.TwoButtonDialog
 import core.ui.screens.loading.SimpleLoading
+import core.ui.screens.snackbars.DecoupledSnackBar
 import core.ui.screens.textfields.SimpleSelectMenu
 import core.ui.screens.textfields.SimpleTextField
 import customer.domain.model.IdentificationTypeResp
 import dev.icerock.moko.resources.compose.stringResource
+import moe.tlaster.precompose.navigation.BackHandler
 
 @Composable
 fun AddCustomerScreen(
@@ -35,6 +41,9 @@ fun AddCustomerScreen(
     addCustomerViewModel: AddCustomerViewModel,
     onBackOnClick: () -> Unit
 ) {
+    BackHandler {
+        onBackOnClick()
+    }
     LaunchedEffect(key1 = 1) {
         uiStructureProperties.onShowTopBar(true)
         uiStructureProperties.onShowBottomBar(false)
@@ -167,7 +176,39 @@ fun AddCustomerScreen(
             onBackOnClick()
         })
 
+    val showSuccessDialog by addCustomerViewModel.showSuccessDialog.collectAsState()
+    OneButtonDialog(
+        show = showSuccessDialog,
+        message = stringResource(SharedRes.strings.successful_registration),
+        onDismissRequest = {
+            addCustomerViewModel.dismissSuccessDialog()
+            onBackOnClick()
+        })
+
     LaunchedEffect(key1 = 1) {
         addCustomerViewModel.loadIdentificationTypeData()
+    }
+
+
+    val snackBarHostState = remember { SnackbarHostState() }
+    DecoupledSnackBar(
+        snackBarHostState = snackBarHostState,
+        containerColor = Color.Red,
+        messageColor = Color.White,
+        actionColor = Color.White
+    )
+
+    val showErrorSnackBar by addCustomerViewModel.showErrorSnackBar.collectAsState()
+    val errorMessage = GetMessageErrorUseCase(errorUi = addCustomerViewModel.getErrorUi() ?: ErrorUi())
+    val actionLabel = stringResource(SharedRes.strings.hide)
+    LaunchedEffect(key1 = showErrorSnackBar) {
+        if (showErrorSnackBar) {
+            snackBarHostState.showSnackbar(
+                message = errorMessage,
+                actionLabel = actionLabel,
+                duration = SnackbarDuration.Short
+            )
+            addCustomerViewModel.resetShowErrorSnackBar()
+        }
     }
 }

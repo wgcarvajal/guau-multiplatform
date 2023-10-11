@@ -51,7 +51,7 @@ fun SelectBreedScreen(
             modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
             text = "${stringResource(SharedRes.strings.select_breed)} ${
                 stringResource(
-                    SharedRes.strings.two_of_five
+                    SharedRes.strings.two_of_four
                 )
             }",
             fontSize = 14.sp,
@@ -84,4 +84,5 @@ fun SelectBreedScreen(
     LaunchedEffect(key1 = 1) {
         addPetViewModel.evaluateBreedSelected()
     }
+
 }

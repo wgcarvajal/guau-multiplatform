@@ -39,6 +39,7 @@ import core.ui.screens.header.HeadScaffold
 import core.ui.screens.viewmodels.GetAddCustomerViewModel
 import core.ui.screens.viewmodels.GetAddPetViewModel
 import core.ui.screens.viewmodels.GetAppViewModel
+import core.ui.screens.viewmodels.GetCustomerViewModel
 import core.ui.screens.viewmodels.GetLoginViewModel
 import core.ui.screens.viewmodels.GetMyVetsViewModel
 import core.ui.screens.viewmodels.GetSignUpViewModel
@@ -55,6 +56,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import login.data.repository.LoginAuthorizationRepository
+import moe.tlaster.precompose.navigation.BackHandler
 import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.PopUpTo
 import moe.tlaster.precompose.navigation.rememberNavigator
@@ -115,10 +117,18 @@ fun App(
 
             val addCustomerViewModel = GetAddCustomerViewModel(
                 httpClient = httpClient,
-                loginAuthorizationRepository = loginAuthorizationRepository
+                loginAuthorizationRepository = loginAuthorizationRepository,
+                employeePreferencesRepository = employeePreferencesRepository
+            )
+
+            val customerViewModel = GetCustomerViewModel(
+                httpClient = httpClient,
+                loginAuthorizationRepository = loginAuthorizationRepository,
+                employeePreferencesRepository = employeePreferencesRepository
             )
 
             var showExitAlertDialog by rememberSaveable { mutableStateOf(false) }
+            var showCancelProcessDialog by rememberSaveable { mutableStateOf(false) }
             val title by appViewModel.title.collectAsState()
             var showNavigation by rememberSaveable { mutableStateOf(false) }
             var showAccountOptions by rememberSaveable { mutableStateOf(false) }
@@ -184,9 +194,23 @@ fun App(
                 showAddActionButton = it
             }
 
-            val onBackOnClickConfirmation: () -> Unit = {
-                navigator.popBackStack()
+            val onBack: () -> Unit = {
+                when (title) {
+                    ScreenEnum.SelectPetType -> {
+                        showCancelProcessDialog = true
+                    }
+
+                    ScreenEnum.AddCustomer -> {
+                        addCustomerViewModel.emptyValues()
+                        navigator.popBackStack()
+                    }
+
+                    else -> {
+                        navigator.popBackStack()
+                    }
+                }
             }
+
 
             val onNextOnClick: () -> Unit = {
                 when (title) {
@@ -198,6 +222,10 @@ fun App(
                         navigator.navigate(AppNavigationRoute.PetDataScreen.route)
                     }
 
+                    ScreenEnum.PetData -> {
+                        navigator.navigate(AppNavigationRoute.SummaryPetScreen.route)
+                    }
+
                     else -> {
 
                     }
@@ -206,6 +234,33 @@ fun App(
 
             val onSaveOnClick: () -> Unit = {
                 when (title) {
+                    ScreenEnum.AddCustomer -> {
+                        addCustomerViewModel.save()
+                    }
+
+                    ScreenEnum.SummaryPet -> {
+                        addPetViewModel.save()
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+
+            val onSaveSuccess: () -> Unit = {
+                when (title) {
+                    ScreenEnum.SummaryPet -> {
+                        navigator.navigate(
+                            route = AppNavigationRoute.PetsScreen.route, options = NavOptions(
+                                popUpTo = PopUpTo(
+                                    route = AppNavigationRoute.SelectPetScreen.route,
+                                    inclusive = false,
+                                ),
+                            )
+                        )
+                    }
+
                     else -> {
 
                     }
@@ -235,10 +290,6 @@ fun App(
                 appViewModel.showExitCenterDialog(true)
             }
 
-            val onBackShowDialog: () -> Unit = {
-                showExitAlertDialog = true
-            }
-
             val launchMyVets = {
                 navigator.navigate(AppNavigationRoute.MyVetsScreen.route)
             }
@@ -258,10 +309,11 @@ fun App(
                 onSetTitle = onSetTitle
             )
 
-            Scaffold(
-                snackbarHost = {
+            BackHandler {
+                onBack()
+            }
 
-                },
+            Scaffold(
                 floatingActionButton = if (getPlatformName() == PlatformConstants.ANDROID && showAddActionButton) {
                     {
                         FloatingActionButton(
@@ -292,7 +344,7 @@ fun App(
                             dropdownMenuWidth = 200.dp,
                             signOffOnClick = signOffOnClick,
                             onExitVet = onExitVet,
-                            onBackOnClick = onBackOnClickConfirmation,
+                            onBackOnClick = onBack,
                             onAddOnClick = onClickAddActionButton
                         )
                     }
@@ -329,6 +381,7 @@ fun App(
                             myVetsViewModel = myVetsViewModel,
                             addPetViewModel = addPetViewModel,
                             addCustomerViewModel = addCustomerViewModel,
+                            customerViewModel = customerViewModel,
                             launchLogin = {
                                 navigator.navigate(
                                     route = AppNavigationRoute.LoginScreen.route,
@@ -357,8 +410,7 @@ fun App(
                                 )
                             },
                             launchMyVets = launchMyVets,
-                            onBack = { navigator.popBackStack() },
-                            onBackShowDialog = onBackShowDialog,
+                            onBack = onBack,
                             launchHome = {
                                 navigator.navigate(
                                     route = AppNavigationRoute.HomeScreen.route,
@@ -391,7 +443,11 @@ fun App(
                                     }
 
                                     ScreenEnum.PetData -> {
-                                        navigator.navigate(route = AppNavigationRoute.CustomersScreen.route)
+                                        navigator.navigate(
+                                            route = AppNavigationRoute.CustomersScreen.createRoute(
+                                                "${ScreenEnum.PetData}"
+                                            )
+                                        )
                                     }
 
                                     else -> {
@@ -399,7 +455,9 @@ fun App(
                                     }
                                 }
 
-                            }
+                            },
+                            addOnClick = onClickAddActionButton,
+                            onSaveSuccess = onSaveSuccess
                         )
                     }
                     if (showBottomAction) {
@@ -478,6 +536,27 @@ fun App(
                     showExitAlertDialog = false
                 })
 
+            TwoButtonDialog(
+                show = showCancelProcessDialog,
+                message = stringResource(SharedRes.strings.are_you_sure_you_want_to_cancel_the_registration_process),
+                confirmButtonText = stringResource(SharedRes.strings.ok),
+                cancelButtonText = stringResource(SharedRes.strings.cancel),
+                confirmButton = {
+                    when (title) {
+                        ScreenEnum.SelectPetType -> {
+                            addPetViewModel.emptyValues()
+                        }
+
+                        else -> {
+                        }
+                    }
+                    showCancelProcessDialog = false
+                    navigator.popBackStack()
+                },
+                onDismissRequest = {
+                    showCancelProcessDialog = false
+                })
+
             val showExitCenterDialog by appViewModel.showExitCenterDialog.collectAsState()
             TwoButtonDialog(
                 show = showExitCenterDialog,
@@ -543,12 +622,12 @@ fun getTitle(screenEnum: ScreenEnum): String {
             stringResource(SharedRes.strings.pets)
         }
 
-        ScreenEnum.SelectPetType, ScreenEnum.SelectBreed, ScreenEnum.PetData -> {
+        ScreenEnum.SelectPetType, ScreenEnum.SelectBreed, ScreenEnum.PetData, ScreenEnum.SummaryPet -> {
             stringResource(SharedRes.strings.add_pet)
         }
 
         ScreenEnum.PetTypes -> {
-            stringResource(SharedRes.strings.pet_kind)
+            stringResource(SharedRes.strings.pet_kinds)
         }
 
         ScreenEnum.Breeds -> {

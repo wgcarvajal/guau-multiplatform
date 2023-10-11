@@ -11,7 +11,7 @@ open class LoginRepositoryHelper {
         val loginResponse = response.data
         if (loginResponse != null) {
             return Resp(
-                response.isValid, response.error, response.errorCode,
+                response.isValid, response.error, response.param, response.errorCode,
                 LoginResp(
                     authorization = loginResponse.authorization,
                     email = loginResponse.email,
@@ -19,6 +19,6 @@ open class LoginRepositoryHelper {
                 )
             )
         }
-        return Resp(response.isValid, response.error, response.errorCode, null)
+        return Resp(response.isValid, response.error, response.param, response.errorCode, null)
     }
 }

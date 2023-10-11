@@ -89,7 +89,7 @@ class LoginViewModel(
             _loginEnabled.value = false
             _loginSuccess.value = true
         } else {
-            error = ErrorUi(result.error, result.errorCode)
+            error = ErrorUi(error=result.error, code=result.errorCode)
             _showErrorDialog.value = true
         }
         _isLoading.value = false

@@ -4,6 +4,8 @@ import core.domain.usecase.InitialsInCapitalLetterUseCase
 import core.domain.usecase.IsMaxStringSizeUseCase
 import core.domain.usecase.IsOnlyLettersUseCase
 import core.domain.usecase.RemoveInitialWhiteSpaceUseCase
+import core.domain.usecase.ValidateEmailAndPasswordUseCase
+import core.domain.usecase.ValidateNameUseCase
 import core.ui.model.ErrorUi
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,8 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import login.domain.model.SignUpReq
 import login.domain.usecase.DoRegisterUseCase
-import core.domain.usecase.ValidateEmailAndPasswordUseCase
-import core.domain.usecase.ValidateNameUseCase
 
 
 class SignUpViewModel(
@@ -27,7 +27,7 @@ class SignUpViewModel(
     private val validateNameUseCase: ValidateNameUseCase
 ) : ViewModel() {
 
-    companion object{
+    companion object {
         const val KEY = "SignUpViewModel"
     }
 
@@ -118,7 +118,7 @@ class SignUpViewModel(
                 initValues()
                 _showSuccessDialog.value = true
             } else {
-                error = ErrorUi(result.error, result.errorCode)
+                error = ErrorUi(error = result.error, param = result.param, code = result.errorCode)
                 _showErrorDialog.value = true
             }
             _showLoading.value = false

@@ -8,17 +8,23 @@ import core.utils.constants.Errors
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun GetMessageErrorUseCase(errorUi: ErrorUi, field: String? = null): String {
+fun GetMessageErrorUseCase(errorUi: ErrorUi): String {
     if (errorUi.error != null) {
         return when (errorUi.error) {
             Errors.BAD_CREDENTIALS -> {
                 stringResource(SharedRes.strings.bad_credentials)
             }
             Errors.DUPLICATE_FIELD -> {
-                if (field != null) {
-                    stringResource(SharedRes.strings.field_duplicate_with_field, field.lowercase())
-                } else {
-                    stringResource(SharedRes.strings.field_duplicate)
+                when(errorUi.param){
+                    "user_email_unique", "customer_email_unique"->{
+                        stringResource(SharedRes.strings.field_duplicate_with_field, stringResource(SharedRes.strings.email).lowercase())
+                    }
+                    "customer_identification_unique"->{
+                        stringResource(SharedRes.strings.field_duplicate_with_field, stringResource(SharedRes.strings.identification_number).lowercase())
+                    }
+                    else->{
+                        ""
+                    }
                 }
             }
             Errors.TOKEN_INVALID -> {

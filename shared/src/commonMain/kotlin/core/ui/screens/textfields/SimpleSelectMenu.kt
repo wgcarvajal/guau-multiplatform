@@ -38,7 +38,7 @@ fun SimpleSelectMenu(
     arrowOnClick: () -> Unit,
     onClickItem: (Any) -> Unit,
     onDismissRequest: () -> Unit,
-    getText: (Any) -> String
+    getText: @Composable (Any) -> String
 ) {
 
     var mTextFieldSize by remember { mutableStateOf(Size.Zero) }

@@ -27,9 +27,13 @@ sealed class AppNavigationRoute(val route: String) {
 
     object BreedsScreen : AppNavigationRoute(route = "BreedsScreen")
 
-    object PetDataScreen:AppNavigationRoute(route = "PetDataScreen")
+    object PetDataScreen : AppNavigationRoute(route = "PetDataScreen")
 
-    object CustomersScreen:AppNavigationRoute(route = "CustomersScreen")
+    object CustomersScreen : AppNavigationRoute(route = "CustomersScreen/{caller}") {
+        fun createRoute(caller: String) = "CustomersScreen/$caller"
+    }
 
-    object AddCustomerScreen:AppNavigationRoute(route = "AddCustomerScreen")
+    object AddCustomerScreen : AppNavigationRoute(route = "AddCustomerScreen")
+
+    object SummaryPetScreen : AppNavigationRoute(route = "SummaryPetScreen")
 }

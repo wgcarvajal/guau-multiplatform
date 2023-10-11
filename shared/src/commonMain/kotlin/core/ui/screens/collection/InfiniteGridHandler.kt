@@ -21,7 +21,6 @@ fun InfiniteGridHandler(
             val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
 
             val result = totalItemsNumber > 0 && lastVisibleItemIndex == (totalItemsNumber - buffer)
-            println("totalItemsNumber: $totalItemsNumber lastVisibleItemIndex: $lastVisibleItemIndex result: $result")
             result
         }
     }

@@ -33,6 +33,9 @@
     <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de
         la aplicación?
     </string>
+    <string name="are_you_sure_you_want_to_cancel_the_registration_process">¿Estas seguro que deseas
+        cancelar el proceso de registro?
+    </string>
     <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada,
         inicia creando una
     </string>
@@ -46,19 +49,22 @@
     <string name="dog">Perro</string>
     <string name="cat">Gato</string>
     <string name="other">Otro</string>
-    <string name="pet_kind">Tipos de mascota</string>
+    <string name="pet_kinds">Tipos de mascota</string>
+    <string name="pet_kind">Tipo de mascota</string>
     <string name="breeds">Razas</string>
+    <string name="breed">Raza</string>
     <string name="select_kind_pet">Seleccione tipo de mascota</string>
-    <string name="one_of_five">(1 de 5)</string>
+    <string name="one_of_four">(1 de 4)</string>
     <string name="select_breed">Seleccione raza</string>
-    <string name="two_of_five">(2 de 5)</string>
+    <string name="two_of_four">(2 de 4)</string>
     <string name="pet_data">Datos de mascota</string>
-    <string name="three_of_five">(3 of 5)</string>
+    <string name="three_of_four">(3 de 4)</string>
+    <string name="four_of_four">(4 de 4)</string>
     <string name="search_breed">Buscar raza</string>
     <string name="hide">Ocultar</string>
     <string name="next">Siguiente</string>
     <string name="customer">Cliente</string>
-    <string name="identification_number">Identificación</string>
+    <string name="identification_number">Número de identificación</string>
     <string name="identification_type">Tipo de identificación</string>
     <string name="pet">Mascota</string>
     <string name="description">Descripción</string>
@@ -71,4 +77,13 @@
     <string name="customer_registry">Registrar Cliente</string>
     <string name="phone">Teléfono</string>
     <string name="address">Dirección</string>
+    <string name="male">Macho</string>
+    <string name="female">Hembra</string>
+    <string name="unknown">Desconocido</string>
+    <string name="summary">Resumen</string>
+    <string name="age">Edad</string>
+    <string name="year_string">año</string>
+    <string name="years_string">años</string>
+    <string name="month_string">mes</string>
+    <string name="months_string">meses</string>
 </resources>

@@ -33,6 +33,11 @@ open class InitialSetupRepositoryHelper {
 
             data = employeesResp
         }
-        return Resp(response.isValid, response.error, response.errorCode, data)
+        return Resp(
+            isValid = response.isValid,
+            error = response.error,
+            errorCode = response.errorCode,
+            data = data
+        )
     }
 }

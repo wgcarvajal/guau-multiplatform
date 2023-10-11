@@ -6,6 +6,6 @@ import customer.domain.model.IdentificationTypeResp
 interface IdentificationTypePort {
 
     suspend fun getAllIdentificationType(
-        token: String,
+        token: String
     ): Resp<List<IdentificationTypeResp>>
 }

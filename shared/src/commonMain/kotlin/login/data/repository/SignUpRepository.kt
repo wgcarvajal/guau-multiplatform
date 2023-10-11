@@ -36,13 +36,13 @@ class SignUpRepository(private val httpClient: HttpClient) : SignUpPort {
             } else {
                 val errorBody = response.body<ResponseError>()
                 println("message $errorBody")
-                Response(isValid = false, error = errorBody.message, errorCode = errorBody.errorCode)
+                Response(isValid = false, error = errorBody.message,param=errorBody.param, errorCode = errorBody.errorCode)
             }
 
         } catch (e: Exception) {
             println("message= $e")
             Response(isValid = false, error = e.message?:"")
         }
-        return Resp(resp.isValid, resp.error, resp.errorCode, null)
+        return Resp(resp.isValid, resp.error, resp.param,resp.errorCode, null)
     }
 }

@@ -35,7 +35,7 @@ kotlin {
                 api("dev.icerock.moko:resources:0.23.0")
                 api("dev.icerock.moko:resources-compose:0.23.0")
 
-                api("moe.tlaster:precompose:1.5.2")
+                api("moe.tlaster:precompose:1.5.4")
 
                 api("dev.icerock.moko:mvvm-core:0.16.1")
                 api("dev.icerock.moko:mvvm-compose:0.16.1")

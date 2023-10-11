@@ -9,9 +9,13 @@ import core.domain.usecase.RemoveInitialWhiteSpaceUseCase
 import core.domain.usecase.ValidateEmailUseCase
 import core.domain.usecase.ValidateNameUseCase
 import core.ui.model.ErrorUi
+import customer.domain.model.RegisterCustomerReq
+import customer.domain.model.RegisterCustomerResp
 import customer.domain.model.IdentificationTypeResp
 import customer.domain.usecase.GetAllIdentificationTypeUseCase
+import customer.domain.usecase.SaveCustomerUseCase
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import employee.domain.usecase.GetCenterIdUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,8 +33,9 @@ class AddCustomerViewModel(
     private val initialsInCapitalLetterUseCase: InitialsInCapitalLetterUseCase,
     private val removeInitialWhiteSpaceUseCase: RemoveInitialWhiteSpaceUseCase,
     private val validateNameUseCase: ValidateNameUseCase,
-    private val validateEmailUseCase: ValidateEmailUseCase
-
+    private val validateEmailUseCase: ValidateEmailUseCase,
+    private val saveCustomerUseCase: SaveCustomerUseCase,
+    private val getCenterIdUseCase: GetCenterIdUseCase
 ) :
     ViewModel() {
 
@@ -73,6 +78,11 @@ class AddCustomerViewModel(
     private val _enabledSave = MutableStateFlow(false)
     val enabledSave: StateFlow<Boolean> = _enabledSave.asStateFlow()
 
+    private val _showErrorSnackBar = MutableStateFlow(false)
+    val showErrorSnackBar: StateFlow<Boolean> = _showErrorSnackBar.asStateFlow()
+
+    private val _showSuccessDialog = MutableStateFlow(false)
+    val showSuccessDialog: StateFlow<Boolean> = _showSuccessDialog
 
     var error: ErrorUi? = null
 
@@ -100,7 +110,7 @@ class AddCustomerViewModel(
             val response = result.data!!
             _identificationTypes.value = response
         } else {
-            error = ErrorUi(result.error, result.errorCode)
+            error = ErrorUi(error = result.error, code = result.errorCode)
             _showError.value = true
         }
     }
@@ -159,5 +169,68 @@ class AddCustomerViewModel(
                     validateNameUseCase(_name.value) &&
                     validateNameUseCase(_lastName.value) &&
                     (_email.value.isEmpty() || validateEmailUseCase(_email.value))
+    }
+
+    fun save() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _enabledSave.value = false
+            _loading.value = true
+            val resp = saveCustomerUseCase(
+                getTokenUseCase(), RegisterCustomerReq(
+                    center = getCenterIdUseCase().toInt(),
+                    identificationType = _identificationTypeSelected.value.id,
+                    identification = _identificationNumber.value,
+                    name = _name.value,
+                    lastName = _lastName.value,
+                    email = if (_email.value.isEmpty()) {
+                        null
+                    } else {
+                        _email.value
+                    },
+                    address = if (_address.value.isEmpty()) {
+                        null
+                    } else {
+                        _address.value
+                    },
+                    phone = if (_phone.value.isEmpty()) {
+                        null
+                    } else {
+                        _phone.value
+                    }
+                )
+            )
+            processSaveCustomerResult(result = resp)
+            _enabledSave.value = true
+            _loading.value = false
+        }
+    }
+
+    private fun processSaveCustomerResult(result: Resp<RegisterCustomerResp>) {
+        if (result.isValid) {
+            emptyValues()
+            _showSuccessDialog.value = true
+
+        } else {
+            error = ErrorUi(error = result.error, param = result.param, code = result.errorCode)
+            _showErrorSnackBar.value = true
+        }
+    }
+
+    fun emptyValues()
+    {
+        _identificationTypeSelected.value = IdentificationTypeResp(-1, "")
+        _identificationNumber.value = ""
+        _name.value = ""
+        _lastName.value = ""
+        _email.value = ""
+        _address.value = ""
+        _phone.value = ""
+    }
+    fun resetShowErrorSnackBar() {
+        _showErrorSnackBar.value = false
+    }
+
+    fun dismissSuccessDialog() {
+        _showSuccessDialog.value = false
     }
 }
