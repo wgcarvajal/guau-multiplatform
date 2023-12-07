@@ -1,19 +1,20 @@
 import UIKit
 import GoogleSignIn
 import SwiftUI
-import shared
+import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
     var loginWithGoogle:()->Void
     var signOutWithGoogle:()-> Void
     func makeUIViewController(context: Context) -> UIViewController {
-        Main_iosKt.MainViewController(
+        MainViewControllerKt.MainViewController(
             database:CreateDatabase_iosKt.createDatabase(),
             datastore:CreateDataStore_iosKt.createDataStore(),
             loginWithGoogle: loginWithGoogle,
             signOutWithGoogle: signOutWithGoogle
         )
     }
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 

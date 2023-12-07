@@ -1,6 +1,6 @@
 import SwiftUI
 import GoogleSignIn
-import shared
+import ComposeApp
 
 @main
 struct iOSApp: App {
@@ -12,7 +12,6 @@ struct iOSApp: App {
                 ).onOpenURL(perform: { url in
                     GIDSignIn.sharedInstance.handle(url)
                 })
-        
         }
     }
 }
@@ -26,12 +25,12 @@ func loginWithGoogle(){
         }
         if let result = result{
             let user = result.user
-            Main_iosKt.onLoginWithGoogle(token: user.idToken!.tokenString)
+            MainViewControllerKt.onLoginWithGoogle(token: user.idToken!.tokenString)
         }
     }
 }
 
 func signOutWithGoogle(){
     GIDSignIn.sharedInstance.signOut()
-    Main_iosKt.onSignOutWithGoogle()
+    MainViewControllerKt.onSignOutWithGoogle()
 }

@@ -11,8 +11,8 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
-		C8F55B762AB7FC1900557E57 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C8F55B752AB7FC1900557E57 /* GoogleSignIn */; };
-		C8F55B782AB7FC1900557E57 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C8F55B772AB7FC1900557E57 /* GoogleSignInSwift */; };
+		C8E3EE5F2B2282FB00899820 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C8E3EE5E2B2282FB00899820 /* GoogleSignIn */; };
+		C8E3EE612B2282FB00899820 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C8E3EE602B2282FB00899820 /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,12 +26,12 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		F85CB1118929364A9C6EFABC /* Frameworks */ = {
+		C8E3EE5C2B2282DB00899820 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8F55B782AB7FC1900557E57 /* GoogleSignInSwift in Frameworks */,
-				C8F55B762AB7FC1900557E57 /* GoogleSignIn in Frameworks */,
+				C8E3EE5F2B2282FB00899820 /* GoogleSignIn in Frameworks */,
+				C8E3EE612B2282FB00899820 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +60,8 @@
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				42799AB246E5F90AF97AA0EF /* Frameworks */,
+				D10B26EAA8F067B4F9AA2832 /* xcuserdata */,
+				D10B29DAC4D13422CCC0B6A4 /* project.xcworkspace */,
 			);
 			sourceTree = "<group>";
 		};
@@ -91,6 +93,86 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		D10B236C26805D0190F3F945 /* xcschemes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = xcschemes;
+			sourceTree = "<group>";
+		};
+		D10B25374A9BDE38E51BEC72 /* swiftpm */ = {
+			isa = PBXGroup;
+			children = (
+				D10B29DE44BCD1EDCECEE414 /* configuration */,
+			);
+			path = swiftpm;
+			sourceTree = "<group>";
+		};
+		D10B264ACF4740C6505AF2E5 /* xcuserdata */ = {
+			isa = PBXGroup;
+			children = (
+				D10B279214B072CBBE04CDA1 /* wilson.xcuserdatad */,
+			);
+			path = xcuserdata;
+			sourceTree = "<group>";
+		};
+		D10B26EAA8F067B4F9AA2832 /* xcuserdata */ = {
+			isa = PBXGroup;
+			children = (
+				D10B2B20E44705DABEBC4A97 /* wilson.xcuserdatad */,
+			);
+			name = xcuserdata;
+			path = iosApp.xcodeproj/xcuserdata;
+			sourceTree = "<group>";
+		};
+		D10B279214B072CBBE04CDA1 /* wilson.xcuserdatad */ = {
+			isa = PBXGroup;
+			children = (
+				D10B2EFB7D01BACBAE257351 /* xcschemes */,
+			);
+			path = wilson.xcuserdatad;
+			sourceTree = "<group>";
+		};
+		D10B29DAC4D13422CCC0B6A4 /* project.xcworkspace */ = {
+			isa = PBXGroup;
+			children = (
+				D10B2B50D013655232875EB4 /* xcshareddata */,
+				D10B264ACF4740C6505AF2E5 /* xcuserdata */,
+			);
+			name = project.xcworkspace;
+			path = iosApp.xcodeproj/project.xcworkspace;
+			sourceTree = "<group>";
+		};
+		D10B29DE44BCD1EDCECEE414 /* configuration */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = configuration;
+			sourceTree = "<group>";
+		};
+		D10B2B20E44705DABEBC4A97 /* wilson.xcuserdatad */ = {
+			isa = PBXGroup;
+			children = (
+				D10B236C26805D0190F3F945 /* xcschemes */,
+			);
+			path = wilson.xcuserdatad;
+			sourceTree = "<group>";
+		};
+		D10B2B50D013655232875EB4 /* xcshareddata */ = {
+			isa = PBXGroup;
+			children = (
+				D10B25374A9BDE38E51BEC72 /* swiftpm */,
+			);
+			path = xcshareddata;
+			sourceTree = "<group>";
+		};
+		D10B2EFB7D01BACBAE257351 /* xcschemes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = xcschemes;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -98,11 +180,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				C86A6B032ABB327F000C6119 /* Compile Kotlin */,
+				F36B1CEB2AD83DDC00CB74D5 /* Compile Kotlin Framework */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
-				F85CB1118929364A9C6EFABC /* Frameworks */,
-				C826D8622ABBB7B200AF3EE3 /* ShellScript */,
+				C8E3EE5B2B2282AB00899820 /* ShellScript */,
+				C8E3EE5C2B2282DB00899820 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -110,8 +192,8 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
-				C8F55B752AB7FC1900557E57 /* GoogleSignIn */,
-				C8F55B772AB7FC1900557E57 /* GoogleSignInSwift */,
+				C8E3EE5E2B2282FB00899820 /* GoogleSignIn */,
+				C8E3EE602B2282FB00899820 /* GoogleSignInSwift */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* Guau.app */;
@@ -142,7 +224,7 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				C8F55B742AB7FC1900557E57 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				C8E3EE5D2B2282FB00899820 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -166,7 +248,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		C826D8622ABBB7B200AF3EE3 /* ShellScript */ = {
+		C8E3EE5B2B2282AB00899820 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -181,9 +263,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :shared:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
+			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :composeApp:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n\n";
 		};
-		C86A6B032ABB327F000C6119 /* Compile Kotlin */ = {
+		F36B1CEB2AD83DDC00CB74D5 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -192,14 +274,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Compile Kotlin";
+			name = "Compile Kotlin Framework";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -341,11 +423,10 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = V3658G943F;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -355,17 +436,9 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
 					"-lsqlite3",
 					"-framework",
-					shared,
-					"$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
-					"-lsqlite3",
-					"-framework",
-					shared,
+					composeApp,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
 				PRODUCT_NAME = "${APP_NAME}";
@@ -382,11 +455,10 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = V3658G943F;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -396,16 +468,9 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
 					"-lsqlite3",
 					"-framework",
-					"shared\n$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
-					"-lsqlite3",
-					"-framework",
-					"shared\n",
+					composeApp,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
 				PRODUCT_NAME = "${APP_NAME}";
@@ -439,7 +504,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C8F55B742AB7FC1900557E57 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+		C8E3EE5D2B2282FB00899820 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
@@ -450,14 +515,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C8F55B752AB7FC1900557E57 /* GoogleSignIn */ = {
+		C8E3EE5E2B2282FB00899820 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C8F55B742AB7FC1900557E57 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			package = C8E3EE5D2B2282FB00899820 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
 		};
-		C8F55B772AB7FC1900557E57 /* GoogleSignInSwift */ = {
+		C8E3EE602B2282FB00899820 /* GoogleSignInSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C8F55B742AB7FC1900557E57 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			package = C8E3EE5D2B2282FB00899820 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */

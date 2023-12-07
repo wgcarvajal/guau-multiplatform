@@ -1,0 +1,13 @@
+{
+    "backend.maxHeapSizeMb": 2602,
+    "plugins": [
+        {
+            "type": "add",
+            "pluginName": "fleet.kotlin"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.mercury"
+        }
+    ]
+}
