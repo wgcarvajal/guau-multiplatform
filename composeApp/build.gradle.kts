@@ -84,6 +84,8 @@ kotlin {
             dependencies {
                 dependsOn(commonMain)
                 implementation(compose.desktop.currentOs)
+                implementation(libs.ktor.client.apache5)
+                implementation(libs.sqldelight.sqlite)
             }
         }
     }
