@@ -334,7 +334,7 @@ fun App(
                 }
 
                 Scaffold(
-                    floatingActionButton = if (getPlatformName() == PlatformConstants.ANDROID && showAddActionButton) {
+                    floatingActionButton = if ((getPlatformName() == PlatformConstants.ANDROID || getPlatformName() == PlatformConstants.JVM) && showAddActionButton) {
                         {
                             FloatingActionButton(
                                 shape = RoundedCornerShape(50),

@@ -54,8 +54,10 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel-image-version" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor-version" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor-version" }
+ktor-client-apache5 = { module = "io.ktor:ktor-client-apache5", version.ref = "ktor-version" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight-version" }
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight-version" }
+sqldelight-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight-version" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-version" }
 
 [plugins]
