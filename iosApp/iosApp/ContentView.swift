@@ -8,8 +8,6 @@ struct ComposeView: UIViewControllerRepresentable {
     var signOutWithGoogle:()-> Void
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
-            database:CreateDatabase_iosKt.createDatabase(),
-            datastore:CreateDataStore_iosKt.createDataStore(),
             loginWithGoogle: loginWithGoogle,
             signOutWithGoogle: signOutWithGoogle
         )

@@ -1,29 +1,30 @@
 [versions]
-compose = "1.5.4"
-compose-plugin = "1.5.11"
+compose = "1.6.6"
+compose-plugin = "1.6.2"
 compose-compiler = "1.5.5"
-agp = "8.1.4"
+agp = "8.2.0"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
-androidx-activityCompose = "1.8.1"
-androidx-core-ktx = "1.12.0"
+androidx-activityCompose = "1.9.0"
+androidx-core-ktx = "1.13.0"
 androidx-appcompat = "1.6.1"
-androidx-material = "1.10.0"
+androidx-material = "1.11.0"
 androidx-constraintlayout = "2.1.4"
 androidx-test-junit = "1.1.5"
 androidx-espresso-core = "3.5.1"
-kotlin = "1.9.21"
+kotlin = "1.9.23"
 junit = "4.13.2"
 sqldelight-version = "2.0.1"
-icerock-resources-version = "0.23.0"
 icerock-mvvm-version = "0.16.1"
 precompose-version = "1.5.8"
-datastore-preferences-version = "1.1.0-dev01"
-ktor-version = "2.3.6"
+datastore-preferences-version = "1.1.1"
+ktor-version = "2.3.10"
 kotlinx-serialization-json-version = "1.6.2"
 kamel-image-version = "0.9.0"
-play-services-version = "20.7.0"
+play-services-version = "21.1.1"
+koin-version = "3.6.0-wasm-alpha1"
+voyager = "1.0.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -41,8 +42,6 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-icerock-resources = { module = "dev.icerock.moko:resources", name = "icerock-resources", version.ref = "icerock-resources-version" }
-icerock-resources-compose = { module = "dev.icerock.moko:resources-compose", name = "icerock-resources-compose", version.ref = "icerock-resources-version" }
 icerock-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "icerock-mvvm-version" }
 icerock-mvvm-compose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "icerock-mvvm-version" }
 precompose = { module = "moe.tlaster:precompose", version.ref = "precompose-version" }
@@ -59,6 +58,12 @@ sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.re
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight-version" }
 sqldelight-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight-version" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-version" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-version" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-version" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-version" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
