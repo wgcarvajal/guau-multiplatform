@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.carpisoft.guau.core.domain.usecase.GetMessageErrorUseCase
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
@@ -41,6 +43,56 @@ import guau.composeapp.generated.resources.sign_up
 import guau.composeapp.generated.resources.successful_registration
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+
+class SignUpScreen:Screen{
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.current
+        val signUpViewModel:SignUpViewModel = GetSignUpViewModel()
+        val onNameChange: (String) -> Unit = {
+            signUpViewModel.nameChange(it)
+        }
+        val onLastNameChange: (String) -> Unit = {
+            signUpViewModel.lastNameChange(it)
+        }
+        val onEmailChange: (String) -> Unit = {
+            signUpViewModel.emailChange(it)
+        }
+        val onPasswordChange: (String) -> Unit = {
+            signUpViewModel.passwordChange(it)
+        }
+
+        val onClick: () -> Unit = {
+            signUpViewModel.signUp()
+        }
+        val name by signUpViewModel.name.collectAsState()
+        val lastName by signUpViewModel.lastName.collectAsState()
+        val email by signUpViewModel.email.collectAsState()
+        val password by signUpViewModel.password.collectAsState()
+        val enableButton by signUpViewModel.enableButton.collectAsState()
+        val showLoading by signUpViewModel.showLoading.collectAsState()
+        if (showLoading) {
+            SimpleLoading()
+        } else {
+            Screen(
+                name = name,
+                lastName = lastName,
+                email = email,
+                password = password,
+                enableButton = enableButton,
+                onNameChange = onNameChange,
+                onLastNameChange = onLastNameChange,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange,
+                onClickLink = {
+                    navigator?.pop()
+                },
+                onClick = onClick
+            )
+        }
+    }
+
+}
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -80,7 +132,7 @@ fun SignUpScreen(
     if (showLoading) {
         SimpleLoading()
     } else {
-        PortraitScreen(
+        Screen(
             name = name,
             lastName = lastName,
             email = email,
@@ -129,7 +181,7 @@ fun SignUpScreen(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun PortraitScreen(
+private fun Screen(
     name: String,
     lastName: String,
     email: String,

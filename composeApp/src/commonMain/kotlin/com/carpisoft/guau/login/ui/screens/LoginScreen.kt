@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.carpisoft.guau.core.domain.usecase.GetMessageErrorUseCase
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
@@ -47,6 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 class LoginScreen : Screen {
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.current
         val loginViewModel: LoginViewModel = GetLoginViewModel()
         val email by loginViewModel.email.collectAsState()
         val password by loginViewModel.password.collectAsState()
@@ -72,7 +74,7 @@ class LoginScreen : Screen {
 
                 },
                 onClickSignUp = {
-
+                    navigator?.push(item = SignUpScreen())
                 }
             )
         }
