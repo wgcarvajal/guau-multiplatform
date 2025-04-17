@@ -2,7 +2,7 @@ package com.carpisoft.guau
 
 import androidx.compose.ui.window.ComposeUIViewController
 import com.carpisoft.guau.core.di.getListModule
-import com.carpisoft.guau.core.utils.states.Action
+import com.carpisoft.guau.login.ui.states.SocialLoginAction
 import org.koin.core.context.startKoin
 
 fun MainViewController(
@@ -24,9 +24,9 @@ fun initKoin() {
 }
 
 fun onLoginWithGoogle(token: String) {
-    store.send(Action.OnLoginWithGoogle(param = token))
+    socialLogin.send(SocialLoginAction.OnLoginWithGoogle(param = token))
 }
 
 fun onSignOutWithGoogle() {
-    store.send(Action.OnSignOutWithGoogle())
+    socialLogin.send(SocialLoginAction.OnSignOutWithGoogle())
 }

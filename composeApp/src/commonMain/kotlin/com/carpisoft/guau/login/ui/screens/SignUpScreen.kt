@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.carpisoft.guau.core.domain.usecase.GetMessageErrorUseCase
+import com.carpisoft.guau.core.domain.usecase.GetMessageErrorBackendlessUseCase
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
 import com.carpisoft.guau.core.ui.screens.buttons.GeneralButton
@@ -41,14 +41,14 @@ import guau.composeapp.generated.resources.name
 import guau.composeapp.generated.resources.password
 import guau.composeapp.generated.resources.sign_up
 import guau.composeapp.generated.resources.successful_registration
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
-class SignUpScreen:Screen{
+class SignUpScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val signUpViewModel:SignUpViewModel = GetSignUpViewModel()
+        val signUpViewModel = koinViewModel<SignUpViewModel>()
         val onNameChange: (String) -> Unit = {
             signUpViewModel.nameChange(it)
         }
@@ -90,11 +90,25 @@ class SignUpScreen:Screen{
                 onClick = onClick
             )
         }
+        val showErrorDialog by signUpViewModel.showErrorDialog.collectAsState()
+        OneButtonDialog(
+            show = showErrorDialog,
+            message = GetMessageErrorBackendlessUseCase(
+                signUpViewModel.error ?: ErrorUi()
+            ),
+            onDismissRequest = { signUpViewModel.dismissErrorDialog() })
+
+        val showSuccessDialog by signUpViewModel.showSuccessDialog.collectAsState()
+        OneButtonDialog(
+            show = showSuccessDialog,
+            message = stringResource(Res.string.successful_registration),
+            onDismissRequest = {
+                signUpViewModel.dismissSuccessDialog()
+            })
     }
 
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun SignUpScreen(
     uiStructureProperties: UiStructureProperties,
@@ -164,7 +178,7 @@ fun SignUpScreen(
     val showErrorDialog by signUpViewModel.showErrorDialog.collectAsState()
     OneButtonDialog(
         show = showErrorDialog,
-        message = GetMessageErrorUseCase(
+        message = GetMessageErrorBackendlessUseCase(
             signUpViewModel.error ?: ErrorUi()
         ),
         onDismissRequest = { signUpViewModel.dismissErrorDialog() })
@@ -179,7 +193,6 @@ fun SignUpScreen(
         })
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun Screen(
     name: String,

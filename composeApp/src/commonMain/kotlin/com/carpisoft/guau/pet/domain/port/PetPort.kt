@@ -9,14 +9,14 @@ interface PetPort {
 
     suspend fun getPetsByCenterIdWithPaginationAndSort(
         token: String,
-        centerId: Int,
+        centerId: String,
         page: Int,
         limit: Int
     ): Resp<List<PetResp>>
 
     suspend fun getPetsByCenterIdAndSearchWithPaginationAndSort(
         token: String,
-        centerId: Int,
+        centerId: String,
         search: String,
         page: Int,
         limit: Int

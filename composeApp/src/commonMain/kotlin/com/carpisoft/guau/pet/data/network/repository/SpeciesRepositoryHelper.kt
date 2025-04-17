@@ -19,7 +19,7 @@ open class SpeciesRepositoryHelper {
             for (species in speciesResponse) {
                 speciesResp.add(
                     SpeciesResp(
-                        id = species.id,
+                        id = species.id.toString(),
                         name = species.name,
                         image = "${NetworkConstants.SERVER}${PetConstants.SPECIES}/image/${species.image}",
                         state = species.state

@@ -21,25 +21,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import com.carpisoft.guau.admission.ui.util.AdmissionHelper
 import com.carpisoft.guau.core.ui.constants.ScreenEnum
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
 import com.carpisoft.guau.core.ui.screens.cards.PetCard
+import com.carpisoft.guau.core.ui.screens.scaffold.GuauScaffoldSimple
+import com.carpisoft.guau.pet.domain.model.PetResp
 import com.carpisoft.guau.pet.ui.screens.GetGenderPet
 import com.carpisoft.guau.pet.ui.screens.GetNamePetKind
+import com.carpisoft.guau.pet.ui.screens.PetsScreen
 import guau.composeapp.generated.resources.Res
+import guau.composeapp.generated.resources.next
+import guau.composeapp.generated.resources.register_admission
 import guau.composeapp.generated.resources.select
 import guau.composeapp.generated.resources.select_pet
 import guau.composeapp.generated.resources.two_of_four
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalResourceApi::class)
+class SelectPetScreen : Screen {
+    @Composable
+    override fun Content() {
+        val navigator: Navigator? = LocalNavigator.current
+        val admissionRegisterViewModel = koinViewModel<AdmissionRegisterViewModel>()
+        val admissionHelper = koinInject<AdmissionHelper>()
+        val petSelected by admissionRegisterViewModel.petSelected.collectAsState()
+        Screen(
+            petSelected = petSelected,
+            onSelectAction = { navigator?.push(item = PetsScreen()) },
+            deleteOnClick = {
+                admissionHelper.setPetSelected(petResp = null)
+                admissionRegisterViewModel.removeSelectedPet()
+            },
+            onBack = {})
+        LaunchedEffect(key1 = 1) {
+            if (admissionHelper.getPetSelected() != null) {
+                admissionRegisterViewModel.selectedPet(petResp = admissionHelper.getPetSelected()!!)
+            }
+        }
+    }
+
+}
+
 @Composable
 fun SelectPetScreen(
     uiStructureProperties: UiStructureProperties,
     onSelectAction: () -> Unit
 ) {
-    val admissionRegisterViewModel = GetAdmissionRegisterViewModel()
+    val admissionRegisterViewModel = koinViewModel<AdmissionRegisterViewModel>()
     LaunchedEffect(key1 = 1) {
         uiStructureProperties.onShowTopBar(true)
         uiStructureProperties.onShowBottomBar(false)
@@ -53,59 +86,69 @@ fun SelectPetScreen(
         uiStructureProperties.onEnabledNextAction(false)
     }
 
-    val enabledNextAction by admissionRegisterViewModel.enabledNextAction.collectAsState()
-    LaunchedEffect(key1 = enabledNextAction) {
-        uiStructureProperties.onEnabledNextAction(enabledNextAction)
-    }
-
     val petSelected by admissionRegisterViewModel.petSelected.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
-            text = "${stringResource(Res.string.select_pet)} ${
-                stringResource(
-                    Res.string.two_of_four
-                )
-            }",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
-        )
-        if (petSelected == null) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Button(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp)
-                        .align(Alignment.Center),
-                    onClick = onSelectAction
-                ) {
-                    Icon(imageVector = Icons.Filled.Pets, contentDescription = null)
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = stringResource(Res.string.select))
+
+}
+
+@Composable
+private fun Screen(
+    petSelected: PetResp?,
+    onSelectAction: () -> Unit,
+    deleteOnClick: () -> Unit,
+    onBack: () -> Unit
+) {
+    GuauScaffoldSimple(
+        title = stringResource(resource = Res.string.register_admission),
+        onBack = onBack
+    ) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues = paddingValues)) {
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                text = "${stringResource(Res.string.select_pet)} ${
+                    stringResource(
+                        Res.string.two_of_four
+                    )
+                }",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+            if (petSelected == null) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Button(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp)
+                            .align(Alignment.Center),
+                        onClick = onSelectAction
+                    ) {
+                        Icon(imageVector = Icons.Filled.Pets, contentDescription = null)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(text = stringResource(Res.string.select))
+                    }
+                }
+            } else {
+                Box(Modifier.fillMaxSize()) {
+                    PetCard(
+                        modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
+                            .padding(top = 30.dp, start = 10.dp, end = 10.dp),
+                        name = petSelected!!.name,
+                        kind = GetNamePetKind(petSelected!!.breed.species.name),
+                        breed = petSelected!!.breed.name,
+                        gender = GetGenderPet(petSelected!!.gender.name),
+                        date = petSelected!!.date,
+                        customer = "${petSelected!!.customer.name} ${petSelected!!.customer.lastName}",
+                        identificationNumber = petSelected!!.customer.identification,
+                        deleteOnClick = deleteOnClick
+                    )
+                    Button(
+                        onClick = { },
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                            .padding(end = 20.dp, bottom = 20.dp)
+                    ) {
+                        Text(text = stringResource(Res.string.next))
+                    }
                 }
             }
-        } else {
-            Box(Modifier.fillMaxSize()) {
-                PetCard(
-                    modifier = Modifier.align(Alignment.Center),
-                    name = petSelected!!.name,
-                    kind = GetNamePetKind(petSelected!!.breed.species.name),
-                    breed = petSelected!!.breed.name,
-                    gender = GetGenderPet(petSelected!!.gender.name),
-                    date = petSelected!!.date,
-                    customer = "${petSelected!!.customer.name} ${petSelected!!.customer.lastName}",
-                    identificationNumber = petSelected!!.customer.identification,
-                    deleteOnClick = {
-                        admissionRegisterViewModel.removeSelectedPet()
-                        admissionRegisterViewModel.evaluatePetSelected()
-                    }
-                )
-            }
         }
-    }
-
-
-    LaunchedEffect(key1 = 1) {
-        admissionRegisterViewModel.evaluatePetSelected()
     }
 }

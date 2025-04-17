@@ -1,5 +1,7 @@
 package com.carpisoft.guau.pet.ui.screens
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.domain.usecase.InitialsInCapitalLetterUseCase
 import com.carpisoft.guau.core.domain.usecase.IsMaxStringSizeUseCase
 import com.carpisoft.guau.core.domain.usecase.IsOnlyLettersUseCase
@@ -19,7 +21,6 @@ import com.carpisoft.guau.pet.domain.usecase.GetBreedsBySpeciesIdWithPaginationA
 import com.carpisoft.guau.pet.domain.usecase.GetGendersUseCase
 import com.carpisoft.guau.pet.domain.usecase.GetSpeciesUseCase
 import com.carpisoft.guau.pet.domain.usecase.SavePetUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,18 +43,17 @@ class AddPetViewModel(
 ) : ViewModel() {
 
     companion object {
-        const val KEY = "AddPetViewModel"
         const val TAG = "AddPetViewModel"
     }
+
+    private val _enabledNextAction = MutableStateFlow(false)
+    val enabledNextAction: StateFlow<Boolean> = _enabledNextAction.asStateFlow()
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name.asStateFlow()
 
     private val _description = MutableStateFlow("")
     val description: StateFlow<String> = _description.asStateFlow()
-
-    private val _enabledNextAction = MutableStateFlow(false)
-    val enabledNextAction: StateFlow<Boolean> = _enabledNextAction.asStateFlow()
 
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading.asStateFlow()
@@ -74,7 +74,7 @@ class AddPetViewModel(
     val breeds: StateFlow<List<BreedResp>> = _breeds.asStateFlow()
 
     private val _typePetSelected =
-        MutableStateFlow(SpeciesResp(id = -1, name = "", image = "", state = -1))
+        MutableStateFlow(SpeciesResp(id = "", name = "", image = "", state = -1))
     val typePetSelected: StateFlow<SpeciesResp> = _typePetSelected.asStateFlow()
 
     private val _showSuccessDialog = MutableStateFlow(false)
@@ -83,7 +83,7 @@ class AddPetViewModel(
     private val _customerSelected =
         MutableStateFlow(
             CustomerResp(
-                id = -1,
+                id = "",
                 identificationType = IdentificationTypeResp(id = -1, name = ""),
                 identification = "",
                 name = "",
@@ -128,7 +128,7 @@ class AddPetViewModel(
             _loading.value = true
             val resp = getBreedsBySpeciesIdWithPaginationAndSortUseCase(
                 token = getTokenUseCase(),
-                speciesId = _typePetSelected.value.id,
+                speciesId = _typePetSelected.value.id.toInt(),
                 page = page,
                 limit = limit
             )
@@ -203,6 +203,14 @@ class AddPetViewModel(
         _breedSelected.value = breed
     }
 
+    fun setName(name: String) {
+        _name.value = name
+    }
+
+    fun setDescription(description: String) {
+        _description.value = description
+    }
+
     fun selectedCustomer(customer: CustomerResp) {
         _customerSelected.value = customer
     }
@@ -215,13 +223,6 @@ class AddPetViewModel(
         _breedSelected.value = BreedResp(id = -1, name = "", image = "", state = -1)
     }
 
-    fun evaluateSpeciesSelected() {
-        _enabledNextAction.value = _typePetSelected.value.id != -1
-    }
-
-    fun evaluateBreedSelected() {
-        _enabledNextAction.value = _breedSelected.value.id != -1
-    }
 
     fun onValueSearchBreed(value: String) {
         if (value.length > 2 || _searchText.value.length == 3) {
@@ -230,14 +231,14 @@ class AddPetViewModel(
                 val resp = if (value.length < 3) {
                     getBreedsBySpeciesIdWithPaginationAndSortUseCase(
                         token = getTokenUseCase(),
-                        speciesId = _typePetSelected.value.id,
+                        speciesId = _typePetSelected.value.id.toInt(),
                         page = page,
                         limit = limit
                     )
                 } else {
                     getBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase(
                         token = getTokenUseCase(),
-                        speciesId = _typePetSelected.value.id,
+                        speciesId = _typePetSelected.value.id.toInt(),
                         name = value,
                         page = page,
                         limit = limit
@@ -257,14 +258,14 @@ class AddPetViewModel(
             val resp = if (_searchText.value.isEmpty()) {
                 getBreedsBySpeciesIdWithPaginationAndSortUseCase(
                     token = getTokenUseCase(),
-                    speciesId = _typePetSelected.value.id,
+                    speciesId = _typePetSelected.value.id.toInt(),
                     page = p,
                     limit = limit
                 )
             } else {
                 getBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase(
                     token = getTokenUseCase(),
-                    speciesId = _typePetSelected.value.id,
+                    speciesId = _typePetSelected.value.id.toInt(),
                     name = _searchText.value,
                     page = p,
                     limit = limit
@@ -287,7 +288,7 @@ class AddPetViewModel(
 
     fun resetCustomerSelected() {
         _customerSelected.value = CustomerResp(
-            id = -1,
+            id = "",
             identificationType = IdentificationTypeResp(id = -1, name = ""),
             identification = "",
             name = "",
@@ -303,10 +304,10 @@ class AddPetViewModel(
         _description.value = ""
         _genders.value = mutableListOf()
         _breeds.value = mutableListOf()
-        _typePetSelected.value = SpeciesResp(id = -1, name = "", image = "", state = -1)
+        _typePetSelected.value = SpeciesResp(id = "", name = "", image = "", state = -1)
         _breedSelected.value = BreedResp(-1, "", "", 0)
         _customerSelected.value = CustomerResp(
-            id = -1,
+            id = "",
             identificationType = IdentificationTypeResp(id = -1, name = ""),
             identification = "",
             name = "",
@@ -331,19 +332,21 @@ class AddPetViewModel(
         }
     }
 
-    fun onChangeName(value: String) {
+    fun onChangeName(value: String): String {
         if (isOnlyLettersUseCase(value) && isMaxStringSizeUseCase(value, 40)) {
             var nameFormat = initialsInCapitalLetterUseCase(removeInitialWhiteSpaceUseCase(value))
             _name.value = nameFormat
             validateEnabledNext()
         }
+        return _name.value
     }
 
-    fun onChangeDescription(value: String) {
+    fun onChangeDescription(value: String): String {
         if (isMaxStringSizeUseCase(value, 100)) {
             var nameFormat = initialsInCapitalLetterUseCase(removeInitialWhiteSpaceUseCase(value))
             _description.value = nameFormat
         }
+        return _description.value
     }
 
     private fun processGendersResult(result: Resp<List<GenderResp>>) {
@@ -363,7 +366,7 @@ class AddPetViewModel(
 
     fun validateEnabledNext() {
         _enabledNextAction.value =
-            _customerSelected.value.id > 0 &&
+            _customerSelected.value.id != "" &&
                     _birthdate.value.isNotEmpty() &&
                     validateNameUseCase(_name.value) && _genderSelected.value.id > 0
     }
@@ -380,7 +383,7 @@ class AddPetViewModel(
                         null
                     },
                     breed = _breedSelected.value.id,
-                    customer = _customerSelected.value.id,
+                    customer = _customerSelected.value.id.toLong(),
                     gender = _genderSelected.value.id
                 )
             )

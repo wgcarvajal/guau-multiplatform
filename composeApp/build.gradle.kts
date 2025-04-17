@@ -1,17 +1,20 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sqldelight)
     kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -36,6 +39,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
@@ -44,22 +48,22 @@ kotlin {
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transitions)
                 implementation(libs.voyager.tabNavigator)
-                api(libs.icerock.mvvm.core)
-                api(libs.icerock.mvvm.compose)
-                api(libs.precompose)
                 api(libs.datastore.preferences.core)
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.lifecycle.viewmodel)
+                implementation(libs.lifecycle.runtime.compose)
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation(libs.compose.ui)
-                implementation(libs.koin.android)
-                implementation(libs.compose.ui.tooling.preview)
+                implementation(compose.preview)
                 implementation(libs.androidx.activity.compose)
+                implementation(libs.koin.android)
                 implementation(libs.ktor.client.android)
                 implementation(libs.sqldelight.android)
+                implementation(libs.backendless.android)
             }
         }
 
@@ -103,9 +107,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -121,7 +122,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
-        debugImplementation(libs.compose.ui.tooling)
+        debugImplementation(compose.uiTooling)
         implementation(libs.play.services.auth)
     }
 }

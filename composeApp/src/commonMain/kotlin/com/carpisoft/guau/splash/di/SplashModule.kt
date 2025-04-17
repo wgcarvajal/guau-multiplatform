@@ -4,6 +4,7 @@ import com.carpisoft.guau.splash.domain.usecase.IsLoginTokenUseCase
 import com.carpisoft.guau.splash.domain.usecase.IsSelectedVetUseCase
 import com.carpisoft.guau.splash.ui.screens.SplashViewModel
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val splashModule: Module = module {
@@ -14,7 +15,8 @@ val splashModule: Module = module {
     factory {
         IsSelectedVetUseCase(employeePreferencesPort = get())
     }
-    factory {
-        SplashViewModel(isLoginTokenUseCase = get(), isSelectedVetUseCase = get())
-    }
+
+    viewModelOf(
+        ::SplashViewModel
+    )
 }

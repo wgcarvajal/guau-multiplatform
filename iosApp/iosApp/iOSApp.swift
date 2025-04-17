@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftSDK
 import GoogleSignIn
 import ComposeApp
 
@@ -7,6 +8,7 @@ struct iOSApp: App {
 
     init() {
         MainViewControllerKt.doInitKoin()
+        Backendless.shared.initApp(applicationId: "A8772C77-85B7-4381-A95C-8F4DDA5B8189", apiKey: "9F8D3A23-0F04-4944-B297-12D6B067E040")
     }
     var body: some Scene {
         WindowGroup {

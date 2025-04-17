@@ -2,7 +2,7 @@ package com.carpisoft.guau.pet.di
 
 import com.carpisoft.guau.pet.data.network.repository.BreedRepository
 import com.carpisoft.guau.pet.data.network.repository.GenderRepository
-import com.carpisoft.guau.pet.data.network.repository.PetRepository
+import com.carpisoft.guau.pet.data.network.repository.PetBackendlessRepository
 import com.carpisoft.guau.pet.data.network.repository.SpeciesRepository
 import com.carpisoft.guau.pet.domain.port.BreedPort
 import com.carpisoft.guau.pet.domain.port.GenderPort
@@ -17,7 +17,9 @@ import com.carpisoft.guau.pet.domain.usecase.GetSpeciesUseCase
 import com.carpisoft.guau.pet.domain.usecase.SavePetUseCase
 import com.carpisoft.guau.pet.ui.screens.AddPetViewModel
 import com.carpisoft.guau.pet.ui.screens.PetsViewModel
+import com.carpisoft.guau.pet.ui.util.PetHelper
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val petModule: Module = module {
@@ -30,7 +32,7 @@ val petModule: Module = module {
     }
 
     factory<PetPort> {
-        PetRepository(httpClient = get())
+        PetBackendlessRepository(httpClient = get())
     }
 
     factory<SpeciesPort> {
@@ -53,28 +55,11 @@ val petModule: Module = module {
 
     factory { SavePetUseCase(petPort = get()) }
 
-    factory {
-        AddPetViewModel(
-            getSpeciesUseCase = get(),
-            getBreedsBySpeciesIdAndNameWithPaginationAndSortUseCase = get(),
-            getBreedsBySpeciesIdWithPaginationAndSortUseCase = get(),
-            getTokenUseCase = get(),
-            getGendersUseCase = get(),
-            isOnlyLettersUseCase = get(),
-            isMaxStringSizeUseCase = get(),
-            removeInitialWhiteSpaceUseCase = get(),
-            initialsInCapitalLetterUseCase = get(),
-            validateNameUseCase = get(),
-            savePetUseCase = get()
-        )
+    single {
+        PetHelper()
     }
 
-    factory {
-        PetsViewModel(
-            getCenterIdUseCase = get(),
-            getTokenUseCase = get(),
-            getPetsByCenterIdWithPaginationAndSortUseCase = get(),
-            getPetsByCenterIdAndSearchWithPaginationAndSortUseCase = get()
-        )
-    }
+    viewModelOf(::PetsViewModel)
+    viewModelOf(::AddPetViewModel)
+
 }

@@ -1,5 +1,7 @@
 package com.carpisoft.guau.login.ui.screens
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.domain.usecase.InitialsInCapitalLetterUseCase
 import com.carpisoft.guau.core.domain.usecase.IsMaxStringSizeUseCase
 import com.carpisoft.guau.core.domain.usecase.IsOnlyLettersUseCase
@@ -9,7 +11,6 @@ import com.carpisoft.guau.core.domain.usecase.ValidateNameUseCase
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.login.domain.model.SignUpReq
 import com.carpisoft.guau.login.domain.usecase.DoRegisterUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow

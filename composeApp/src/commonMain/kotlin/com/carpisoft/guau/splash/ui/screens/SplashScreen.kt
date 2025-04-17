@@ -12,14 +12,17 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
+import com.carpisoft.guau.initialsetup.ui.screens.InitialScreen
 import com.carpisoft.guau.login.ui.screens.LoginScreen
+import com.carpisoft.guau.main.ui.screens.MainSplashScreen
 import kotlinx.coroutines.delay
+import org.koin.compose.viewmodel.koinViewModel
 
 class SplashScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val splashViewModel: SplashViewModel = GetSplashViewModel()
+        val splashViewModel = koinViewModel<SplashViewModel>()
         Screen()
 
         LaunchedEffect(key1 = 1) {
@@ -29,6 +32,7 @@ class SplashScreen : Screen {
         val launchInitialSetup by splashViewModel.launchInitialSetup.collectAsState()
         if (launchInitialSetup) {
             splashViewModel.resetLaunchInitialSetup()
+            navigator?.replace(item = InitialScreen())
 
         }
         val launchLogin by splashViewModel.launchLogin.collectAsState()
@@ -40,7 +44,7 @@ class SplashScreen : Screen {
         val launchHome by splashViewModel.launchHome.collectAsState()
         if (launchHome) {
             splashViewModel.resetLaunchHome()
-
+            navigator?.replace(item = MainSplashScreen())
         }
     }
 }

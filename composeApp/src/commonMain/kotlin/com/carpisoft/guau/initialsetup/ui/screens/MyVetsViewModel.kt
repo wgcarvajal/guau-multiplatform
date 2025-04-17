@@ -1,14 +1,15 @@
 package com.carpisoft.guau.initialsetup.ui.screens
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.network.domain.model.Resp
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.initialsetup.domain.model.EmployeeResp
 import com.carpisoft.guau.initialsetup.domain.model.EmployeesReq
 import com.carpisoft.guau.initialsetup.domain.usecase.GetEmployeesUseCase
 import com.carpisoft.guau.initialsetup.domain.usecase.SaveCenterIdAndRolUseCase
-import com.carpisoft.guau.login.domain.usecase.GetEmailUseCase
 import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import com.carpisoft.guau.login.domain.usecase.GetUserIdUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,13 +20,12 @@ import kotlinx.coroutines.launch
 
 class MyVetsViewModel(
     private val getTokenUseCase: GetTokenUseCase,
-    private val getEmailUseCase: GetEmailUseCase,
+    private val getUserIdUseCase: GetUserIdUseCase,
     private val getEmployeesUseCase: GetEmployeesUseCase,
     private val saveCenterIdAndRolUseCase: SaveCenterIdAndRolUseCase
 ) : ViewModel() {
 
     companion object {
-        const val KEY = "MyVetsViewModel"
         const val TAG = "MyVetsViewModel"
     }
 
@@ -52,7 +52,7 @@ class MyVetsViewModel(
             _loading.value = true
             val resp = getEmployeesUseCase(
                 token = getTokenUseCase(),
-                employeesReq = EmployeesReq(email = getEmailUseCase(), rol = "owner")
+                employeesReq = EmployeesReq(id = getUserIdUseCase(), rol = "owner")
             )
             processResult(resp)
             _loading.value = false

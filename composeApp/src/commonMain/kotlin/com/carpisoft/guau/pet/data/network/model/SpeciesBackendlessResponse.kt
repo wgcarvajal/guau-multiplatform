@@ -1,0 +1,12 @@
+package com.carpisoft.guau.pet.data.network.model
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class SpeciesBackendlessResponse (
+    @SerialName("objectId") val id: String,
+    val name: String,
+    val image: String,
+    val state: Int
+)

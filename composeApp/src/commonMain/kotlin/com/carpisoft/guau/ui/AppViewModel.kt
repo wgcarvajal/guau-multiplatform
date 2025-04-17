@@ -1,19 +1,20 @@
 package com.carpisoft.guau.ui
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.ui.constants.ScreenEnum
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import com.carpisoft.guau.employee.domain.usecase.SaveCenterIdUseCase
 import com.carpisoft.guau.employee.domain.usecase.SaveEmployeeIdUseCase
 import com.carpisoft.guau.employee.domain.usecase.SaveRolUseCase
+import com.carpisoft.guau.login.domain.usecase.SaveEmailUseCase
+import com.carpisoft.guau.login.domain.usecase.SaveNameUseCase
+import com.carpisoft.guau.login.domain.usecase.SaveTokenUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.carpisoft.guau.login.domain.usecase.SaveEmailUseCase
-import com.carpisoft.guau.login.domain.usecase.SaveNameUseCase
-import com.carpisoft.guau.login.domain.usecase.SaveTokenUseCase
 
 class AppViewModel(
     private val saveEmailUseCase: SaveEmailUseCase,
@@ -48,13 +49,11 @@ class AppViewModel(
         _title.value = title
     }
 
-    fun resetSuccessExitCenter()
-    {
+    fun resetSuccessExitCenter() {
         _successExitCenter.value = false
     }
 
-    fun resetSuccessSignOff()
-    {
+    fun resetSuccessSignOff() {
         _successSignOff.value = false
     }
 
@@ -71,8 +70,8 @@ class AppViewModel(
             saveTokenUseCase("")
             saveEmailUseCase("")
             saveNameUseCase("")
-            saveCenterIdUseCase(-1)
-            saveEmployeeIdUseCase(-1)
+            saveCenterIdUseCase("")
+            saveEmployeeIdUseCase("")
             saveRolUseCase("")
             _showSignOffDialog.value = false
             _successSignOff.value = true
@@ -81,8 +80,8 @@ class AppViewModel(
 
     fun exitCenter() {
         viewModelScope.launch(Dispatchers.IO) {
-            saveCenterIdUseCase(-1)
-            saveEmployeeIdUseCase(-1)
+            saveCenterIdUseCase("")
+            saveEmployeeIdUseCase("")
             saveRolUseCase("")
             _showExitCenterDialog.value = false
             _successExitCenter.value = true

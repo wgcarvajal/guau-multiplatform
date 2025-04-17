@@ -8,7 +8,7 @@ class GetPetsByCenterIdWithPaginationAndSortUseCase(private val petPort: PetPort
 
     suspend operator fun invoke(
         token: String,
-        centerId: Int,
+        centerId: String,
         page: Int,
         limit: Int
     ): Resp<List<PetResp>> {

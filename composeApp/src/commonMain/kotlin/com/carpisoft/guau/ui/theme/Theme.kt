@@ -1,6 +1,8 @@
 package com.carpisoft.guau.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
@@ -13,7 +15,12 @@ private val LightColorScheme = lightColorScheme(
     background = Background,
     onSurface = OnSurface,
     outline = Outline,
-    onSurfaceVariant = OnSurfaceVariant
+    onSurfaceVariant = OnSurfaceVariant,
+    surface = SurfaceLight
+)
+
+private val DarkColorScheme = darkColorScheme(
+    surface = SurfaceDark
 )
 
 
@@ -21,7 +28,11 @@ private val LightColorScheme = lightColorScheme(
 fun GuauTheme(
     content: @Composable () -> Unit
 ) {
-    val colorScheme = LightColorScheme
+    val colorScheme = if (isSystemInDarkTheme()) {
+        DarkColorScheme
+    } else {
+        LightColorScheme
+    }
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

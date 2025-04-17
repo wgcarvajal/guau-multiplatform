@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,10 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import com.carpisoft.guau.core.utils.constants.PlatformConstants
 import com.carpisoft.guau.core.ui.screens.collection.InfiniteGridHandler
 import com.carpisoft.guau.core.ui.screens.collection.InfiniteListHandler
 import com.carpisoft.guau.core.ui.screens.loading.CustomLoading
+import com.carpisoft.guau.core.utils.constants.PlatformConstants
 import com.carpisoft.guau.getPlatformName
 import com.carpisoft.guau.ui.theme.BackgroundHead
 import com.carpisoft.guau.ui.theme.Green100
@@ -46,6 +46,7 @@ fun SearchAndContentTemplateScreen(
     activeSearch: Boolean,
     loadingMore: Boolean,
     showAdd: Boolean = false,
+    showNavigation: Boolean = true,
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager,
     onLoadMore: () -> Unit,
@@ -68,19 +69,21 @@ fun SearchAndContentTemplateScreen(
                     .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(
-                    onClick = onBackOnClick, colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Green100,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Gray
-                    )
-                ) {
-                    Icon(
-                        modifier = Modifier.size(20.dp),
-                        imageVector = Icons.Default.ArrowBackIos,
-                        contentDescription = ""
-                    )
+                if (showNavigation) {
+                    IconButton(
+                        onClick = onBackOnClick, colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Green100,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Gray
+                        )
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                            contentDescription = ""
+                        )
+                    }
                 }
                 if (activeSearch) {
                     SearchBar(

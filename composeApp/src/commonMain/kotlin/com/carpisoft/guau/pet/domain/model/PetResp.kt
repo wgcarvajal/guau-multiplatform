@@ -5,7 +5,7 @@ import com.carpisoft.guau.pet.domain.model.BreedCompleteResp
 import com.carpisoft.guau.pet.domain.model.GenderResp
 
 data class PetResp(
-    val id: Long,
+    val id: String,
     val date: Long,
     val name: String,
     val description: String?,

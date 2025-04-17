@@ -1,9 +1,7 @@
 package com.carpisoft.guau.initialsetup.domain.model
 
-import com.carpisoft.guau.initialsetup.domain.model.CenterResp
-
 data class EmployeeResp(
-    val idEmployee: Long,
+    val idEmployee: String,
     val centerResp: CenterResp,
     val roles: List<String>
 )

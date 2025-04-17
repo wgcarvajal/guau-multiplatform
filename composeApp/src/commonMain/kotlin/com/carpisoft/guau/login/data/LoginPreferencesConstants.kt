@@ -5,5 +5,6 @@ class LoginPreferencesConstants{
         const val TOKEN_KEY = "tokenKey"
         const val EMAIL_KEY = "emailKey"
         const val NAME_KEY = "nameKey"
+        const val USER_ID_KEY = "userIdKey"
     }
 }

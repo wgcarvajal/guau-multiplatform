@@ -37,7 +37,6 @@ fun MyTopAppBar(
             appBarHeight : Dp
 ) {
     AppBar(
-        backgroundColor,
         contentColor,
         PaddingValues(4.dp, 4.dp),
         RectangleShape,
@@ -83,7 +82,6 @@ fun MyTopAppBar(
 
 @Composable
 private fun AppBar(
-    backgroundColor: Color,
     contentColor: Color,
     contentPadding: PaddingValues,
     shape: Shape,
@@ -92,7 +90,6 @@ private fun AppBar(
     content: @Composable RowScope.() -> Unit
 ) {
     Surface(
-        color = backgroundColor,
         contentColor = contentColor,
         shape = shape,
         modifier = modifier

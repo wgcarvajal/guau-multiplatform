@@ -1,8 +1,9 @@
 package com.carpisoft.guau.splash.ui.screens
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.splash.domain.usecase.IsLoginTokenUseCase
 import com.carpisoft.guau.splash.domain.usecase.IsSelectedVetUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

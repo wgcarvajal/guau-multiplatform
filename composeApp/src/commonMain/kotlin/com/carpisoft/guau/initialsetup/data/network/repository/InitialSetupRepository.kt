@@ -36,7 +36,7 @@ class InitialSetupRepository(
                     header(key = "Authorization", token)
                     setBody(
                         EmployeesRequest(
-                            email = employeesReq.email,
+                            id = employeesReq.id,
                             rol = employeesReq.rol
                         )
                     )

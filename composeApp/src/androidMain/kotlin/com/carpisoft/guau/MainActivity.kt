@@ -12,9 +12,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.carpisoft.guau.core.google.onLoginWithGoogle
 import com.carpisoft.guau.core.google.onSignOutWithGoogle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 
 class MainActivity : ComponentActivity() {
 
@@ -33,9 +35,9 @@ class MainActivity : ComponentActivity() {
                     if (result.resultCode == RESULT_OK) {
                         val intent = result.data
                         if (result.data != null) {
-                            val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
                             try {
-                                val account = task.getResult(ApiException::class.java)
+                                val account = task.result
                                 if (account != null) {
                                     Log.i("token", account.idToken!!)
                                     onLoginWithGoogle(token = account.idToken!!)

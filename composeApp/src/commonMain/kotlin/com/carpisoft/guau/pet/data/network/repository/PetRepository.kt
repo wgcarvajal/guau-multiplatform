@@ -7,6 +7,9 @@ import com.carpisoft.guau.core.network.domain.model.Resp
 import com.carpisoft.guau.pet.data.network.constants.PetConstants
 import com.carpisoft.guau.pet.data.network.model.PetRequest
 import com.carpisoft.guau.pet.data.network.model.PetResponse
+import com.carpisoft.guau.pet.domain.model.PetReq
+import com.carpisoft.guau.pet.domain.model.PetResp
+import com.carpisoft.guau.pet.domain.port.PetPort
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -16,9 +19,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import com.carpisoft.guau.pet.domain.model.PetReq
-import com.carpisoft.guau.pet.domain.model.PetResp
-import com.carpisoft.guau.pet.domain.port.PetPort
 
 class PetRepository(private val httpClient: HttpClient) : PetPort, PetRepositoryHelper() {
 
@@ -60,7 +60,7 @@ class PetRepository(private val httpClient: HttpClient) : PetPort, PetRepository
 
     override suspend fun getPetsByCenterIdWithPaginationAndSort(
         token: String,
-        centerId: Int,
+        centerId: String,
         page: Int,
         limit: Int
     ): Resp<List<PetResp>> {
@@ -91,7 +91,7 @@ class PetRepository(private val httpClient: HttpClient) : PetPort, PetRepository
 
     override suspend fun getPetsByCenterIdAndSearchWithPaginationAndSort(
         token: String,
-        centerId: Int,
+        centerId: String,
         search: String,
         page: Int,
         limit: Int

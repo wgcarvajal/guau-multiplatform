@@ -9,4 +9,8 @@ class PetConstants {
         const val GENDERS = "/genders"
         const val SAVE_PET= "/save"
     }
+
+    object Backendless{
+        const val PET = "data/Pet"
+    }
 }

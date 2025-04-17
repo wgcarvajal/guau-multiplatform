@@ -39,18 +39,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import com.carpisoft.guau.core.domain.usecase.GetMessageErrorUseCase
-import com.carpisoft.guau.core.ui.constants.ScreenEnum
 import com.carpisoft.guau.core.ui.model.ErrorUi
-import com.carpisoft.guau.core.ui.model.UiStructureProperties
+import com.carpisoft.guau.core.ui.screens.buttons.NextButtonIntoBox
 import com.carpisoft.guau.core.ui.screens.datepicker.SimpleDatePickerDialog
 import com.carpisoft.guau.core.ui.screens.dialogs.TwoButtonDialog
 import com.carpisoft.guau.core.ui.screens.loading.SimpleLoading
+import com.carpisoft.guau.core.ui.screens.scaffold.GuauScaffoldSimple
 import com.carpisoft.guau.core.ui.screens.textfields.SimpleSelectMenu
 import com.carpisoft.guau.core.ui.screens.textfields.SimpleTextField
 import com.carpisoft.guau.core.utils.date.DateTime
+import com.carpisoft.guau.customer.domain.model.CustomerResp
+import com.carpisoft.guau.customer.ui.CustomersScreen
 import com.carpisoft.guau.pet.domain.model.GenderResp
+import com.carpisoft.guau.pet.ui.util.PetHelper
+import com.carpisoft.guau.ui.theme.Background
+import com.carpisoft.guau.ui.theme.OnSurface
+import com.carpisoft.guau.ui.theme.OnSurfaceVariant
+import com.carpisoft.guau.ui.theme.Outline
 import guau.composeapp.generated.resources.Res
+import guau.composeapp.generated.resources.add_pet
 import guau.composeapp.generated.resources.associate
 import guau.composeapp.generated.resources.birthdate
 import guau.composeapp.generated.resources.cancel
@@ -61,254 +72,324 @@ import guau.composeapp.generated.resources.owner
 import guau.composeapp.generated.resources.pet_data
 import guau.composeapp.generated.resources.retry
 import guau.composeapp.generated.resources.three_of_four
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import com.carpisoft.guau.ui.theme.Background
-import com.carpisoft.guau.ui.theme.OnSurface
-import com.carpisoft.guau.ui.theme.OnSurfaceVariant
-import com.carpisoft.guau.ui.theme.Outline
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-@Composable
-fun PetDataScreen(
-    uiStructureProperties: UiStructureProperties,
-    addPetViewModel: AddPetViewModel,
-    selectOnClick: () -> Unit,
-    onBackOnClick: () -> Unit
-) {
+class PetDataScreen : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun Content() {
+        val navigator: Navigator? = LocalNavigator.current
+        val addPetViewModel = koinViewModel<AddPetViewModel>()
+        val petHelper = koinInject<PetHelper>()
+        val customerSelected by addPetViewModel.customerSelected.collectAsState()
+        val birthdate by addPetViewModel.birthdate.collectAsState()
+        val genderSelected by addPetViewModel.genderSelected.collectAsState()
+        val genders by addPetViewModel.genders.collectAsState()
+        val loading by addPetViewModel.loading.collectAsState()
+        val showError by addPetViewModel.showError.collectAsState()
+        val name by addPetViewModel.name.collectAsState()
+        val description by addPetViewModel.description.collectAsState()
+        val enabledNextAction by addPetViewModel.enabledNextAction.collectAsState()
+        var showCalendar by rememberSaveable { mutableStateOf(false) }
+        Screen(
+            genders = genders,
+            loading = loading,
+            name = name,
+            description = description,
+            showError = showError,
+            birthdate = birthdate,
+            customerSelected = customerSelected,
+            genderSelected = genderSelected,
+            enabledNextAction = enabledNextAction,
+            onClickItem = {
+                addPetViewModel.onSelectedGender(it)
+                petHelper.setGenderSelected(genderSelected = it)
+            },
+            onValueChangeName = {
+                petHelper.setName(addPetViewModel.onChangeName(it))
+            }, onValueChangeDescription = {
+                petHelper.setDescription(addPetViewModel.onChangeDescription(it))
+            }, resetCustomerOnClick = {
+                petHelper.setCustomerSelected(customerResp = null)
+                addPetViewModel.resetCustomerSelected()
+            }, associateOnClick = {
+                navigator?.push(item = CustomersScreen())
+            }, calendarIconOnClick = {
+                showCalendar = true
+            }, nextOnclick = {
+                navigator?.push(item = SummaryPetScreen())
+            }, onback = {
+                navigator?.pop()
+            })
+        TwoButtonDialog(
+            show = showError,
+            message = GetMessageErrorUseCase(errorUi = addPetViewModel.getErrorUi() ?: ErrorUi()),
+            confirmButtonText = stringResource(Res.string.retry),
+            cancelButtonText = stringResource(Res.string.cancel),
+            confirmButton = {
+                addPetViewModel.dismissErrorDialog()
+                addPetViewModel.loadBreedData()
+            },
+            onDismissRequest = {
+                addPetViewModel.dismissErrorDialog()
+                //onBackOnClick()
+            })
+        val datePickerState =
+            rememberDatePickerState(
+                initialSelectedDateMillis = DateTime.getCurrentDate(),
+                selectableDates = object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                        return utcTimeMillis <= DateTime.getCurrentDate()
+                    }
 
-    LaunchedEffect(key1 = 1) {
-        uiStructureProperties.onShowTopBar(true)
-        uiStructureProperties.onShowBottomBar(false)
-        uiStructureProperties.showActionNavigation(true)
-        uiStructureProperties.onShowExitCenter(true)
-        uiStructureProperties.onSetTitle(ScreenEnum.PetData)
-        uiStructureProperties.showAddActionButton(false)
-        uiStructureProperties.showActionAccountOptions(false)
-        uiStructureProperties.onShowActionBottom(true)
-        uiStructureProperties.showActionNext(true)
-        uiStructureProperties.onShowSaveAction(false)
-    }
-    val enabledNextAction by addPetViewModel.enabledNextAction.collectAsState()
-    val customerSelected by addPetViewModel.customerSelected.collectAsState()
-    val birthdate by addPetViewModel.birthdate.collectAsState()
-    val genderSelected by addPetViewModel.genderSelected.collectAsState()
-    val genders by addPetViewModel.genders.collectAsState()
-    var expanded by remember { mutableStateOf(false) }
-    val loading by addPetViewModel.loading.collectAsState()
-    val showError by addPetViewModel.showError.collectAsState()
-    val name by addPetViewModel.name.collectAsState()
-    val description by addPetViewModel.description.collectAsState()
-    LaunchedEffect(key1 = enabledNextAction) {
-        uiStructureProperties.onEnabledNextAction(enabledNextAction)
-    }
-    var showCalendar by rememberSaveable { mutableStateOf(false) }
-    if (loading) {
-        SimpleLoading()
-    } else if (!showError) {
-        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
-                text = "${stringResource(Res.string.pet_data)} ${
-                    stringResource(
-                        Res.string.three_of_four
-                    )
-                }",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-
-            SimpleSelectMenu(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
-                value = if (genderSelected.id == -1) {
-                    ""
-                } else {
-                    GetGenderPet(genderSelected.name)
+                })
+        if (showCalendar) {
+            SimpleDatePickerDialog(
+                datePickerState = datePickerState,
+                onDateSelected = {
+                    addPetViewModel.changeBirthdate(it)
+                    petHelper.setBirthdate(birthdate = it)
                 },
-                label = "${stringResource(Res.string.gender)} *",
-                placeholder = "",
-                list = genders,
-                expanded = expanded,
-                arrowOnClick = {
-                    expanded = !expanded
-                },
-                onClickItem = {
-                    addPetViewModel.onSelectedGender(it as GenderResp)
-                    expanded = false
-                },
-                onDismissRequest = {
-                    expanded = false
-                },
-                getText = {
-                    GetGenderPet((it as GenderResp).name)
+                onDismiss = {
+                    showCalendar = false
                 }
             )
+        }
+        LaunchedEffect(key1 = 1) {
+            addPetViewModel.selectedTypePet(typePet = petHelper.getTypePetSelected()!!)
+            addPetViewModel.selectedBreed(breed = petHelper.getBreedPetSelected()!!)
+            if (petHelper.getName().isNotEmpty()) {
+                addPetViewModel.setName(name = petHelper.getName())
+            }
+            if (petHelper.getDescription().isNotEmpty()) {
+                addPetViewModel.setDescription(description = petHelper.getDescription())
+            }
+            if (petHelper.getBirthdate().isNotEmpty()) {
+                addPetViewModel.changeBirthdate(value = petHelper.getBirthdate())
+            }
+            if (petHelper.getGenderSelected() != null) {
+                addPetViewModel.onSelectedGender(petHelper.getGenderSelected()!!)
+            }
+            if (petHelper.getCustomerSelected() != null) {
+                addPetViewModel.selectedCustomer(petHelper.getCustomerSelected()!!)
+            }
+            addPetViewModel.validateEnabledNext()
+            addPetViewModel.loadGendersData()
+        }
+    }
+}
 
-            SimpleTextField(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
-                value = if (birthdate.isNotEmpty()) {
-                    DateTime.getFormattedDate(birthdate.toLong(), "dd/MM/yyyy")
-                } else {
-                    ""
-                },
-                onValueChange = {
-
-                },
-                label = "${stringResource(Res.string.birthdate)} *",
-                placeholder = "",
-                trailingIcon = {
-                    IconButton(onClick = { showCalendar = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.CalendarMonth,
-                            contentDescription = ""
-                        )
-                    }
-                },
-                enabled = false,
-                readOnly = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    disabledBorderColor = Outline,
-                    disabledLabelColor = OnSurfaceVariant,
-                    disabledTrailingIconColor = OnSurfaceVariant,
-                    disabledPlaceholderColor = OnSurfaceVariant,
-                    disabledTextColor = OnSurface
-                )
-            )
-
-            SimpleTextField(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
-                value = name,
-                onValueChange = {
-                    addPetViewModel.onChangeName(it)
-                },
-                label = "${stringResource(Res.string.name)} *",
-                placeholder = "",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-            )
-
-            SimpleTextField(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
-                value = description,
-                onValueChange = {
-                    addPetViewModel.onChangeDescription(it)
-                },
-                label = stringResource(Res.string.description),
-                placeholder = "",
-                maxLines = 5,
-                minLines = 3,
-                singleLine = false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-            )
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(top = 10.dp)
-                        .border(
-                            width = 1.dp,
-                            color = OnSurfaceVariant,
-                            shape = RoundedCornerShape(5)
-                        )
-                        .clip(shape = RoundedCornerShape(5))
-                )
-                {
-                    if (customerSelected.id != -1L) {
-                        Column(modifier = Modifier.weight(4f)) {
-                            Text(
-                                modifier = Modifier.padding(top = 20.dp, start = 10.dp),
-                                text = "${customerSelected.identificationType.name}: ${customerSelected.identification}",
-                                fontSize = 12.sp
+@Composable
+private fun Screen(
+    genders: List<GenderResp>,
+    genderSelected: GenderResp,
+    name: String,
+    description: String,
+    birthdate: String,
+    customerSelected: CustomerResp,
+    loading: Boolean,
+    showError: Boolean,
+    enabledNextAction: Boolean,
+    calendarIconOnClick: () -> Unit,
+    onClickItem: (GenderResp) -> Unit,
+    onValueChangeName: (String) -> Unit,
+    onValueChangeDescription: (String) -> Unit,
+    resetCustomerOnClick: () -> Unit,
+    associateOnClick: () -> Unit,
+    nextOnclick: () -> Unit,
+    onback: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    GuauScaffoldSimple(
+        title = stringResource(resource = Res.string.add_pet),
+        showExitCenter = false,
+        showAddActionButton = false,
+        showAccountOptions = false,
+        onBack = onback
+    ) { paddingValues ->
+        if (loading) {
+            SimpleLoading()
+        } else if (!showError) {
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues = paddingValues)) {
+                Column(modifier = Modifier.fillMaxSize().padding(bottom = 60.dp)) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                        text = "${stringResource(Res.string.pet_data)} ${
+                            stringResource(
+                                Res.string.three_of_four
                             )
-                            Text(
-                                modifier = Modifier.padding(
-                                    top = 10.dp,
-                                    start = 10.dp,
-                                    bottom = 20.dp
-                                ),
-                                text = "${customerSelected.name} ${customerSelected.lastName}",
-                                fontSize = 12.sp
+                        }",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+
+
+                        SimpleSelectMenu(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                            value = if (genderSelected.id == -1) {
+                                ""
+                            } else {
+                                GetGenderPet(genderSelected.name)
+                            },
+                            label = "${stringResource(Res.string.gender)} *",
+                            placeholder = "",
+                            list = genders,
+                            expanded = expanded,
+                            arrowOnClick = {
+                                expanded = !expanded
+                            },
+                            onClickItem = {
+                                onClickItem(it as GenderResp)
+                                expanded = false
+                            },
+                            onDismissRequest = {
+                                expanded = false
+                            },
+                            getText = {
+                                GetGenderPet((it as GenderResp).name)
+                            }
+                        )
+
+                        SimpleTextField(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                            value = if (birthdate.isNotEmpty()) {
+                                DateTime.getFormattedDate(birthdate.toLong(), "dd/MM/yyyy")
+                            } else {
+                                ""
+                            },
+                            onValueChange = {
+
+                            },
+                            label = "${stringResource(Res.string.birthdate)} *",
+                            placeholder = "",
+                            trailingIcon = {
+                                IconButton(onClick = calendarIconOnClick) {
+                                    Icon(
+                                        imageVector = Icons.Filled.CalendarMonth,
+                                        contentDescription = ""
+                                    )
+                                }
+                            },
+                            enabled = false,
+                            readOnly = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledBorderColor = Outline,
+                                disabledLabelColor = OnSurfaceVariant,
+                                disabledTrailingIconColor = OnSurfaceVariant,
+                                disabledPlaceholderColor = OnSurfaceVariant,
+                                disabledTextColor = OnSurface
                             )
-                        }
+                        )
+
+                        SimpleTextField(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                            value = name,
+                            onValueChange = onValueChangeName,
+                            label = "${stringResource(Res.string.name)} *",
+                            placeholder = "",
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                        )
+
+                        SimpleTextField(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                            value = description,
+                            onValueChange = onValueChangeDescription,
+                            label = stringResource(Res.string.description),
+                            placeholder = "",
+                            maxLines = 5,
+                            minLines = 3,
+                            singleLine = false,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                        )
                         Box(
-                            modifier = Modifier.weight(1f)
-                                .align(Alignment.CenterVertically)
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 10.dp)
                         ) {
-                            IconButton(
-                                modifier = Modifier.align(Alignment.Center),
-                                onClick = { addPetViewModel.resetCustomerSelected() }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Delete,
-                                    contentDescription = "remove owner"
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 10.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = OnSurfaceVariant,
+                                        shape = RoundedCornerShape(5)
+                                    )
+                                    .clip(shape = RoundedCornerShape(5))
+                            )
+                            {
+                                if (customerSelected.id != "") {
+                                    Column(modifier = Modifier.weight(4f)) {
+                                        Text(
+                                            modifier = Modifier.padding(top = 20.dp, start = 10.dp),
+                                            text = "${customerSelected.identificationType.name}: ${customerSelected.identification}",
+                                            fontSize = 12.sp
+                                        )
+                                        Text(
+                                            modifier = Modifier.padding(
+                                                top = 10.dp,
+                                                start = 10.dp,
+                                                bottom = 20.dp
+                                            ),
+                                            text = "${customerSelected.name} ${customerSelected.lastName}",
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier.weight(1f)
+                                            .align(Alignment.CenterVertically)
+                                    ) {
+                                        IconButton(
+                                            modifier = Modifier.align(Alignment.Center),
+                                            onClick = resetCustomerOnClick
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Delete,
+                                                contentDescription = "remove owner"
+                                            )
+                                        }
+                                    }
+                                } else {
+
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth()
+                                            .padding(top = 10.dp, bottom = 10.dp)
+                                    ) {
+                                        Button(
+                                            onClick = associateOnClick,
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
+                                        {
+                                            Text(text = stringResource(Res.string.associate))
+                                        }
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier.height(20.dp).padding(start = 10.dp)
+                                    .background(Background)
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(start = 5.dp, end = 5.dp),
+                                    text = "${stringResource(Res.string.owner)} *",
+                                    color = OnSurfaceVariant
                                 )
                             }
                         }
-                    } else {
 
-                        Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp)
-                        ) {
-                            Button(
-                                onClick = selectOnClick,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                            {
-                                Text(text = stringResource(Res.string.associate))
-                            }
-                        }
                     }
                 }
-                Box(
-                    modifier = Modifier.height(20.dp).padding(start = 10.dp).background(Background)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-                        text = "${stringResource(Res.string.owner)} *",
-                        color = OnSurfaceVariant
-                    )
-                }
+                NextButtonIntoBox(nextOnclick = nextOnclick, enabled = enabledNextAction)
             }
-
         }
-    }
-    TwoButtonDialog(
-        show = showError,
-        message = GetMessageErrorUseCase(errorUi = addPetViewModel.getErrorUi() ?: ErrorUi()),
-        confirmButtonText = stringResource(Res.string.retry),
-        cancelButtonText = stringResource(Res.string.cancel),
-        confirmButton = {
-            addPetViewModel.dismissErrorDialog()
-            addPetViewModel.loadBreedData()
-        },
-        onDismissRequest = {
-            addPetViewModel.dismissErrorDialog()
-            onBackOnClick()
-        })
-    val datePickerState =
-        rememberDatePickerState(
-            initialSelectedDateMillis = DateTime.getCurrentDate(),
-            selectableDates = object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                    return utcTimeMillis <= DateTime.getCurrentDate()
-                }
-
-            })
-    if (showCalendar) {
-        SimpleDatePickerDialog(
-            datePickerState = datePickerState,
-            onDateSelected = {
-                addPetViewModel.changeBirthdate(it)
-            },
-            onDismiss = {
-                showCalendar = false
-            }
-        )
-    }
-    LaunchedEffect(key1 = 1) {
-        addPetViewModel.validateEnabledNext()
-        addPetViewModel.loadGendersData()
     }
 }

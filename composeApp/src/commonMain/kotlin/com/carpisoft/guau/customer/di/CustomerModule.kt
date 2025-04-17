@@ -11,6 +11,7 @@ import com.carpisoft.guau.customer.domain.usecase.SaveCustomerUseCase
 import com.carpisoft.guau.customer.ui.AddCustomerViewModel
 import com.carpisoft.guau.customer.ui.CustomerViewModel
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val customerModule: Module = module {
@@ -39,28 +40,6 @@ val customerModule: Module = module {
         SaveCustomerUseCase(customerPort = get())
     }
 
-    factory {
-        AddCustomerViewModel(
-            getAllIdentificationTypeUseCase = get(),
-            getTokenUseCase = get(),
-            isOnlyLettersUseCase = get(),
-            isOnlyNumbersUseCase = get(),
-            isMaxStringSizeUseCase = get(),
-            initialsInCapitalLetterUseCase = get(),
-            removeInitialWhiteSpaceUseCase = get(),
-            validateEmailUseCase = get(),
-            validateNameUseCase = get(),
-            saveCustomerUseCase = get(),
-            getCenterIdUseCase = get()
-        )
-    }
-
-    factory {
-        CustomerViewModel(
-            getCustomersByCenterIdAndNameWithPaginationAndSortUseCase = get(),
-            getCustomersByCenterIdWithPaginationAndSortUseCase = get(),
-            getTokenUseCase = get(),
-            getCenterIdUseCase = get()
-        )
-    }
+    viewModelOf(::CustomerViewModel)
+    viewModelOf(::AddCustomerViewModel)
 }

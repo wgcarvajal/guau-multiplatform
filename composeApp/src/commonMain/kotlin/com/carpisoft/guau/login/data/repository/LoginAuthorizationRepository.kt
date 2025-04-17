@@ -20,6 +20,10 @@ class LoginAuthorizationRepository(private val preferences: PreferencesManager) 
         preferences.saveString(key = LoginPreferencesConstants.NAME_KEY, value = name)
     }
 
+    override suspend fun saveUserId(userId: String) {
+        preferences.saveString(key = LoginPreferencesConstants.USER_ID_KEY, value = userId)
+    }
+
     override suspend fun getToken(): String {
         return preferences.getString(LoginPreferencesConstants.TOKEN_KEY)
     }
@@ -30,5 +34,9 @@ class LoginAuthorizationRepository(private val preferences: PreferencesManager) 
 
     override suspend fun getName(): String {
         return preferences.getString(LoginPreferencesConstants.NAME_KEY)
+    }
+
+    override suspend fun getUserId(): String {
+        return preferences.getString(LoginPreferencesConstants.USER_ID_KEY)
     }
 }

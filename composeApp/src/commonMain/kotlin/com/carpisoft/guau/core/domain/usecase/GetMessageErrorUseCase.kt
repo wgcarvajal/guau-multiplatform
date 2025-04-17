@@ -1,8 +1,8 @@
 package com.carpisoft.guau.core.domain.usecase
 
 import androidx.compose.runtime.Composable
-import com.carpisoft.guau.core.utils.constants.Errors
 import com.carpisoft.guau.core.ui.model.ErrorUi
+import com.carpisoft.guau.core.utils.constants.Errors
 import guau.composeapp.generated.resources.Res
 import guau.composeapp.generated.resources.authentication_error
 import guau.composeapp.generated.resources.bad_credentials
@@ -10,9 +10,8 @@ import guau.composeapp.generated.resources.email
 import guau.composeapp.generated.resources.field_duplicate_with_field
 import guau.composeapp.generated.resources.identification_number
 import guau.composeapp.generated.resources.server_error
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-@OptIn(ExperimentalResourceApi::class)
+
 @Composable
 fun GetMessageErrorUseCase(errorUi: ErrorUi): String {
     if (errorUi.error != null) {

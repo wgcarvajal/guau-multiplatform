@@ -1,6 +1,8 @@
 package com.carpisoft.guau.login.ui.screens
 
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.domain.usecase.ValidateEmailAndPasswordUseCase
 import com.carpisoft.guau.core.network.domain.model.Resp
 import com.carpisoft.guau.core.ui.model.ErrorUi
@@ -12,7 +14,7 @@ import com.carpisoft.guau.login.domain.usecase.DoSocialLoginUseCase
 import com.carpisoft.guau.login.domain.usecase.SaveEmailUseCase
 import com.carpisoft.guau.login.domain.usecase.SaveNameUseCase
 import com.carpisoft.guau.login.domain.usecase.SaveTokenUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import com.carpisoft.guau.login.domain.usecase.SaveUserIdUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,11 +27,11 @@ class LoginViewModel(
     private val doSocialLoginUseCase: DoSocialLoginUseCase,
     private val saveEmailUseCase: SaveEmailUseCase,
     private val saveNameUseCase: SaveNameUseCase,
-    private val saveTokenUseCase: SaveTokenUseCase
+    private val saveTokenUseCase: SaveTokenUseCase,
+    private val saveUserIdUseCase: SaveUserIdUseCase
 ) : ViewModel() {
 
     companion object {
-        const val KEY = "LoginViewModel"
         const val TAG = "LoginViewModel"
     }
 
@@ -86,6 +88,7 @@ class LoginViewModel(
             saveTokenUseCase(response.authorization)
             saveNameUseCase(response.name)
             saveEmailUseCase(response.email)
+            saveUserIdUseCase(response.objectId)
             _email.value = ""
             _password.value = ""
             _loginEnabled.value = false

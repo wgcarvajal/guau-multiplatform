@@ -11,9 +11,9 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.TransitEnterexit
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -30,17 +30,14 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.carpisoft.guau.core.utils.constants.PlatformConstants
 import com.carpisoft.guau.getPlatformName
+import com.carpisoft.guau.ui.theme.BackgroundHead
+import com.carpisoft.guau.ui.theme.Green100
 import guau.composeapp.generated.resources.Res
 import guau.composeapp.generated.resources.exit_center
 import guau.composeapp.generated.resources.my_profile
 import guau.composeapp.generated.resources.sign_off
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import com.carpisoft.guau.ui.theme.BackgroundHead
-import com.carpisoft.guau.ui.theme.Green100
 
-
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HeadScaffold(
     title: String,
@@ -120,7 +117,7 @@ fun HeadScaffold(
                         }
                     })
                     if (showExitCenter) {
-                        Divider()
+                        HorizontalDivider()
                         DropdownMenuItem(onClick = {
                             openMenu = false
                             onExitVet()
@@ -135,7 +132,7 @@ fun HeadScaffold(
                             }
                         })
                     }
-                    Divider()
+                    HorizontalDivider()
                     DropdownMenuItem(onClick = {
                         openMenu = false
                         signOffOnClick()

@@ -1,5 +1,7 @@
 package com.carpisoft.guau.customer.ui
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.domain.usecase.InitialsInCapitalLetterUseCase
 import com.carpisoft.guau.core.domain.usecase.IsMaxStringSizeUseCase
 import com.carpisoft.guau.core.domain.usecase.IsOnlyLettersUseCase
@@ -14,15 +16,14 @@ import com.carpisoft.guau.customer.domain.model.RegisterCustomerReq
 import com.carpisoft.guau.customer.domain.model.RegisterCustomerResp
 import com.carpisoft.guau.customer.domain.usecase.GetAllIdentificationTypeUseCase
 import com.carpisoft.guau.customer.domain.usecase.SaveCustomerUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import com.carpisoft.guau.employee.domain.usecase.GetCenterIdUseCase
+import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
 
 class AddCustomerViewModel(
     private val getAllIdentificationTypeUseCase: GetAllIdentificationTypeUseCase,
@@ -217,7 +218,7 @@ class AddCustomerViewModel(
         }
     }
 
-    fun emptyValues() {
+    private fun emptyValues() {
         _identificationTypeSelected.value = IdentificationTypeResp(-1, "")
         _identificationNumber.value = ""
         _name.value = ""

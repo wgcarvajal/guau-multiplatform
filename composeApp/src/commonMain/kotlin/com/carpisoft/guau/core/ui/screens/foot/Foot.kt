@@ -1,40 +1,35 @@
 package com.carpisoft.guau.core.ui.screens.foot
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import guau.composeapp.generated.resources.Res
-import guau.composeapp.generated.resources.home
-import guau.composeapp.generated.resources.pets
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.stringResource
+import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.carpisoft.guau.home.ui.HomeTab
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Foot(
-    selectedIndex: Int
+    tabNavigator: TabNavigator
 ) {
     NavigationBar {
         NavigationBarItem(
-            selected = selectedIndex == 1,
-            onClick = {},
+            selected = tabNavigator.current.key == HomeTab.key,
+            onClick = {
+                if (tabNavigator.current.key != HomeTab.key) {
+                    tabNavigator.current = HomeTab
+                }
+            },
             icon = {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = null
-                )
+                Icon(painter = HomeTab.options.icon!!, contentDescription = null)
+
             },
             label = {
-                Text(text = stringResource(Res.string.home))
+                Text(text = HomeTab.options.title)
             }
         )
 
-        NavigationBarItem(
+        /*NavigationBarItem(
             selected = selectedIndex == 2,
             onClick = {},
             icon = {
@@ -46,7 +41,7 @@ fun Foot(
             label = {
                 Text(text = stringResource(Res.string.pets))
             }
-        )
+        )*/
     }
     /*Column {
         BottomNavigation(backgroundColor = Color.White, elevation = 0.dp) {

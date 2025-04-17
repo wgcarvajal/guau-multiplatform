@@ -12,6 +12,9 @@ import androidx.compose.ui.unit.dp
 import com.carpisoft.guau.core.ui.constants.ScreenEnum
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
 import com.carpisoft.guau.core.ui.screens.itemlist.ItemHome
+import com.carpisoft.guau.ui.theme.NavyBlue
+import com.carpisoft.guau.ui.theme.Orange
+import com.carpisoft.guau.ui.theme.Purple
 import guau.composeapp.generated.resources.Res
 import guau.composeapp.generated.resources.admissions
 import guau.composeapp.generated.resources.admit
@@ -19,13 +22,8 @@ import guau.composeapp.generated.resources.appointment
 import guau.composeapp.generated.resources.calendar
 import guau.composeapp.generated.resources.vaccine
 import guau.composeapp.generated.resources.vaccines
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import com.carpisoft.guau.ui.theme.NavyBlue
-import com.carpisoft.guau.ui.theme.Orange
-import com.carpisoft.guau.ui.theme.Purple
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeScreen(
     uiStructureProperties: UiStructureProperties,

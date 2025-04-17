@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.carpisoft.guau.core.domain.usecase.GetMessageErrorBackendlessUseCase
 import com.carpisoft.guau.core.domain.usecase.GetMessageErrorUseCase
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.core.ui.model.UiStructureProperties
@@ -32,7 +33,10 @@ import com.carpisoft.guau.core.ui.screens.loading.SimpleLoading
 import com.carpisoft.guau.core.ui.screens.text.TextQuestionWithLink
 import com.carpisoft.guau.core.ui.screens.textfields.SimpleTextField
 import com.carpisoft.guau.core.ui.screens.textfields.SimpleTextFieldPassword
-import com.carpisoft.guau.core.utils.states.LoginWithGoogleHandler
+import com.carpisoft.guau.initialsetup.ui.screens.InitialScreen
+import com.carpisoft.guau.login.ui.states.LoginWithGoogleHandler
+import com.carpisoft.guau.login.ui.states.SocialLoginAction
+import com.carpisoft.guau.socialLogin
 import guau.composeapp.generated.resources.Res
 import guau.composeapp.generated.resources.app_name_shared
 import guau.composeapp.generated.resources.dont_have_an_account
@@ -42,14 +46,14 @@ import guau.composeapp.generated.resources.enter_your_password
 import guau.composeapp.generated.resources.password
 import guau.composeapp.generated.resources.sign_in
 import guau.composeapp.generated.resources.sign_up
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 class LoginScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val loginViewModel: LoginViewModel = GetLoginViewModel()
+        val loginViewModel = koinViewModel<LoginViewModel>()
         val email by loginViewModel.email.collectAsState()
         val password by loginViewModel.password.collectAsState()
         val loginEnabled by loginViewModel.loginEnabled.collectAsState()
@@ -71,12 +75,26 @@ class LoginScreen : Screen {
                     loginViewModel.doLogin()
                 },
                 onClickGoogle = {
-
+                    socialLogin.send(action = SocialLoginAction.GoLoginWithGoogle())
                 },
                 onClickSignUp = {
                     navigator?.push(item = SignUpScreen())
                 }
             )
+        }
+        val showErrorDialog by loginViewModel.showErrorDialog.collectAsState()
+        OneButtonDialog(
+            show = showErrorDialog,
+            message = GetMessageErrorBackendlessUseCase(loginViewModel.getErrorUi() ?: ErrorUi()),
+            onDismissRequest = { loginViewModel.dismissErrorDialog() })
+
+        val loginSuccess by loginViewModel.loginSuccess.collectAsState()
+        if (loginSuccess) {
+            loginViewModel.resetLoginSuccess()
+            navigator?.replace(item = InitialScreen())
+        }
+        LoginWithGoogleHandler {
+            loginViewModel.doSocialLogin(it.param, "Google")
         }
     }
 
@@ -139,7 +157,6 @@ fun LoginScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun Screen(
     email: String,

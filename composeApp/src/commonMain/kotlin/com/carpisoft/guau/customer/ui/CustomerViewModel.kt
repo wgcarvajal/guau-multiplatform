@@ -1,19 +1,20 @@
 package com.carpisoft.guau.customer.ui
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.network.domain.model.Resp
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.customer.domain.model.CustomerResp
 import com.carpisoft.guau.customer.domain.usecase.GetCustomersByCenterIdAndNameWithPaginationAndSortUseCase
 import com.carpisoft.guau.customer.domain.usecase.GetCustomersByCenterIdWithPaginationAndSortUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import com.carpisoft.guau.employee.domain.usecase.GetCenterIdUseCase
+import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
 
 class CustomerViewModel(
     private val getCustomersByCenterIdWithPaginationAndSortUseCase: GetCustomersByCenterIdWithPaginationAndSortUseCase,

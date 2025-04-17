@@ -7,7 +7,7 @@ import com.carpisoft.guau.pet.domain.port.PetPort
 class GetPetsByCenterIdAndSearchWithPaginationAndSortUseCase(private val petPort: PetPort) {
     suspend operator fun invoke(
         token: String,
-        centerId: Int,
+        centerId: String,
         search: String,
         page: Int,
         limit: Int

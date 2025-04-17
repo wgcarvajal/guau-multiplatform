@@ -5,10 +5,8 @@ import guau.composeapp.generated.resources.Res
 import guau.composeapp.generated.resources.female
 import guau.composeapp.generated.resources.male
 import guau.composeapp.generated.resources.unknown
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun GetGenderPet(gender: String): String {
     return when (gender) {

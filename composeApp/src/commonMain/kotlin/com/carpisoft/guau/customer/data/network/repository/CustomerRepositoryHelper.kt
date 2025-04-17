@@ -34,7 +34,7 @@ open class CustomerRepositoryHelper {
             for (customer in customerResponse) {
                 customersResp.add(
                     CustomerResp(
-                        id = customer.id,
+                        id = customer.id.toString(),
                         identificationType = IdentificationTypeResp(
                             customer.identificationType.id,
                             customer.identificationType.name

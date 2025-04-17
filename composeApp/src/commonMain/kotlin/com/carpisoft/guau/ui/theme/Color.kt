@@ -20,3 +20,6 @@ val OnSurface = Color(0xFF1C1B1F)
 val Outline = Color(0XFF79747e)
 val OnSurfaceVariant = Color(0xFF3f454f)
 val TextColor = Color(0xFFAEB6BF )
+
+val SurfaceLight = Color(0xFF16A085 )
+val SurfaceDark = Color(0xFF02312B)

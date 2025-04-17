@@ -1,5 +1,7 @@
 package com.carpisoft.guau.pet.ui.screens
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.carpisoft.guau.core.network.domain.model.Resp
 import com.carpisoft.guau.core.ui.model.ErrorUi
 import com.carpisoft.guau.employee.domain.usecase.GetCenterIdUseCase
@@ -7,7 +9,6 @@ import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
 import com.carpisoft.guau.pet.domain.model.PetResp
 import com.carpisoft.guau.pet.domain.usecase.GetPetsByCenterIdAndSearchWithPaginationAndSortUseCase
 import com.carpisoft.guau.pet.domain.usecase.GetPetsByCenterIdWithPaginationAndSortUseCase
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,6 @@ class PetsViewModel(
 ) : ViewModel() {
 
     companion object {
-        const val KEY = "PetsViewModel"
         const val TAG = "PetsViewModel"
     }
 
@@ -57,14 +57,14 @@ class PetsViewModel(
             val resp = if (_searchText.value.isEmpty()) {
                 getPetsByCenterIdWithPaginationAndSortUseCase(
                     token = getTokenUseCase(),
-                    centerId = getCenterIdUseCase().toInt(),
+                    centerId = getCenterIdUseCase(),
                     page = p,
                     limit = limit
                 )
             } else {
                 getPetsByCenterIdAndSearchWithPaginationAndSortUseCase(
                     token = getTokenUseCase(),
-                    centerId = getCenterIdUseCase().toInt(),
+                    centerId = getCenterIdUseCase(),
                     search = _searchText.value,
                     page = p,
                     limit = limit
@@ -108,14 +108,14 @@ class PetsViewModel(
                 val resp = if (value.length < 3) {
                     getPetsByCenterIdWithPaginationAndSortUseCase(
                         token = getTokenUseCase(),
-                        centerId = getCenterIdUseCase().toInt(),
+                        centerId = getCenterIdUseCase(),
                         page = page,
                         limit = limit
                     )
                 } else {
                     getPetsByCenterIdAndSearchWithPaginationAndSortUseCase(
                         token = getTokenUseCase(),
-                        centerId = getCenterIdUseCase().toInt(),
+                        centerId = getCenterIdUseCase(),
                         search = value,
                         page = page,
                         limit = limit
@@ -150,7 +150,7 @@ class PetsViewModel(
             _loading.value = true
             val resp = getPetsByCenterIdWithPaginationAndSortUseCase(
                 token = getTokenUseCase(),
-                centerId = getCenterIdUseCase().toInt(),
+                centerId = getCenterIdUseCase(),
                 page = page,
                 limit = limit
             )

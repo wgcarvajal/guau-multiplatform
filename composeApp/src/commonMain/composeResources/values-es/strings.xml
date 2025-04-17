@@ -30,15 +30,9 @@
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="retry">Reintentar</string>
-    <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de
-        la aplicación?
-    </string>
-    <string name="are_you_sure_you_want_to_cancel_the_registration_process">¿Estas seguro que deseas
-        cancelar el proceso de registro?
-    </string>
-    <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada,
-        inicia creando una
-    </string>
+    <string name="are_you_sure_you_want_to_exit_the_application">¿Estas seguro que deseas salir de la aplicación?</string>
+    <string name="are_you_sure_you_want_to_cancel_the_registration_process">¿Estas seguro que deseas cancelar el proceso de registro?</string>
+    <string name="you_do_not_have_any_veterinary_created">No tienes ninguna veterinaria creada, inicia creando una</string>
     <string name="admissions">Ingresos</string>
     <string name="vaccination">Vacunación</string>
     <string name="vaccines">Vacunas</string>
@@ -73,7 +67,7 @@
     <string name="owner">Dueño</string>
     <string name="gender">Género</string>
     <string name="customers">Clientes</string>
-    <string name="save">Guardar</string>
+    <string name="save">Registrar</string>
     <string name="customer_registry">Registrar Cliente</string>
     <string name="phone">Teléfono</string>
     <string name="address">Dirección</string>

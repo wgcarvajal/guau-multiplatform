@@ -1,8 +1,8 @@
 package com.carpisoft.guau.login.di
 
 import com.carpisoft.guau.login.data.repository.LoginAuthorizationRepository
-import com.carpisoft.guau.login.data.repository.LoginRepository
-import com.carpisoft.guau.login.data.repository.SignUpRepository
+import com.carpisoft.guau.login.data.repository.LoginBackendlessRepository
+import com.carpisoft.guau.login.data.repository.SignUpBackendlessRepository
 import com.carpisoft.guau.login.data.repository.SocialLoginRepository
 import com.carpisoft.guau.login.domain.port.LoginAuthorizationPort
 import com.carpisoft.guau.login.domain.port.LoginPort
@@ -13,24 +13,26 @@ import com.carpisoft.guau.login.domain.usecase.DoRegisterUseCase
 import com.carpisoft.guau.login.domain.usecase.DoSocialLoginUseCase
 import com.carpisoft.guau.login.domain.usecase.GetEmailUseCase
 import com.carpisoft.guau.login.domain.usecase.GetTokenUseCase
+import com.carpisoft.guau.login.domain.usecase.GetUserIdUseCase
 import com.carpisoft.guau.login.domain.usecase.SaveEmailUseCase
 import com.carpisoft.guau.login.domain.usecase.SaveNameUseCase
 import com.carpisoft.guau.login.domain.usecase.SaveTokenUseCase
+import com.carpisoft.guau.login.domain.usecase.SaveUserIdUseCase
 import com.carpisoft.guau.login.ui.screens.LoginViewModel
 import com.carpisoft.guau.login.ui.screens.SignUpViewModel
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val loginModule: Module = module {
+    factory<SignUpPort> {
+        SignUpBackendlessRepository(httpClient = get())
+    }
     factory<LoginAuthorizationPort> {
         LoginAuthorizationRepository(preferences = get())
     }
     factory<LoginPort> {
-        LoginRepository(httpClient = get())
-    }
-
-    factory<SignUpPort> {
-        SignUpRepository(httpClient = get())
+        LoginBackendlessRepository(httpClient = get())
     }
     factory<SocialLoginPort> {
         SocialLoginRepository(httpClient = get())
@@ -45,6 +47,8 @@ val loginModule: Module = module {
 
     factory { GetTokenUseCase(loginAuthorizationPort = get()) }
 
+    factory { GetUserIdUseCase(loginAuthorizationPort = get()) }
+
     factory { SaveEmailUseCase(loginAuthorizationPort = get()) }
 
     factory { SaveNameUseCase(loginAuthorizationPort = get()) }
@@ -52,25 +56,15 @@ val loginModule: Module = module {
     factory { SaveTokenUseCase(loginAuthorizationPort = get()) }
 
     factory {
-        LoginViewModel(
-            validateEmailAndPasswordUseCase = get(),
-            doLoginUseCase = get(),
-            doSocialLoginUseCase = get(),
-            saveEmailUseCase = get(),
-            saveNameUseCase = get(),
-            saveTokenUseCase = get()
+        SaveUserIdUseCase(
+            loginAuthorizationPort = get()
         )
     }
 
-    factory {
-        SignUpViewModel(
-            validateEmailAndPasswordUseCase = get(),
-            doRegisterUseCase = get(),
-            initialsInCapitalLetterUseCase = get(),
-            removeInitialWhiteSpaceUseCase = get(),
-            isOnlyLettersUseCase = get(),
-            isMaxStringSizeUseCase = get(),
-            validateNameUseCase = get()
-        )
-    }
+    viewModelOf(
+        ::LoginViewModel
+    )
+    viewModelOf(
+        ::SignUpViewModel
+    )
 }

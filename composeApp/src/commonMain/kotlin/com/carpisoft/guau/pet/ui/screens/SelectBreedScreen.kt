@@ -16,79 +16,95 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.carpisoft.guau.core.ui.constants.ScreenEnum
-import com.carpisoft.guau.core.ui.model.UiStructureProperties
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import com.carpisoft.guau.core.ui.screens.buttons.NextButtonIntoBox
 import com.carpisoft.guau.core.ui.screens.itemlist.ItemWithRemove
-import com.carpisoft.guau.pet.ui.screens.AddPetViewModel
+import com.carpisoft.guau.core.ui.screens.scaffold.GuauScaffoldSimple
+import com.carpisoft.guau.pet.domain.model.BreedResp
+import com.carpisoft.guau.pet.ui.util.PetHelper
 import guau.composeapp.generated.resources.Res
+import guau.composeapp.generated.resources.add_pet
 import guau.composeapp.generated.resources.select
 import guau.composeapp.generated.resources.select_breed
 import guau.composeapp.generated.resources.two_of_four
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun SelectBreedScreen(
-    uiStructureProperties: UiStructureProperties,
-    addPetViewModel: AddPetViewModel,
-    selectOnClick: () -> Unit
-) {
-    LaunchedEffect(key1 = 1) {
-        uiStructureProperties.onShowTopBar(true)
-        uiStructureProperties.onShowBottomBar(false)
-        uiStructureProperties.showActionNavigation(true)
-        uiStructureProperties.onShowExitCenter(true)
-        uiStructureProperties.onSetTitle(ScreenEnum.SelectBreed)
-        uiStructureProperties.showAddActionButton(false)
-        uiStructureProperties.showActionAccountOptions(false)
-        uiStructureProperties.onShowActionBottom(true)
-        uiStructureProperties.showActionNext(true)
-        uiStructureProperties.onShowSaveAction(false)
-    }
-    val enabledNextAction by addPetViewModel.enabledNextAction.collectAsState()
-    LaunchedEffect(key1 = enabledNextAction) {
-        uiStructureProperties.onEnabledNextAction(enabledNextAction)
-    }
-
-    val breedSelected by addPetViewModel.breedSelected.collectAsState()
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
-            text = "${stringResource(Res.string.select_breed)} ${
-                stringResource(
-                    Res.string.two_of_four
-                )
-            }",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
-        )
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (breedSelected.id == -1) {
-                Button(
-                    modifier = Modifier.fillMaxWidth().align(Alignment.Center)
-                        .padding(start = 10.dp, end = 10.dp),
-                    onClick = selectOnClick
-                ) {
-                    Text(
-                        text = stringResource(Res.string.select)
-                    )
-                }
-            } else {
-                ItemWithRemove(
-                    modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp),
-                    text = breedSelected.name,
-                    imageUrl = breedSelected.image,
-                    onRemove = {
-                        addPetViewModel.removeSelectedBreed()
-                        addPetViewModel.evaluateBreedSelected()
-                    }
-                )
+class SelectBreedScreen : Screen {
+    @Composable
+    override fun Content() {
+        val navigator: Navigator? = LocalNavigator.current
+        val addPetViewModel = koinViewModel<AddPetViewModel>()
+        val petHelper = koinInject<PetHelper>()
+        val breedSelected by addPetViewModel.breedSelected.collectAsState()
+        Screen(
+            breedSelected = breedSelected,
+            selectOnClick = { navigator?.push(item = BreedsScreen()) },
+            onRemove = {
+                petHelper.setBreedPetSelected(breedResp = null)
+                addPetViewModel.removeSelectedBreed()
+            }, nextOnclick = {
+                navigator?.push(item = PetDataScreen())
+            }, onBack = {
+                navigator?.pop()
+            })
+        LaunchedEffect(key1 = 1) {
+            if (petHelper.getBreedPetSelected() != null) {
+                addPetViewModel.selectedBreed(breed = petHelper.getBreedPetSelected()!!)
             }
         }
     }
-    LaunchedEffect(key1 = 1) {
-        addPetViewModel.evaluateBreedSelected()
+}
+
+@Composable
+private fun Screen(
+    breedSelected: BreedResp,
+    selectOnClick: () -> Unit,
+    onRemove: () -> Unit,
+    nextOnclick: () -> Unit,
+    onBack: () -> Unit
+) {
+    GuauScaffoldSimple(
+        title = stringResource(Res.string.add_pet),
+        onBack = onBack
+    ) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues = paddingValues)) {
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                text = "${stringResource(Res.string.select_breed)} ${
+                    stringResource(
+                        Res.string.two_of_four
+                    )
+                }",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (breedSelected.id == -1) {
+                    Button(
+                        modifier = Modifier.fillMaxWidth().align(Alignment.Center)
+                            .padding(start = 10.dp, end = 10.dp),
+                        onClick = selectOnClick
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.select)
+                        )
+                    }
+                } else {
+                    ItemWithRemove(
+                        modifier = Modifier.align(Alignment.TopCenter)
+                            .padding(top = 20.dp, start = 20.dp, end = 20.dp),
+                        text = breedSelected.name,
+                        imageUrl = breedSelected.image,
+                        onRemove = onRemove
+                    )
+                    NextButtonIntoBox(nextOnclick = nextOnclick)
+                }
+            }
+        }
     }
 
 }
